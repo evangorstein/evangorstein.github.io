@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>Randomization Inference Part 2: Attributable Effects - Evan Gorstein</title>
+<meta property="og:title" content="Randomization Inference Part 2: Attributable Effects - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Randomization Inference Part 2: Attributable Effects</h1>
+
+    
+    <span class="article-date">2021-01-13</span>
+    
+
+    <div class="article-content">
+      <h1 id="introduction">Introduction</h1>
+<p>In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-uniform causal effects. The quantity that we will define for this task is known as the &ldquo;attributable effect&rdquo; of treatment. This discussion is adapted from Chapter 2 of Paul Rosenbaum&rsquo;s <em>Design of Observational Studies</em> (2010).</p>
+<h1 id="exceptional-pairs">Exceptional Pairs</h1>
+<p>We adopt the same experimental set-up as in the previous post with <code>$I$</code> pairs matched for pre-treatment covariates and treatment assignment randomized within each pair. Let&rsquo;s consider for the moment a subset <code>$\mathscr{I} \subseteq \{1,2,3,...I\}$</code> of <code>$m$</code> of these <code>$I$</code> pairs. In order to allow the heterogeneity of the effect to play a role in our calculations, let&rsquo;s try to identify the pair <code>$i_\mathscr{I}$</code> in <code>$\mathscr{I}$</code> whose two individuals exhibit the largest difference in outcomes. Surely, this is an important pair, one that may provide evidence about the direction of the effect of treatment. For example, we might consider it evidence for a positive treatment effect if within this exceptional pair, the treated unit&rsquo;s observed response is the larger of the two. Let <code>$H_\mathscr{I}$</code> be an indicator for just this. In other words, <code>$H_\mathscr{I} = 1 $</code> if in the pair in <code>$\mathscr{I}$</code> with the largest disparity in responses, the treated-minus-control difference is positive and <code>$H_\mathscr{I} = 0 $</code> otherwise. Of course, we may have just gotten lucky in the sense that even if there is no treatment effect in any unit, we still might find that the treated unit in the &ldquo;most exceptional pair&rdquo; has a larger observed response. We saw in the previous post that under the sharp null hypothesis of no treatment effect,
+<code>$$ Y_{i} = (Z_{i1}-Z_{i2})(R_{i1}-R_{i2})=(Z_{i1}-Z_{i2})(r_{Ci1}-r_{Ci2}) \tag{1} $$</code>
+for all <code>$i$</code>, so whichever pair is most exceptional, a flip of the coin determines the sign of its treated-minus-response difference, which, in turn, determines whether or not we get to tally a &ldquo;success&rdquo;.</p>
+<p>Let&rsquo;s define <code>$H_{C\mathscr{I}}$</code> to be an indicator for whether we would tally a success if instead of using the observed responses for each unit to make our comparisons, we actually used potential responses under control. Unless the sharp null hypothesis is true, this is a hypothetical quantity, not calculable from our observed data.</p>
+<h1 id="attributable-effect">Attributable Effect</h1>
+<p>Let&rsquo;s recall that <code>$\mathscr{I}$</code> was just one arbitrary subset of pairs, so we actually want to do this for every single subset of pairs of size <code>$m$</code> and sum the results. Let <code>$\mathscr{K}$</code> be the collection of all subsets of <code>$m$</code> distinct pairs. We define the statistic <code>$\tilde{T}$</code> to be the tally of all the &ldquo;successes&rdquo; as we loop through these subsets, i.e. <code>$\tilde{T}= \sum_{\mathscr{I}\in\mathscr{K}}{H_\mathscr{I}}$</code>. Similarly, the count of the successes if we went according to the potential responses under control, which in general is unobserved, is given by <code>$\tilde{T_C}= \sum_{\mathscr{I}\in\mathscr{K}}{H_{C\mathscr{I}}}$</code>. The quantity that accounts for the role that chance plays in the process of our collecting evidence for a treatment effect is the difference between these two tallies, <code>$A=T_\mathscr{I} - T_{C\mathscr{I}} = \sum_{\mathscr{I}\in\mathscr{K}}{H_\mathscr{I} - H_{C\mathscr{I}}}$</code>. In general, <code>$A$</code> is an integer between <code>$-|\mathscr{K}|$</code> and  <code>$|\mathscr{K}|$</code> representing the change in the number of successes which can be attributed to treatment, i.e. the &ldquo;attributable effect&rdquo;. It is common and more informative to discuss attributable effects in terms of proportions, i.e.  <code>$A/|\mathscr{K}|$</code>.</p>
+<h1 id="calculations">Calculations</h1>
+<p>Now that we know what we&rsquo;re interested in, let&rsquo;s see if we can calculate it. There seem to be a couple of significant obstacles to calculating <code>$A$</code>:</p>
+<ol>
+<li>We do not observe <code>$\tilde{T}_C$</code>.</li>
+<li>Although we observe <code>$\tilde{T}$</code>, it seems pretty awful to calculate, involving the separate consideration of every subset of pairs of size <code>$m$</code>.</li>
+</ol>
+<p>Upon further reflection, however, both of these obstacles can be overcome. First, although we don&rsquo;t know the exact value of <code>$\tilde{T}_C$</code>, we know its distribution; second, <code>$\tilde{T}$</code> ends up being easy to calculate.</p>
+<p>Starting with the latter, <code>$\tilde{T}$</code> can actually be expressed in the form of a signed rank statistic very similar to Wilcoxon&rsquo;s, allowing us to calculate it with ease. In particular, we have <code>$T=\sum_{i=1}^I{\mathop{\mathrm{sgn}}(Y_i)\tilde{q_i}}$</code>, where <code>$\tilde{q_i}$</code> is a quantity that we will now define. Recall that <code>${q_i}$</code>, without the tilde, is just the rank of <code>$|Y_i|$</code>, defined for the calculation of Wilcoxon&rsquo;s statistic. Now for a fixed pair <code>$i$</code>, if <code>${q_i}=1, 2, ... , m-1$</code>, then in any subset of <code>$m$</code> pairs, there will be at least one pair &ldquo;more exceptional&rdquo; than pair <code>$i$</code>, and so pair <code>$i$</code> contributes nothing to our tally of &ldquo;successes&rdquo;. On the other hand, if <code>$ m \le q_i $</code>, then the number of subsets of size <code>$m$</code> in which <code>$i$</code> appears as most exceptional is just the number of ways to choose <code>$m-1$</code> pairs from the <code>$q_i-1$</code> pairs less exceptional that pair <code>$i$</code>. This analysis motivates our definition of <code>$\tilde{q_i}$</code> as</p>
+<p><code>$$ \tilde{q_i} = {q_i-1 \choose m-1} \text{ for } q_i \ge m \text{, } \tilde{q_i}=0 \text{ for }  q_i &lt; m$$</code>
+With <code>$\tilde{q_i}$</code> thus defined, <code>$\sum_{i=1}^I{\mathop{\mathrm{sgn}}(Y_i)\tilde{q_i}}$</code> describes an alternative approach to tallying &ldquo;successes,&rdquo; looping through pairs instead of looping through subsets of pairs. The result, of course, will be the same, although written in this form, it&rsquo;s much easier to calculate. Notice also that if <code>$m=2$</code>, <code>$\tilde{q_i} = q_i-1$</code>, so we recover the Wilcoxon statistic with ranks starting at <code>$0$</code> and going to <code>$I-1$</code> instead of starting at <code>$1$</code> and going to <code>$I$</code>.</p>
+<p>What about the distribution of <code>$\tilde{T}_C$</code>? Well, <code>$\tilde{T}_C$</code> can also be written as the sum of the signed ranks of each of the treated-minus-control differences, where we now use the potential responses under control for each unit to calculate these differences. As we saw in Equation 1, when we use potential responses, the sign of each pair&rsquo;s treated-minus-control difference is determined by a fair coin flip, so <code>$\tilde{T}_C$</code> is just the sum of <code>$I$</code> independent random variables, each equal to <code>$\tilde{q_i}$</code> or <code>$0$</code> with equal probability <code>$\frac{1}{2}$</code>. Consequently, if we assume that there are no ties among the treated-minus-control differences, then we know its distribution before we even observe our data. In particular, its expected value and variance are given by</p>
+<p><code>$$\mathrm{E}(\tilde{T}_C)=\frac{1}{2}\sum_{i=1}^I{\tilde{q_i}}=\frac{1}{2}|\mathscr{K}|$$</code><br>
+and
+<code>$$\mathrm{Var}(\tilde{T}_C)=\frac{1}{4}\sum_{i=1}^I{\tilde{q_i}^2}=\frac{1}{4}\sum_{i=m}^I{{q_{i-1} \choose m-1}^2}$$</code></p>
+<p>A point estimate for the attributable effect is thus <code>$$\hat{A}=\tilde{T}-\mathrm{E}(\tilde{T}_C)=\tilde{T} - \frac{1}{2}|\mathscr{K}|$$</code> or in proportional terms, <code>$$\frac{\tilde{T} - |\mathscr{K}|/2} {|\mathscr{K}|}= \frac{\tilde{T}}{|\mathscr{K}|} - .5$$</code></p>
+<h1 id="confidence-intervals">Confidence Intervals</h1>
+<p>The Lyapunov version of the central limit theorem tells us that the assymptotic distribution of the sum of independent, not necessarilly identical random variables follows a normal distribution. <code>$\tilde{T}_C$</code> is a finite sum of independent random variables, but for large enough <code>$I$</code>, the assymptotic distribution provides a solid approximation. Using this approximation, we can calculate the smallest value <code>$t_\alpha$</code> such that <code>$P(\tilde{T}_C\leq t_\alpha) \geq 1 - \alpha$</code> with</p>
+<p><code>$$ t_\alpha = \mathrm{E}(\tilde{T}_C) + \Phi^{-1}(1-\alpha)\sqrt{\mathrm{Var}(\tilde{T}_C)} $$</code></p>
+<p>where <code>$\Phi^{-1}$</code> is the quantile function for the standard normal distribution. The confidence statement we can then make about <code>$A=T_\mathscr{I} - T_{C\mathscr{I}}$</code> is
+<code>$$P(A \geq \tilde{T} - t_\alpha) \geq 1-\alpha $$</code> In terms of proportions, we state with <code>$1-\alpha$</code> confidence that <code>$$\frac{A}{|\mathscr{K}|} \geq \frac{\tilde{T} - t_\alpha}{|\mathscr{K}|}$$</code></p>
+<h1 id="detecting-heterogenous-effects">Detecting Heterogenous Effects</h1>
+<p>Returning to our original motivation for introducing attributable effects, let&rsquo;s conclude by analyzing the role that <code>$m$</code>, the size of our subsets, plays in our calculations. In Part 1, we saw that the Wilxon signed rank statistic does a great job of efficiently estimating a constant treatment effect in a randomized, matched pair experiment. We also mentioned that Wilcoxon&rsquo;s statistic could be used to test a null hypothesis of a particular non-constant effect, and in theory, this test could be inverted to produce a confidence set in a <code>$\mathbb{R}^{2I}$</code> parameter space. However, this would not be a pretty set and therefore of little use to us. To address this gap, we introduced in this post the attributable effect, an interpretable quantity which summarizes the effect of a treatment that is not the same for all individuals.</p>
+<p>Let us now update this description slightly by looking at the role of <code>$m$</code>. If <code>$m=2$</code>, then the attributable effect is obtained from making comparisons between just two pairs at a time. What kind of effect will this do a good job of detecting and which kind of effect will it discount? I claim that a constant tretment effect, even one which is modest in size, should be detected using this method, whereas a heterogenous effect, which is large for a small number of individuals, but <code>$0$</code> for the majority, will probably be underestimated. This is because most of the comparisons will not include any of the small number of highly affected individuals, and in those which do, there is no extra credit given for the size of the effect&ndash;the tally of successes goes up by at most one no matter what. This result is also reflected by the observation we made earlier in our calculations: When <code>$m=2$</code>, <code>$\tilde{T}$</code> is virtually identical to the Wilcoxon statistic, which only does a good job of detecting homogenous effects.</p>
+<p>By increasing <code>$m$</code>, we consider larger collections of pairs one at a time. By virtue of their size, these collections are more likely to include one of the highly affected individuals and, as a result, our tally of successes will more appropriately account for the treatment effect. In other words, the measure of attributable effects as we defined it is more sensitive to large but uncommon effects the larger <code>$m$</code> is.</p>
+<p>In Rosenbaum&rsquo;s textbook, he illustrates this using a study of the impact of a employment and training program on the earnings of economically disadvantaged workers upon leaving the program. He computes the estimate of the attributable effect with <code>$m$</code>=2 as 10.8% with a 95% confidence level for an effect of at least 3.8%. He also computes estimates for <code>$m=20$</code>: a point estimate of a 35.7% increase in successes and a 95% confidence interval of at least a 15.8% increase. The conclusion he draws from these diverging estimates is that the training program had a a large but uncommon effect, dramatically increasing the earnings of a few select workers, but leaving the majority of wages unchanged.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

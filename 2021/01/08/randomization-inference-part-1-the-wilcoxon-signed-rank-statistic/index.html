@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic - Evan Gorstein</title>
+<meta property="og:title" content="Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic</h1>
+
+    
+    <span class="article-date">2021-01-08</span>
+    
+
+    <div class="article-content">
+      <h1 id="introduction">Introduction</h1>
+<p>Last semester, I made my way through the first half of Paul Rosenbaum&rsquo;s textbook <em>Design of Observational Studies</em> (2010). Rosenbaum is a leading expert in causal inference, an area of statistical research concerned with the identification of causal effects through the analysis of observational data.</p>
+<p>One piece of advice I&rsquo;ve heard directed towards researchers in the social sciences who are interested in measuring a  causal effect is to get a clear image in their head of the randomized experiment that, were it feasible, ethical, etc., would be used to test for its presence. In this hypothetical, randomization plays the role of a benchmark which can be approached using the tools of causal inference. In the fortunate circumstances in which a randomized experiment is possible, the task of conducting inference simplifies greatly, although there is still some work to be done. Rosenbaum discusses randomization inference in a matched pair experiment in Chapter 2 of his textbook, alongside an example study that he works through. In the next post or two, I would like to summarize the method he presents to solidify my own understanding.</p>
+<p>In this post, I discuss two non-parametric ways of doing inference in a randomized matched pair study. The first näively uses the mean treated-minus-control
+difference among the pairs as its test statistic, whereas the second uses the more efficient Wilcoxon signed rank statistic, which has the
+added benefit of opening up other inferential possibilities. In a follow-up post, I hope to talk about a method for quantifying the effect of the treatment without making any simplifying
+assumptions about the form the effect takes. This quantity is known as the &ldquo;attributable effect&rdquo; of a treatment.</p>
+<h1 id="hypothesis-testing-with-the-mean-treated-minus-control-difference">Hypothesis Testing with the Mean Treated-Minus-Control Difference</h1>
+<p>Let&rsquo;s establish some notation to describe the set-up of our hypothetical experiment.
+Suppose we have <code>$I$</code> pairs of individuals matched on the basis of some observed covariates. We will use <code>$i=1,2,...,I$</code>, to index the pairs
+and <code>$j=1, 2$</code>, to index the individual within each pair. Let
+<code>$Z_{ij}$</code> be an indicator for whether individual <code>$i,j$</code> is treated. Since
+we treat exactly one individual in each pair, we have <code>$Z_{i1}+Z_{12}=1$</code>
+for <code>$i=1,2,...I$</code>. Finally, let <code>$R$</code> represent the response we are
+interested in.</p>
+<p>With this notation, the treated-minus-control difference for matched
+pair <code>$i$</code> is given by <code>$Y_i=(Z_{i1}-Z_{12})(R_{i1}-R_{i2})$</code>. One inference
+goal for this study might be to test the sharp hypothesis that treatment has
+no effect on response in any individual. In order to formalize this
+hypothesis, we must imagine that each individual has two potential
+responses: the response they would exhibit if assigned the treatment,
+<code>$r_{Tij}$</code>, and the response they would exhibit if assigned the control,
+<code>$r_{Cij}$</code>. Then the hypothesis we are testing states precisely that
+<code>$r_{Cij}=r_{Tij}$</code> for all <code>$i, j$</code>. Packaging the potential responses for
+all individuals into vectors, we write the null hypothesis as
+<code>$\boldsymbol{r_T}=\boldsymbol{r_I}$</code>.</p>
+<p>If treatment assignment is random within each pair, we will be able to
+perform this test. In the words of Ronald Fisher, randomization provides us with a &ldquo;reasoned basis for inference.&rdquo; In order to see
+this, let&rsquo;s draw out the implications of the null hypothesis. If
+treatment does not have any effect, then an individual&rsquo;s observed
+response is equal to their potential response under control (this of
+course holds true if the individual is given the control&ndash;the point
+here is that because of the null hypothesis, it is also true if
+she is treated). That is <code>$R_{i,j}=r_{Cij}$</code> for each
+individual <code>$i,j$</code>. The treated-minus-control difference for pair <code>$i$</code> is thus <code>$$Y_i=(Z_{i1}-Z_{12})(R_{i1}-R_{i2})=(Z_{i1}-Z_{12})(r_{Ci1}-r_{Ci2})$$</code></p>
+<p>Now we can see from this equation that the randomness in <code>$Y_i$</code> comes
+only from the treatment assignment <code>$Z$</code>. In particular, if a fair coin is
+used to decide assignment, we will observe <code>$Y_i=(r_{Ci1}-r_{Ci2})$</code> and
+<code>$Y_i=(r_{Ci2}-r_{Ci1})=-(r_{Ci1}-r_{Ci2})$</code> with equal probability
+<code>$\frac{1}{2}$</code>. This fact allows us to determine the exact null
+distribution of the mean treated-minus-control difference
+<code>$\bar{Y}=\frac{1}{n}\sum_{i=1}^{n}{Y_i}$</code> after observing our data. For
+each pair <code>$i$</code>, if we observe <code>$Y_i=y_i$</code>, the null hypothesis assures us
+that if we happened to swap treatment with control, we would have observed a
+treated-minus-control difference of <code>$-y_i$</code>. It follows that after
+we observe the <code>$Y_i$</code>&rsquo;s, we can calculate the value <code>$\bar{Y}$</code> takes for
+each of the equally likely <code>$2^I$</code> possible treatment assignment
+<code>$(Z_{11}, Z_{12}, ... , Z_{I1}, Z_{I2})$</code>. We can then compare our
+observed <code>$\bar{Y}$</code> to this null distribution of <code>$\bar{Y}$</code>&rsquo;s in order to
+asses the evidence for treatment effect, find one or two-sided p-values,
+and make the corresponding conclusion.</p>
+<h1 id="hypothesis-testing-with-the-wilcoxon-signed-rank-statistic">Hypothesis Testing with the Wilcoxon Signed Rank Statistic</h1>
+<p>If we followed the method outlined above, there is no reason to doubt
+the validity of our inferences. However, in performing inference, we
+would also like to be efficient at detecting effects when the responses
+<code>$R_{ij}$</code> are not well-behaved, and in this respect, there are better
+test statistics than the mean treated-minus-control difference. One of
+the most popular such test statistics is due to Frank Wilcoxon, and it&rsquo;s
+known as the signed rank statistic.</p>
+<p>Like <code>$\bar{Y}$</code>, the Wilcoxon signed rank statistic <code>$T$</code> also uses
+treated-minus-control differences <code>$Y_i$</code>, but it focuses more on their
+sign. To construct <code>$T$</code>, we rank the absolute differences <code>$|Y_i|$</code> from
+smallest to largest. We then sum the ranks for all pairs <code>$i$</code> whose
+treated-minus-control difference is positive. That is, let <code>$q_i$</code> be the
+rank of <code>$|Y_i|$</code>. Then
+<code>$T\equiv\sum_{i=1}^n{\mathop{\mathrm{sgn}}(Y_i)q_i}$</code>, where
+<code>$\mathop{\mathrm{sgn}}(x)=1$</code> if <code>$x&gt;0$</code> and <code>$\mathop{\mathrm{sgn}}(x)=0$</code>
+if <code>$x\leq0$</code>. As we&rsquo;ve seen, with no treatment effects,
+<code>$Y_i=(r_{Ci1}-r_{Ci2})$</code> and <code>$Y_i=(r_{Ci2}-r_{Ci1})=-(r_{Ci1}-r_{Ci2})$</code>
+with equal probability <code>$\frac{1}{2}$</code>. Thus, under the null and assuming
+non-zero treated-minus-control differences, each rank <code>$q_i$</code> has a 50-50
+shot of being included in the sum <code>$T$</code>. This makes the null distribution
+of <code>$T$</code> particularly easy to calculate. In fact, assuming there are no
+ties in the absolute treated-minus-control differences, we can write the
+null distribution of <code>$T$</code> before we even look at our data, since it is
+simply the result of adding up the numbers <code>$1$</code> through <code>$I$</code>, including
+each number with probability <code>$.5$</code>. Thus, under the null hypothesis, the
+expected value of <code>$T$</code> is given by
+<code>$$\mathop{\mathrm{\mathrm{E}}}(T)=\frac{1}{2}\sum_{i=1}^I{i}=\frac{I(I+1)}{4}$$</code>
+and the variance by
+<code>$$\mathop{\mathrm{\mathrm{Var}}}(T)=\sum_{i=1}^I{i^2\mathop{\mathrm{\mathrm{Var}}}[\mathop{\mathrm{sgn}}(Y_i)]}=\frac{1}{4}\sum_{i=1}^I{i^2}=\frac{I(I+1)(2I+1)}{24}$$</code></p>
+<p>Just as with the <code>$\bar{Y}$</code>, the null distribution of <code>$T$</code> is symmetric
+about its mean, and we can compare it to our observed <code>$T$</code> to derive
+one-sided and two-sided p-values for the null hypothesis of no treatment
+effect. Furthermore, with only a slight modification, we can test the
+null hypothesis of a non-zero additive effect, i.e. we can test
+<code>$H_0: r_{Tij} = r_{Cij} + \tau_{ij}$</code> for all <code>$i,j$</code>. In order to do this, we
+simply define  <code>$Y'_i=Y_i-(\tau_{i1}Z_{i1}+\tau_{i2}Z_{i2})$</code> and use these adjusted responses to calculate the signed-rank statistic, ranking the <code>$|Y'_i|$</code>s and summing up the ranks for which <code>$Y'_i$</code> is positive.</p>
+<p>The Wilcoxon signed rank test statistic thus opens up a world of
+opportunity for robust inference in matched pair studies. As
+opposed to the paired t-test, a staple of introductory statistics
+courses, the Wilcoxon signed rank test is non-parametric, meaning that
+it does not involve making any assumptions about the distribution of the
+data. The t-test depends on the assumption that the data (the
+response-minus-controldifference <code>$Y_i$</code>&rsquo;s) is normally distributed or that the
+number of pairs is large enough such that the Central Limit Theorem
+guarantees that the distribution of <code>$\bar{Y}$</code> is approximately normal. Often, these two conditions are both unrealistic&ndash;that is, the underlying distribution for our experimental data is non-normal, and our sample size is small.
+Personally, this is my experience of <em>most</em> science. We&rsquo;re in luck because in just such a case, the Wilcoxon signed rank test allows us to perform
+valid inferences.</p>
+<p>What&rsquo;s more, by assuming that the additive effect <code>$\tau_{ij}=\tau$</code> is constant across all individuals, we can invert hypothesis tests and form point estimates of a constant treatment effect (choose the <code>$\tau$</code> that yields the ranked sum test statistic closest to its expected value if there were actually a <code>$\tau$</code> constant effect, i.e. <code>$I(I+1)/4$</code>), as well as construct <code>$1-\alpha$</code> confidence intervals for a constant treatment effect (include in the interval all <code>$\tau$</code>s which are not rejected by a <code>$\alpha$</code> level test).
+The Wilcoxon ranked-sum statistic can also be used to
+detect and estimate a constant multiplicative treatment effects, i.e.
+<code>$H_0: \mathbf{r_T}=\beta_0\mathbf{r_C}$</code> with <code>$\beta_0\geq0$</code>.</p>
+<p>Unfortunately, in forming these (point and interval) estimates of the (additive or multiplicative) treatment effect, we are forced to make the possibly unrealistic assumption that the effect is constant for all individuals. In my next post, I will discuss how we can make a summary statement about the magnitude of the effect without this assumption.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
