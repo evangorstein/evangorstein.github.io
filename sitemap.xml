@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/tags/ams/</loc>
-    <lastmod>2021-01-13T00:00:00+00:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2021-08-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2021-01-13T00:00:00+00:00</lastmod>
+    <loc>/2021/08/12/pivoting-a-cdf/</loc>
+    <lastmod>2021-08-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
+    <lastmod>2021-08-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/ams/</loc>
     <lastmod>2021-01-13T00:00:00+00:00</lastmod>
   </url>
   
@@ -34,7 +39,6 @@
   
   <url>
     <loc>/about/</loc>
-    <lastmod>2016-05-05T21:48:51-07:00</lastmod>
   </url>
   
   <url>
