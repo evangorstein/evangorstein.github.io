@@ -170,7 +170,7 @@ ci&lt;- cbind(lb, ub)
 z &lt;- apply(ci,1,mycolor,theta)
 
 plotCI(x=est, y=1:simul, ui=ub, li=lb, 
-       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;Pivoting CDF Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;)
+       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;CDF Pivot Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;)
 abline(v=theta)</code></pre>
 <p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-1-1.png" width="100%" /></p>
 </div>
@@ -213,7 +213,7 @@ ci&lt;- cbind(lb, ub)
 z &lt;- apply(ci,1,mycolor,theta)
 
 plotCI(x=est, y=1:simul, ui=ub, li=lb, 
-       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;Pivoting CDF Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;, xlim=c(0,10))
+       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;CDF Pivot Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;, xlim=c(0,10))
 abline(v=theta)</code></pre>
 <p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-2-1.png" width="100%" />
 Uh-oh! These intervals achieve their nominal coverage, but are so long that they are virtually useless.</p>
@@ -235,7 +235,7 @@ ci2&lt;- cbind(lb2, ub2)
 z2 &lt;- apply(ci2,1,mycolor,theta)
 
 plotCI(x=est2, y=1:simul, ui=ub2, li=lb2, 
-       err=&quot;x&quot;, gap=T, col=z2, xlab=&quot;Non-cdf Pivot Confidence Interval for Theta &quot;, ylab=&quot;Sample Number&quot;)
+       err=&quot;x&quot;, gap=T, col=z2, xlab=&quot;Non-CDF Pivot Confidence Interval for Theta &quot;, ylab=&quot;Sample Number&quot;)
 abline(v=theta)</code></pre>
 <p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
 <p>What went wrong when we used the method of pivoting a cdf in this example? We used the same statistic, <span class="math inline">\(X_{(1)}\)</span>, as in the first example, but the confidence intervals that resulted from pivoting the cdf of this statistic were horribly inprecise!</p>
