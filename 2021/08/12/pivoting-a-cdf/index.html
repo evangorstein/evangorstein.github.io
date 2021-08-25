@@ -62,7 +62,7 @@
 
   <article class="article">
     
-    <span class="article-duration">10 min read</span>
+    <span class="article-duration">12 min read</span>
     
 
     <h1 class="article-title">Pivoting a cdf</h1>
@@ -79,8 +79,8 @@
 <p><font size="1"></p>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as quite the surprise to me when I first learned about it this past year in my first year Math Stat class. My surprise was that a single method could be employed to construct confidence sets in every setting (i.e. every parameterized family of distributions in which a real-valued parameter is to be targeted with a confidence set)! Who knew?!</p>
-<p>These were my thoughts upon first learning the theory behind the method. However, after seeing a few use-cases, I discovered that my initial amazement was näive. Alas, pivoting a cdf is not some magic bullet of parametric set estimation. For any given problem, there are two dimensions in which the method may be limited: ease of implementation and performance of the result. To begin with the first, just because we <em>can</em> pivot a cdf, does not mean we will necessarilly <em>want</em> to. In particular, there’s a good chance we’ll have to rely on inexact computations to perform the pivot. Second, even if the method can be executed to arrive at some confidence set of a desired level, perhaps relying on a computational approximation in the process, there is no guarantee that this confidence set will be a particularly good one! We will see that the performance of the resulting confidence set depends on the statistic that we start with.</p>
+<p>The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as quite the surprise to me when I first learned about it this past year in my first year Math Stat class. My surprise was that a single method could be employed to construct confidence sets in every setting (i.e. every parameterized family of distributions in which a real-valued parameter is to be targeted with a confidence set). Who knew?!</p>
+<p>These were my thoughts upon first learning the theory behind the method. However, I realized soon thereafter that things were not so rosey, that pivoting a cdf is not some magic bullet of parametric set estimation. After all, there are two different dimensions on which we can judge a method: ease of implementation and performance of the result. To begin with the first, just because we <em>can</em> pivot a cdf, does not mean we will necessarilly <em>want</em> to. In particular, there’s a good chance we’ll have to rely on inexact computations to perform the pivot. Second, even if the method can be executed to arrive at some confidence set of a desired level, perhaps relying on a computational approximation in the process, there is no guarantee that this confidence set will be a particularly good one! We will see that the performance of the resulting confidence set depends on the statistic that we start with.</p>
 <p>To draw a connection to my previous posts, I am here discussing parametric inference from a random sample. In this setting, we assume a specific functional form for the distribution of our data and we proceed to make inferences (perform hypothesis tests and develop estimates) about an unknown parameter in this function. In contrast, in my first two blog posts, I discuss methods of inference which rely only on an assumption of randomization, an example of non-parametric statistics.</p>
 <p>Without further adieu, here’s the method:</p>
 <div id="pivoting-a-cdf" class="section level2">
@@ -101,7 +101,7 @@ L(t)= \inf \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;U(t)= \sup \
 <p>The method can actually be viewed as a specific example of a more general strategy for constructing confidence interval, known as “pivoting” (since I promised that the method is as general as can be, this might not make much sense, but bear with me for now). A pivot is defined as a function of both the data and of the unknown parameters which has a distribution that does not depend on any unknown parameters. The cool thing about pivots is that they yield confidence intervals of any level through inversion! Here is some notation to go along with the idea:</p>
 <p>Suppose <span class="math inline">\(q(X, \theta)\)</span> is a pivot. By definition, this means that the distribution of <span class="math inline">\(q(X, \theta)\)</span> is known to us and so in particular, for any desired <span class="math inline">\(\alpha\)</span>, we can find a set <span class="math inline">\(A\)</span> such that <span class="math inline">\(P(q(X, \theta) \in A) \geq 1-\alpha\)</span>. Then the set <span class="math inline">\(C(X)=\{\theta : q(X, \theta) \in A\}\)</span> is a level <span class="math inline">\(1-\alpha\)</span> confidence set.</p>
 <p>Now while the theory is nice, let me reitterate that theory <span class="math inline">\(\neq\)</span> practice, and one can encounter all sorts of difficulties in both finding the set <span class="math inline">\(A\)</span> and inverting <span class="math inline">\(q(x, \theta) \in A\)</span> into a statement about <span class="math inline">\(\theta\)</span>. In particular, we may have to rely on computation instead of an exact solution for either step (or both), and the confidence set that we eventually obtain is by no means guaranteed to be of a simple form. In one special case, it will be: when both <span class="math inline">\(\theta\)</span> and <span class="math inline">\(q(X, \theta)\)</span> are real-valued and <span class="math inline">\(q(X, \theta)\)</span> is monotone in <span class="math inline">\(\theta\)</span> for every fixed X, then choosing <span class="math inline">\(A\)</span> to be an interval will lead to <span class="math inline">\(C(X)\)</span> being an interval. Meanwhile, when <span class="math inline">\(\theta\)</span> is multivariate, then the process of inverting <span class="math inline">\(q(X, \theta) \in A\)</span> to obtain a confidence set in <span class="math inline">\(\mathbb{R}^n\)</span> can be quite complicated.</p>
-<p>Still, what we’ve discovered is that <em>in theory</em> pivots immediately gives us confidence sets. Thus, the task of developing a good set estimator boils down to finding a good pivot. Now usually, when we are working on developing a set estimator, we have already done some thinking about our parametric setting and have identified a “sufficient statistic”. A statistic is any feature of the data, such as the sample mean, sample variance or the minimum or maximum observation. A sufficient statistic is a feature of the data which contains as much information about the parameter as the entire sample. But how does this help us? We are looking for pivot, and statistics are decidedly not pivots, since their distributions depend on the parameter! The key insight that now comes into play is that statistics can be turned into pivots by plugging them into their own cdf! The reason for this is that in general when you plug a random variable its own cdf, you get a standard uniform random variable (when the original random variable is continuous; when it’s discrete, you get something stochastically greater than a standard uniform). This deserves a proof, but the intuition is clear: (Provide intution). Signficant for our purposes is that the distribution of a standard uniform does not depend on any unknown parameter, and so we have a pivot!</p>
+<p>Still, what we’ve discovered is that <em>in theory</em> pivots immediately gives us confidence sets. Thus, the task of developing a good set estimator boils down to finding a good pivot. Now usually, when we are working on developing a set estimator, we have already done some thinking about our parametric setting and have identified a “sufficient statistic”. A statistic is any feature of the data, such as the sample mean, sample variance or the minimum or maximum observation. A sufficient statistic is a feature of the data which contains as much information about the parameter as the entire sample. But how does this help us? We are looking for pivot, and statistics are decidedly not pivots, since their distributions depend on the parameter! The key insight that now comes into play is that statistics can be turned into pivots by plugging them into their own cdf! The reason for this is that in general when you plug a random variable into its own cdf, you get a standard uniform random variable (when the original random variable is continuous; when it’s discrete, you get something stochastically greater than a standard uniform). Signficant for our purposes is that the distribution of a standard uniform does not depend on any unknown parameter, and so we have a pivot!</p>
 <p>To recap, what we’ve found is that any time we have a statistic, we have a pivot and any time we have a pivot, we get a confidence set. This is formalized in the following proof.</p>
 </div>
 <div id="proof-of-pivoting-cdf-for-a-continuous-random-variable" class="section level2">
@@ -112,7 +112,6 @@ L(t)= \inf \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;U(t)= \sup \
 and by inverting we get a confidence set with confidence coefficient <span class="math inline">\(1-\alpha\)</span>:</p>
 <p><span class="math display">\[C(T)=\{\theta : \alpha_1 \leq F_\theta(T) \leq 1-\alpha_2\} 
 \]</span></p>
-<p>Notice that we haven’t invoked any assumptions about the monotonicity of <span class="math inline">\(F_\theta\)</span> in <span class="math inline">\(\theta\)</span> in the proof yet, so we are working in extreme generality. This is what I mean when I say that the method of pivoting a CDF is always available, requiring only a statistic with a known cdf. The confidence set <span class="math inline">\(C(T)\)</span> can always be defined, but for <span class="math inline">\(C(T)\)</span> to be of a nice form, i.e. an interval, we need <span class="math inline">\(F_\theta(t)\)</span> to be non-increasing or non-decreasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>.</p>
 <p>We will prove the case where <span class="math inline">\(F_\theta(t)\)</span> is non-increasing in <span class="math inline">\(\theta\)</span>, so we define</p>
 <p><span class="math display">\[\begin{align}
 U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \} 
@@ -120,14 +119,13 @@ U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \
 and hope to prove <span class="math inline">\(C(T)=[L(T), U(T)]\)</span>.</p>
 <p>This can be checked: For a fixed <span class="math inline">\(t\)</span>, <span class="math inline">\(F_\theta(t) \geq \alpha_1\)</span> is equivalent to <span class="math inline">\(\theta \leq U(t)\)</span> and <span class="math inline">\(F_\theta(t) \leq 1- \alpha_2\)</span> is equivalent to <span class="math inline">\(L(t) \leq \theta\)</span> by the definitions of supremum and infimum and the non-increasingness of <span class="math inline">\(F_\theta(t)\)</span> in <span class="math inline">\(\theta\)</span>.</p>
 <p>Thus, <span class="math inline">\(C(T)=[L(T), U(T)]\)</span>.</p>
-<p>Note that in case the equation <span class="math inline">\(F_\theta(t)=\alpha_1\)</span> or <span class="math inline">\(F_\theta(t)=1-\alpha_2\)</span> has a unique solution for <span class="math inline">\(theta\)</span>, those solutions are <span class="math inline">\(U(T)\)</span> for the first and <span class="math inline">\(L(T)\)</span> for the second.</p>
-<div id="examples" class="section level3">
-<h3>Examples</h3>
+<p>Note that in case the equation <span class="math inline">\(F_\theta(t)=\alpha_1\)</span> or <span class="math inline">\(F_\theta(t)=1-\alpha_2\)</span> has a unique solution for <span class="math inline">\(\theta\)</span>, those solutions are exactly <span class="math inline">\(U(T)\)</span> for the first and <span class="math inline">\(L(T)\)</span> for the second.</p>
 </div>
-</div>
-<div id="exponential-location-family" class="section level2">
-<h2>Exponential location family</h2>
-<p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= e^{-(x-\theta)}\)</span> for <span class="math inline">\(x &gt; \theta\)</span> with <span class="math inline">\(\theta \in \mathbb{R}\)</span>. We identify the minimum observation <span class="math inline">\(X_{(1)}\)</span> as the sufficient and complete statistic–it efficiently packages all of the information about <span class="math inline">\(\theta\)</span> that can be gleaned from our sample. Coincidentally, this statistic is the maximum likelihood estimator (MLE) for <span class="math inline">\(\theta\)</span>, and it also follows an exponential distribution with the same location parameter, but with rate parameter <span class="math inline">\(n\)</span>. Its cdf is therefore <span class="math inline">\((1-\exp(-n(t-\theta)))I(t&gt;\theta)\)</span>, which is decreasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>. In this case, the equations</p>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<div id="exponential-location-family" class="section level3">
+<h3>Exponential location family</h3>
+<p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= e^{-(x-\theta)}\)</span> for <span class="math inline">\(x &gt; \theta\)</span> with <span class="math inline">\(\theta \in \mathbb{R}\)</span>. We identify the minimum observation <span class="math inline">\(X_{(1)}\)</span> as the sufficient and complete statistic–it efficiently packages all of the information about <span class="math inline">\(\theta\)</span> that can be gleaned from our sample. Coincidentally, this statistic is the maximum likelihood estimator (MLE) for <span class="math inline">\(\theta\)</span>, and it also follows an exponential distribution with the same location parameter, but with rate parameter <span class="math inline">\(n\)</span>. Its cdf is therefore <span class="math inline">\((1-\exp(-n(t-\theta)))I(t&gt;\theta),\)</span> which is decreasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>. In this case, the equations</p>
 <p><span class="math display">\[\begin{align}
 \frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)} \\       
 1-\frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)} 
@@ -172,29 +170,27 @@ ci&lt;- cbind(lb, ub)
 z &lt;- apply(ci,1,mycolor,theta)
 
 plotCI(x=est, y=1:simul, ui=ub, li=lb, 
-       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;Estimate of Theta&quot;, ylab=&quot;Sample Number&quot;)
+       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;Pivoting CDF Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;)
 abline(v=theta)</code></pre>
-<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-1-1.png" width="100%" /></p>
 </div>
-<div id="pareto-family" class="section level2">
-<h2>Pareto family</h2>
-<p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= \frac{\theta}{x^{\theta+1}}\)</span> for <span class="math inline">\(x &gt; 1\)</span>. This is the Pareto family with unit scale and unknown shape parameter <span class="math inline">\(\theta &gt; 0\)</span>. It’s not too difficult to work out that the cdf of the minimum observation <span class="math inline">\(T=X_{(1)}\)</span> is <span class="math inline">\(F_{\theta}(t)= (1 - t^{-n\theta})\unicode{x1D7D9}(x&gt;1)\)</span>, i.e. the cdf of a Pareto with shape parameter <span class="math inline">\(n\)</span> (and the same unit scale), which is increasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>.</p>
-<p>In this case, the equations</p>
+<div id="pareto-family" class="section level3">
+<h3>Pareto family</h3>
+<p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= \frac{\theta}{x^{\theta+1}}\)</span> for <span class="math inline">\(x &gt; 1\)</span>. This is the Pareto family with unit scale and unknown shape parameter <span class="math inline">\(\theta &gt; 0\)</span>. It’s not too difficult to work out that, just as in the exponential case, the minimum draw <span class="math inline">\(T=X_{(1)}\)</span> follows a distribution in the same family: Pareto with the same unit scale but shape parameter <span class="math inline">\(n\theta\)</span> instead of <span class="math inline">\(\theta\)</span>. Its cdf is <span class="math inline">\(F_{\theta}(t)= (1 - t^{-n\theta})\unicode{x1D7D9}(x&gt;1)\)</span>, increasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>.</p>
+<p>We again have unique solutions for <span class="math inline">\(\theta\)</span> to the following equations, so we can avoid dealing with the sups and infs from the theorem.</p>
 <p><span class="math display">\[\begin{align}
 \frac{\alpha}{2} &amp;= 1-x^{-n(\theta)} \\       
 1-\frac{\alpha}{2} &amp;= 1-x^{-n(\theta)} 
-\end{align}\]</span>
-each have unique solutions for <span class="math inline">\(\theta\)</span>.</p>
+\end{align}\]</span></p>
 <p>We solve the first to get</p>
 <p><span class="math display">\[ L(T)= \frac{-\log \left( 1-\frac{\alpha}{2} \right)}{n\log(T)}
 \]</span>
 and the second to get
 <span class="math display">\[ U(T)= \frac{-\log \left(\frac{\alpha}{2} \right)}{n\log(T)}
 \]</span></p>
-<pre class="r"><code>library(VGAM)</code></pre>
-<pre><code>## Loading required package: stats4</code></pre>
-<pre><code>## Loading required package: splines</code></pre>
-<pre class="r"><code>theta=3
+<p>Let’s see what these confident intervals look like. The circles in the plot will denote the MLE, <span class="math inline">\(\hat{\theta}=\frac{n}{\sum_{i=1}^n{\log(X_i)}}\)</span>, which is a good point estimate for <span class="math inline">\(\theta\)</span>.</p>
+<pre class="r"><code>suppressMessages(library(VGAM))
+theta=3
 alpha1=.025
 alpha2=.025
 n=100
@@ -213,30 +209,49 @@ for (i in 1:simul) {
   ub[i] &lt;- -log(alpha1)/(n*log(t))
 }
 
-library(plotrix)
-
-mycolor &lt;- function(endpoints, mn) {
-  if (mn &lt; endpoints[1] | mn &gt; endpoints[2]) 
-    &quot;Red&quot; # if confidence interval doesn&#39;t cover true theta
-  else 
-    &quot;Black&quot; 
-}
-
 ci&lt;- cbind(lb, ub)
 z &lt;- apply(ci,1,mycolor,theta)
 
 plotCI(x=est, y=1:simul, ui=ub, li=lb, 
-       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;Estimate of Theta&quot;, ylab=&quot;Sample Number&quot;, xlim=c(0,10))
+       err=&quot;x&quot;, gap=T, col=z, xlab=&quot;Pivoting CDF Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;, xlim=c(0,10))
 abline(v=theta)</code></pre>
-<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p>adasds
-### Discussion (Notes to the Careful Reader)</p>
+<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-2-1.png" width="100%" />
+Uh-oh! These intervals achieve their nominal coverage, but are so long that they are virtually useless.</p>
+<p>For comparison, here are confidence intervals for <span class="math inline">\(\theta\)</span> of a much shorter length built off of the pivot <span class="math inline">\(2\theta\sum_{i=1}^n{\log(X_i)} \sim \chi^2_{2n}\)</span>.</p>
+<pre class="r"><code>lb2 &lt;- numeric(simul)
+ub2 &lt;- numeric(simul)
+est2 &lt;- numeric(simul)
+
+set.seed(42070)
+for (i in 1:simul) {
+  data &lt;- rpareto(n, shape=theta)
+  mle &lt;- 1/mean(log(data)) 
+  est2[i] &lt;- mle
+  lb2[i] &lt;- mle*qchisq(alpha1, 2*n)/(2*n)
+  ub2[i] &lt;- mle*qchisq(1-alpha2, 2*n)/(2*n)
+}
+
+ci2&lt;- cbind(lb2, ub2)
+z2 &lt;- apply(ci2,1,mycolor,theta)
+
+plotCI(x=est2, y=1:simul, ui=ub2, li=lb2, 
+       err=&quot;x&quot;, gap=T, col=z2, xlab=&quot;Non-cdf Pivot Confidence Interval for Theta &quot;, ylab=&quot;Sample Number&quot;)
+abline(v=theta)</code></pre>
+<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
+<p>What went wrong when we used the method of pivoting a cdf in this example? We used the same statistic, <span class="math inline">\(X_{(1)}\)</span>, as in the first example, but the confidence intervals that resulted from pivoting the cdf of this statistic were horribly inprecise!</p>
+<p>The key, I believe, is the different role played by the statistic <span class="math inline">\(X_{(1)}\)</span> in these two examples. In the expoential location family, <span class="math inline">\(X_{(1)}\)</span> is a sufficient and complete statistic for <span class="math inline">\(\theta\)</span>. As mentioned, a sufficient statistic is one that contains all the information in the sample, and completeness means that the statistic packages this information efficiently. In the Pareto family, <span class="math inline">\(X_{(1)}\)</span> is neither sufficient nor complete. Instead, the statistic <span class="math inline">\(S(X)=\sum_{i=1}^n{\log(X_i)}\)</span> (or equivalently, <span class="math inline">\(\prod_{i=1}^n{X_i}\)</span>) is sufficient and complete, and lo and behold, when we built our pivot on this statistic, we obtained much more efficient confidence intervals.</p>
+<p>Note that we did not pivot the CDF of the statistic <span class="math inline">\(S(X)\)</span> in this case. Instead we took a different route, multiplying the statistic by <span class="math inline">\(\theta\)</span> to get a pivot (it can be shown that this random variable follows a <span class="math inline">\(\text{Gamma}(n,1)=\chi^2_{2n}/2\)</span>). The reason we did not pivot the CDF of S(X) to obtain a confidence interval has more to do with the first criteria by which to judge the method: ease of implementation. The CDF of S(X) involves the incomplete gamma function, which is an integral that cannot be expressed in terms of elementary functions. It turns out that the cdf of <span class="math inline">\(S(X)\)</span> is an increasing function of <span class="math inline">\(\theta\)</span> and so the method does apply, but who wants to work with an incomplete gamma function?</p>
+<p>So the lesson here is twofold:</p>
 <ol style="list-style-type: decimal">
-<li><p>The careful reader will observe that although I promised a method that works in all cases, there is a very important condition in the theorem just proved, which is that <span class="math inline">\(F_\theta(t)\)</span> is monotone in <span class="math inline">\(\theta\)</span>. This corresponds to our family of distributions having a monotone likelihood ratio in T, which is a useful condition for finding uniformly most powerful tests using the Karlin Rubin theorem, which is a topic for another blog post. What may come as a surprise is that this condition is not actually needed for us to use the core idea of pivoting a cdf. We can pivot a cdf to get a confidence set even when the condition fails! Instead, the condition is provided in the theorem to ensure that the resulting confidence set is an interval. As we mentioned above, we get a confidence interval when <span class="math inline">\(q(\theta, X)\)</span> is monotone in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(X\)</span>. Here, our pivot <span class="math inline">\(q(\theta, X)\)</span> is simply <span class="math inline">\(F_\theta(T(X))\)</span>, and so we require it to be monotone in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(T(X)\)</span>. When we don’t have this condition, we can still invert <span class="math inline">\(\alpha_1 \leq F_\theta(T(X)) \leq 1-\alpha_2\)</span> to get a confidence set for <span class="math inline">\(\theta\)</span>–it just won’t necessarily be an interval.</p></li>
-<li><p>The “better” the statistic we start with, the “better” the set estimator
-In the most extreme case, suppose we start with an ancillary statistic: a statistic whose distribution is independent of the parameter…</p></li>
+<li><p>The “better” the statistic we start with, the “better” the set estimator we get from pivoting its cdf. In the extreme case, if we start with an ancillary statistic, a statistic whose distribution is independent of the parameter, our confidence interval will be the entire parameter space.</p></li>
+<li><p>Unless you’re good at doing computing (beep bop boop), the method is really only worthwhile when the cdf of the statistic has a “nice” form.</p></li>
 </ol>
+</div>
+<div id="final-note" class="section level3">
+<h3>Final Note</h3>
+<p>Although I promised a method that works in all cases, there is a condition in the theorem as presented, which is that <span class="math inline">\(F_\theta(t)\)</span> is monotone in <span class="math inline">\(\theta\)</span>. This corresponds to our family of distributions having a monotone likelihood ratio in T, which is a useful condition for finding uniformly most powerful tests using the Karlin Rubin theorem, a topic for another blog post. I would like to make clear that this condition is not actually needed: we can pivot a cdf to get a confidence set even when the condition fails! What the condition guarantees is that the resulting confidence set is an interval. As mentioned, we get an interval when <span class="math inline">\(q(\theta, X)\)</span> is monotone in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(X\)</span>. Here, our pivot <span class="math inline">\(q(\theta, X)\)</span> is simply <span class="math inline">\(F_\theta(T(X))\)</span>, and so we require it to be monotone in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(T(X)\)</span>. I suppose that this consideration relates to both the “ease of implementation” criteria, as well as the “results” criteria: in the case where the pivot isn’t monotone, inverting <span class="math inline">\(\alpha_1 \leq F_\theta(T(X)) \leq 1-\alpha_2\)</span> into a statement about <span class="math inline">\(\theta\)</span> may involve difficult calculations, and the result can be an ugly, uninterprable set.</p>
 <p></font></p>
+</div>
 </div>
 </div>
 
