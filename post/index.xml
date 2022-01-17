@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Evan Gorstein</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Evan Gorstein</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 12 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pivoting a cdf</title>
+      <link>/2021/08/12/pivoting-a-cdf/</link>
+      <pubDate>Thu, 12 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/08/12/pivoting-a-cdf/</guid>
+      <description>Introduction The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as quite the surprise to me when I first learned about it this past year in my first year Math Stat class. My surprise was that a single method could be employed to construct confidence sets in every setting (i.e. every parameterized family of distributions in which a real-valued parameter is to be targeted with a confidence set).</description>
+    </item>
+    
+    <item>
+      <title>Randomization Inference Part 2: Attributable Effects</title>
+      <link>/2021/01/13/attributable-effects/</link>
+      <pubDate>Wed, 13 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/01/13/attributable-effects/</guid>
+      <description>Introduction In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-uniform causal effects.</description>
+    </item>
+    
+    <item>
+      <title>Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic</title>
+      <link>/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</link>
+      <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</guid>
+      <description>Introduction Last semester, I made my way through the first half of Paul Rosenbaum&amp;rsquo;s textbook Design of Observational Studies (2010). Rosenbaum is a leading expert in causal inference, an area of statistical research concerned with the identification of causal effects through the analysis of observational data.
+One piece of advice I&amp;rsquo;ve heard directed towards researchers in the social sciences who are interested in measuring a causal effect is to get a clear image in their head of the randomized experiment that, were it feasible, ethical, etc.</description>
+    </item>
+    
+  </channel>
+</rss>
