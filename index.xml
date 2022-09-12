@@ -36,12 +36,13 @@ One piece of advice I&amp;rsquo;ve heard directed towards researchers in the soc
     </item>
     
     <item>
-      <title>About</title>
+      <title>Evan Gorstein</title>
       <link>/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>Welcome to my blog! I am a PhD student in the University of Wisconsin-Madison’s statistic program. I hope to use this site to put into writing various thoughts I have as I take courses and eventually perform research. My personal website can be found here.</description>
+      <description>Hello and welcome to my website! I am a graduate student in UW-Madison’s statistics department and an aspiring data scientist. I am currently a PhD student, but I am hoping to receive a masters degree at the end of this academic year.
+My academic background is in more math-y and theoretical statistics. I am hoping to develop more in the areas of software development, machine learning, and causal inference in the coming year so that I can better solve applied data science problems.</description>
     </item>
     
   </channel>
