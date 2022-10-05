@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>Sampling bias and causal inference - Evan Gorstein</title>
+<meta property="og:title" content="Sampling bias and causal inference - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Sampling bias and causal inference</h1>
+
+    
+    <span class="article-date">2022-10-05</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p><font size="2"></p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>What can you do when the sample you’ve collected does not represent the population you’re interested in studying? This is a hard problem. It’s a problem that is eliminated (and therefore obscured) when the population is replaced with an abstract probability distribution and your sampling units viewed as iid realizations from this distribution. In this set-up, the sample has been defined to represent the population. But science as done in the real world is not a problem from your math stat class, and in the real world, your sample is not guaranteed to represent the population you want to know about!</p>
+<p>The problem of sampling bias or sample selection, as the above question has come to be known, does not, strictly speaking, have anything to do with causal inference. Nonetheless, researchers in the field of causal inference have devoted some attention to sampling bias in the past 15 years. Why? Well, perhaps because everyone doing science should think about sampling bias. In plain words, sampling bias is the problem of when you think you’re studying one thing but you’re actually studying another. It’s perhaps the most fundamental thing you could point to as a flaw in a scientific study. Everyone should care about sampling bias. But there is a reason why researchers in the field of causal inference are particularly well-suited to study sampling bias. It turns out that the framework, assumptions, and methods involved in identifying causal effects are similar, if not completely analogous, to the framework, assumptions, and methods required to adjust for sampling bias.</p>
+<p>There is another connection between sampling bias and causal inference, this one a little bit less harmonious. Causal inference deals with the question: when are observed differences in Y across levels of X evidence for a causal effect of X of Y in the units under study? One condition that is sufficient is when the values of X have been randomly assigned to the units. Intuitively, if X is randomly assigned, then the units assigned one value of X are “comparable” or “exchangeable” with units who received a different level of X. If such units still exhibit differences in their Y’s, this can then only be due to X affecting Y in some way. This fact explains the position that randomized experiments occupy in the eyes of many as a gold standard study design. The issue with randomized experiments, especially when the units in concern are humans, is that they’re a lot of work, of course. It’s a lot of work for the researcher to recruit subjects and deliver the treatments, and it is often a lot of work for the subjects themselves to participate. For this reason, not everyone participates in experiments, and those who do are usually of a particular breed. Remind you of something? Sampling bias rears its ugly head.</p>
+<p>What the previous paragraph suggests is there may be some degree of trade-off here. In the 2008 paper <em>Misunderstandings between experimentalists and observationalists about causal inference</em>, Kosuke Imai <em>et al.</em> decompose the error in estimating a causal effect in some population of interest into two additive components. The first, which is termed <em>sample selection</em>, is the difference between the causal effect in the sample that’s been collected and the causal effect in the target population. The second, which is termed <em>treatment imbalance</em>, is the difference between your estimate and the causal effect in the sample. Whereas <em>treatment imbalance</em> poses a threats to internal validity (how well are you estimating the effect in the sample you’ve collected), <em>sample selection</em> poses a threat to external validity (how well does the causal effect in the sample approximate the causal effect in the population). Here is a really nice diagram from a <a href="https://arxiv.org/abs/2102.11904">review paper</a> by Irina Degtiar and Sherri Rose on the topic.</p>
+<p><img src="images/paste-07C621B5.png" style="width:15cm" /></p>
+</div>
+<div id="question" class="section level2">
+<h2>Question</h2>
+<p>Just as with questions of internal validity, questions of external validity can be attacked on two fronts: on the front end with your study design, and on the back end with your statistical analysis. And just as with internal validity, there will be those who vehemently argue for one approach versus the other.</p>
+<p>I’m interested in learning how well the second can simulate the first. I’m inspired by <a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2796930" class="uri">https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2796930</a>, which seems to suggest that the back end approach really can perform as well as the front end approach when it comes to acquiring internal validity. Can the same be true for external validity?</p>
+<p>The challenge to answering this question is obtaining data. Since I lack data, I will rely on simulation and in particular, I will follow the set-up provided by Erin Hartman in a chapter of the book <em>Advances in Experimental Political Science</em> called <em>Generalizing Experimental Results</em>.</p>
+<p>In a future post, compare the necessary assumptions: (conditional) exchangeability in terms of treatment effects (Y(1)-Y(0)) across sample inclusion versus (conditional) exchangeability in terms of potential outcomes across treatment assignment, and the data requirements.</p>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+
+    
+  </body>
+</html>
+

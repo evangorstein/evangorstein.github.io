@@ -9,11 +9,11 @@
     <lastBuildDate>Wed, 05 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Sampling bias and causal inference</title>
-      <link>/2022/10/05/adsdas/</link>
+      <link>/2022/10/05/samplingbiasandcausalinference/</link>
       <pubDate>Wed, 05 Oct 2022 00:00:00 +0000</pubDate>
       
-      <guid>/2022/10/05/adsdas/</guid>
-      <description>What can you do when the sample you’ve collected does not represent the population you’re interested in studying? This is a hard problem. It’s a problem that is eliminated (and therefore obscured) when the population is replaced with an abstract probability distribution and your sampling units viewed as iid realizations from this distribution. In this set-up, the sample has been defined to represent the population. But science as done in the real world is not a problem from your math stat class, and in the real world, your sample is not guaranteed torepresent the population you want to know about!</description>
+      <guid>/2022/10/05/samplingbiasandcausalinference/</guid>
+      <description>Introduction What can you do when the sample you’ve collected does not represent the population you’re interested in studying? This is a hard problem. It’s a problem that is eliminated (and therefore obscured) when the population is replaced with an abstract probability distribution and your sampling units viewed as iid realizations from this distribution. In this set-up, the sample has been defined to represent the population. But science as done in the real world is not a problem from your math stat class, and in the real world, your sample is not guaranteed to represent the population you want to know about!</description>
     </item>
     
     <item>
