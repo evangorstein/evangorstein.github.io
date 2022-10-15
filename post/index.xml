@@ -13,7 +13,7 @@
       <pubDate>Wed, 05 Oct 2022 00:00:00 +0000</pubDate>
       
       <guid>/2022/10/05/samplingbiasandcausalinference/</guid>
-      <description>Introduction What can you do when the sample you’ve collected does not represent the population you’re interested in studying? This is a hard problem. It’s a problem that is eliminated (and therefore obscured) when the population is replaced with an abstract probability distribution and your sampling units viewed as iid realizations from this distribution. In this set-up, the sample has been defined to represent the population. But science as done in the real world is not a problem from your math stat class, and in the real world, your sample is not guaranteed to represent the population you want to know about!</description>
+      <description>Introduction What can you do when the sample you’ve collected doesn’t represent the population you’re interested in studying? When such a disconnect between sample and population of interest goes unaddressed by the researcher, we say that the study suffers from sampling bias. Ideally, researchers would collect a random sample from their population of interest, in which case, sampling bias is expected to vanish. The issue is that random sampling is hard.</description>
     </item>
     
     <item>
