@@ -6,7 +6,34 @@
     <description>Recent content in Tags on Evan Gorstein</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 13 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 20 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Causal Inference</title>
+      <link>/tags/causal-inference/</link>
+      <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/causal-inference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>External Validity</title>
+      <link>/tags/external-validity/</link>
+      <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/external-validity/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Identification</title>
+      <link>/tags/identification/</link>
+      <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/identification/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>ams</title>
       <link>/tags/ams/</link>

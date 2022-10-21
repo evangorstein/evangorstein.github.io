@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>Identifitication for External Validity - Evan Gorstein</title>
+<meta property="og:title" content="Identifitication for External Validity - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Identifitication for External Validity</h1>
+
+    
+    <span class="article-date">2022-10-20</span>
+    
+
+    <div class="article-content">
+      
+
+
+<div id="brief-intro-to-the-idea-of-causal-identification" class="section level2">
+<h2>Brief intro to the idea of causal identification</h2>
+<p>Using data to effectively learn about cause-effect relationships generally requires additional assumptions beyond those needed to learn about associational quantities from data. We can express our assumptions in the form of a causal graph whose vertices are random variables and whose directed edges have the meaning “directly causes.” This graph facilitates our reasoning about how we might leverage our data to learn about a cause-effect relationship of interest. To simplify a bit, it may turn out that given the assumptions expressed by our graph, it’s impossible to learn about the causal relationship from our data, or it may turn out that, given the assumptions expressed by our graph, we do have some hope of learning about the causal quantity from data. In this latter case, we say that our causal effect is identifiable or identified. The proof that the effect is identified is usually constructive in the sense that we actually come up with a quantity that can be obtained from our data (if we had an infinite amount of it) and which is equal to the causal effect. This relating of the causal quantity to a statistical quantity (the one that is known from an infinite amount of data) is known as causal identification or sometimes just identification.</p>
+<p>In the previous post, we motivated the problem of external validity and introduced a formal framework for defining the target population average treatment effect (or PATE for short). In this post, we will try to understand what conditions are necessary for us to have some hope of estimating this quantity, or using the terminology we’ve just defined, we’ll understand when and how the PATE is identified.</p>
+</div>
+<div id="assumptions-and-dags" class="section level2">
+<h2>Assumptions and DAGs</h2>
+<p>Let’s recall our framework. We have variables <code>$D$</code>, <code>$S$</code>, <code>$Y$</code>, and <code>$\mathbf{X}$</code>, representing the exposure, sampling indicator, response, and some other pre-treatment covariates, respectively, and we’ve already defined the target PATE to be <code>$$PATE = \mathbb{E}[Y(1) - Y(0) \mid S =0].$$</code></p>
+<p>The first assumption that will be necessary for us to have any hope of estimating this quantity is what Hartman refers to as the “consistency of parallel studies.” In words, this assumption states that whether or not you’re in the experimental sample is irrelevant to your response when your exposure is intervened on. In mathematical notation, it says the following</p>
+<blockquote>
+<p><strong>Assumption 1 (causal irrelevance of the sampling indicator):</strong><code>$$Y(s,d)=Y(d)\quad$$</code> for all <code>$s\in\{0,1\}$</code>.</p>
+</blockquote>
+<p>Finally, in causal graph notation, it says this</p>
+<div class="figure">
+<img src="images/Untitled%20(Draft)-2%202.jpg" style="width:14.3cm" alt="" />
+<p class="caption">Figure 1</p>
+</div>
+<p>I don’t view this as too strong of an assumption. However, situations in which merely belonging to the experimental sample can have a causal effect on your response (that isn’t mediated by the exposure <code>$D$</code>), i.e. violations of Assumption 1, are not impossible to conceive of. In particular, the Hawthorne effect refers to a phenomenon in which experimental subjects behave differently in response to their awareness of being observed. (I should note, by the way, that whereas the graph pulled from Hartman in my previous post does not include an arrow from <code>$S$</code> to <code>$D$</code>, Figure 1 does have this arrow. The explanation for this arrow is that being included in the experiment causes your exposure to get manipulated by the researcher. The existence of this arrow implies that in general, <code>$S$</code> <em>does</em> have a causal effect on the response–the point of Assumption 1, however, is that this effect is fully mediated by the exposure <code>$D$</code>.)</p>
+<p>We move on to assumption 2. We’ve been assuming all along that we are conducting a legitimate RCT in the experimental sample <code>$\Omega_s$</code>, and assumption 2 makes this explicit.</p>
+<blockquote>
+<p><strong>Assumption 2 (randomization within the experiment):</strong><code>$$\{Y(1), Y(0), \mathbf{X}\} \perp\!\!\!\perp D \, \mid \, S=1$$</code></p>
+</blockquote>
+<p>In terms of our earlier discussion, assumption 2 says that we’re effectively free of concerns about internal validity and so we can focus solely on the issue of external validity.</p>
+<p>In terms of our graphical models, it’s impossible to show what a violation of Assumption 2 would look like. For example, you might think that Figure 2 represents a violation of Assumption 2 because <code>$Z$</code> is a confounder of the effect of <code>$D$</code> on <code>$Y$</code>. But so long as <code>$Z$</code> only confounds this effect in the target sample and not in the experimental sample, we are OK.</p>
+<div class="figure">
+<img src="images/Untitled%20(Draft)-2%203-01.jpg" style="width:14.3cm" alt="" />
+<p class="caption">Figure 2: Not necessarilly a violation of Assumption 2</p>
+</div>
+<p>Finally, we turn to assumption 3, which is by far the most substantive and difficult one to achieve.</p>
+</div>
+<div id="identification" class="section level2">
+<h2>Identification</h2>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
