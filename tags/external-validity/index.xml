@@ -13,7 +13,7 @@
       <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
       
       <guid>/2022/10/20/identifitication-for-external-validity/</guid>
-      <description>Brief intro to the idea of causal identification Using data to effectively learn about cause-effect relationships generally requires additional assumptions beyond those needed to learn about associational quantities from data. We can express our assumptions in the form of a causal graph whose vertices are random variables and whose directed edges have the meaning “directly causes.” This graph facilitates our reasoning about how we might leverage our data to learn about a cause-effect relationship of interest.</description>
+      <description>In my previous blog post, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</description>
     </item>
     
   </channel>

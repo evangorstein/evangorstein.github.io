@@ -73,10 +73,9 @@
 
     <div class="article-content">
       
-<script src="/2021/08/12/pivoting-a-cdf/index_files/header-attrs/header-attrs.js"></script>
 
 
-<p><font size="1"></p>
+<p><font size="2"></p>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as quite the surprise to me when I first learned about it this past year in my first year Math Stat class. My surprise was that a single method could be employed to construct confidence sets in every setting (i.e. every parameterized family of distributions in which a real-valued parameter is to be targeted with a confidence set). Who knew?!</p>
@@ -87,11 +86,11 @@
 <h2>Pivoting a CDF</h2>
 <p><strong>Let <span class="math inline">\(T\)</span> be a real-valued statistic with a continuous cdf <span class="math inline">\(F_\theta(t)\)</span>, where <span class="math inline">\(\theta\in\Theta\subset\mathbb{R}\)</span>. Let <span class="math inline">\(\alpha_1 + \alpha_2 = \alpha\)</span> where <span class="math inline">\(\alpha_1\)</span> and <span class="math inline">\(\alpha_2\)</span> are non-negative and their sum <span class="math inline">\(\alpha\)</span> is strictly between <span class="math inline">\(0\)</span> and <span class="math inline">\(1.\)</span> If <span class="math inline">\(F_\theta(t)\)</span> is non-increasing in <span class="math inline">\(\theta\)</span> for each <span class="math inline">\(t\)</span>, define</strong></p>
 <p><span class="math display">\[\begin{align}
-U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \} 
+U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \}
 \end{align}\]</span></p>
 <p><strong>If <span class="math inline">\(F_\theta(t)\)</span> is non-decreasing in <span class="math inline">\(\theta\)</span> for each <span class="math inline">\(t\)</span>, define</strong></p>
 <p><span class="math display">\[\begin{align}
-L(t)= \inf \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;U(t)= \sup \{\theta : F_\theta(t) \leq 1-\alpha_2 \} 
+L(t)= \inf \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;U(t)= \sup \{\theta : F_\theta(t) \leq 1-\alpha_2 \}
 \end{align}\]</span></p>
 <p><strong>Then <span class="math inline">\([L(T), U(T)]\)</span> is a <span class="math inline">\(1-\alpha\)</span> confidence interval for <span class="math inline">\(\theta\)</span>.</strong></p>
 <p>In the case of a discrete statistic with a discontinuous CDF, the statement changes only slightly with <span class="math inline">\(\lim_{s\to t^-} F_\theta(t)\)</span> replacing <span class="math inline">\(F_\theta(t)\)</span> in the inequality <span class="math inline">\(F_\theta(t) \leq 1-\alpha_2\)</span>.</p>
@@ -110,11 +109,11 @@ L(t)= \inf \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;U(t)= \sup \
 <p><span class="math display">\[ P(\alpha_1 \leq F_\theta(T) \leq 1-\alpha_2)= 1-\alpha_2-\alpha_1=1-\alpha,
 \]</span>
 and by inverting we get a confidence set with confidence coefficient <span class="math inline">\(1-\alpha\)</span>:</p>
-<p><span class="math display">\[C(T)=\{\theta : \alpha_1 \leq F_\theta(T) \leq 1-\alpha_2\} 
+<p><span class="math display">\[C(T)=\{\theta : \alpha_1 \leq F_\theta(T) \leq 1-\alpha_2\}
 \]</span></p>
 <p>We will prove the case where <span class="math inline">\(F_\theta(t)\)</span> is non-increasing in <span class="math inline">\(\theta\)</span>, so we define</p>
 <p><span class="math display">\[\begin{align}
-U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \} 
+U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \}
 \end{align}\]</span><br />
 and hope to prove <span class="math inline">\(C(T)=[L(T), U(T)]\)</span>.</p>
 <p>This can be checked: For a fixed <span class="math inline">\(t\)</span>, <span class="math inline">\(F_\theta(t) \geq \alpha_1\)</span> is equivalent to <span class="math inline">\(\theta \leq U(t)\)</span> and <span class="math inline">\(F_\theta(t) \leq 1- \alpha_2\)</span> is equivalent to <span class="math inline">\(L(t) \leq \theta\)</span> by the definitions of supremum and infimum and the non-increasingness of <span class="math inline">\(F_\theta(t)\)</span> in <span class="math inline">\(\theta\)</span>.</p>
@@ -128,7 +127,7 @@ and hope to prove <span class="math inline">\(C(T)=[L(T), U(T)]\)</span>.</p>
 <p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= e^{-(x-\theta)}\)</span> for <span class="math inline">\(x &gt; \theta\)</span> with <span class="math inline">\(\theta \in \mathbb{R}\)</span>. We identify the minimum observation <span class="math inline">\(X_{(1)}\)</span> as the sufficient and complete statistic–it efficiently packages all of the information about <span class="math inline">\(\theta\)</span> that can be gleaned from our sample. Coincidentally, this statistic is the maximum likelihood estimator (MLE) for <span class="math inline">\(\theta\)</span>, and it also follows an exponential distribution with the same location parameter, but with rate parameter <span class="math inline">\(n\)</span>. Its cdf is therefore <span class="math inline">\((1-\exp(-n(t-\theta)))I(t&gt;\theta),\)</span> which is decreasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>. In this case, the equations</p>
 <p><span class="math display">\[\begin{align}
 \frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)} \\       
-1-\frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)} 
+1-\frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)}
 \end{align}\]</span>
 each have unique solutions for <span class="math inline">\(\theta\)</span>.
 We solve the first to get</p>
@@ -180,7 +179,7 @@ abline(v=theta)</code></pre>
 <p>We again have unique solutions for <span class="math inline">\(\theta\)</span> to the following equations, so we can avoid dealing with the sups and infs from the theorem.</p>
 <p><span class="math display">\[\begin{align}
 \frac{\alpha}{2} &amp;= 1-x^{-n(\theta)} \\       
-1-\frac{\alpha}{2} &amp;= 1-x^{-n(\theta)} 
+1-\frac{\alpha}{2} &amp;= 1-x^{-n(\theta)}
 \end{align}\]</span></p>
 <p>We solve the first to get</p>
 <p><span class="math display">\[ L(T)= \frac{-\log \left( 1-\frac{\alpha}{2} \right)}{n\log(T)}

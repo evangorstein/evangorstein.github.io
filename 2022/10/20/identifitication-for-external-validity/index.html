@@ -57,7 +57,7 @@
 
   <article class="article">
     
-    <span class="article-duration">4 min read</span>
+    <span class="article-duration">12 min read</span>
     
 
     <h1 class="article-title">Identifitication for External Validity</h1>
@@ -70,38 +70,110 @@
       
 
 
-<div id="brief-intro-to-the-idea-of-causal-identification" class="section level2">
-<h2>Brief intro to the idea of causal identification</h2>
-<p>Using data to effectively learn about cause-effect relationships generally requires additional assumptions beyond those needed to learn about associational quantities from data. We can express our assumptions in the form of a causal graph whose vertices are random variables and whose directed edges have the meaning “directly causes.” This graph facilitates our reasoning about how we might leverage our data to learn about a cause-effect relationship of interest. To simplify a bit, it may turn out that given the assumptions expressed by our graph, it’s impossible to learn about the causal relationship from our data, or it may turn out that, given the assumptions expressed by our graph, we do have some hope of learning about the causal quantity from data. In this latter case, we say that our causal effect is identifiable or identified. The proof that the effect is identified is usually constructive in the sense that we actually come up with a quantity that can be obtained from our data (if we had an infinite amount of it) and which is equal to the causal effect. This relating of the causal quantity to a statistical quantity (the one that is known from an infinite amount of data) is known as causal identification or sometimes just identification.</p>
-<p>In the previous post, we motivated the problem of external validity and introduced a formal framework for defining the target population average treatment effect (or PATE for short). In this post, we will try to understand what conditions are necessary for us to have some hope of estimating this quantity, or using the terminology we’ve just defined, we’ll understand when and how the PATE is identified.</p>
+<p><font size="2"></p>
+<p>In my previous <a href="https://evangorstein.github.io/2022/10/05/samplingbiasandcausalinference/">blog post</a>, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</p>
+<div id="tldr-of-causal-identification" class="section level2">
+<h2>Tl;dr of causal identification</h2>
+<p>Using data to effectively learn about causal relationships generally requires additional assumptions above and beyond those needed to learn about associational relationships. We express such assumptions in the form of a causal graph whose vertices are variables and whose directed edges have the meaning “directly causes.” With this graph in hand, we can reason about how to use the data we’ve observed to learn about the causal relationship we’re interested in. Unfortunately, in some situations, our reasoning may lead us to the sad conclusion that we <em>cannot</em> learn about the causal relationship of interest from the data that we’ve observed. Often, however, given the assumptions encoded in our graph, our data does tell us something about the causal relationship of interest, and in this case, we say that the causal effect is (perhaps only partially) <em>identified.</em> An <em>identification strategy</em> amounts to specifying a quantity which could be obtained from an infinite amount of our observed data and which equals (or bounds, if we only have partial identification) the quantity representing the causal effect of interest. Note that identification is precisely this relating of a causal quantity to an associational quantity and it simply lays the groundwork for the subsequent work of actually estimating this associational quantity from the finite data set that we have access to.</p>
 </div>
 <div id="assumptions-and-dags" class="section level2">
 <h2>Assumptions and DAGs</h2>
-<p>Let’s recall our framework. We have variables <code>$D$</code>, <code>$S$</code>, <code>$Y$</code>, and <code>$\mathbf{X}$</code>, representing the exposure, sampling indicator, response, and some other pre-treatment covariates, respectively, and we’ve already defined the target PATE to be <code>$$PATE = \mathbb{E}[Y(1) - Y(0) \mid S =0].$$</code></p>
-<p>The first assumption that will be necessary for us to have any hope of estimating this quantity is what Hartman refers to as the “consistency of parallel studies.” In words, this assumption states that whether or not you’re in the experimental sample is irrelevant to your response when your exposure is intervened on. In mathematical notation, it says the following</p>
+<p>Let’s recall our framework. We have variables <span class="math inline">\(D\)</span>, <span class="math inline">\(S\)</span>, <span class="math inline">\(Y\)</span>, and <span class="math inline">\(\mathbf{X}\)</span>, representing the exposure, sampling indicator, response, and some other pre-treatment covariates, respectively, and we’ve already defined the target PATE to be <span class="math display">\[PATE = \mathbb{E}[Y(1) - Y(0) \mid S =0].\]</span>In the example from Hartman, the exposure <span class="math inline">\(D\)</span> is an intervention in Liberian villages in the wake of the Charles Taylor civil wars in the 1990’s and early 2000’s, and the response <span class="math inline">\(Y\)</span> is some measure of social reconciliation or welfare in the village. The pre-treatment covariate set <span class="math inline">\(\mathbf{X}\)</span> includes the region in Liberia in which the village is located–either the North, which was the center of conflict during these wars, or the South.</p>
+<div id="assumption-1" class="section level3">
+<h3>Assumption 1</h3>
+<p>The first assumption that will be necessary for us to identify the PATE is what Hartman refers to as the “consistency of parallel studies.” In words, this assumption states that whether or not you’re in the experimental sample is irrelevant to your response when your exposure is intervened on. In mathematical notation, it says the following</p>
 <blockquote>
-<p><strong>Assumption 1 (causal irrelevance of the sampling indicator):</strong><code>$$Y(s,d)=Y(d)\quad$$</code> for all <code>$s\in\{0,1\}$</code>.</p>
+<p><strong>Assumption 1 (causal irrelevance of the sampling indicator):</strong><span class="math display">\[Y(s,d)=Y(d)\quad\]</span> for all <span class="math inline">\(s\in\{0,1\}\)</span>.</p>
 </blockquote>
-<p>Finally, in causal graph notation, it says this</p>
+<p>Finally, in causal graph notation, it says the following:</p>
 <div class="figure">
-<img src="images/Untitled%20(Draft)-2%202.jpg" style="width:14.3cm" alt="" />
-<p class="caption">Figure 1</p>
+<img src="images/fig1_erased.jpeg" style="width:9.5cm;height:7cm" alt="" />
+<p class="caption">Figure 1: Violation of Assumption 1</p>
 </div>
-<p>I don’t view this as too strong of an assumption. However, situations in which merely belonging to the experimental sample can have a causal effect on your response (that isn’t mediated by the exposure <code>$D$</code>), i.e. violations of Assumption 1, are not impossible to conceive of. In particular, the Hawthorne effect refers to a phenomenon in which experimental subjects behave differently in response to their awareness of being observed. (I should note, by the way, that whereas the graph pulled from Hartman in my previous post does not include an arrow from <code>$S$</code> to <code>$D$</code>, Figure 1 does have this arrow. The explanation for this arrow is that being included in the experiment causes your exposure to get manipulated by the researcher. The existence of this arrow implies that in general, <code>$S$</code> <em>does</em> have a causal effect on the response–the point of Assumption 1, however, is that this effect is fully mediated by the exposure <code>$D$</code>.)</p>
-<p>We move on to assumption 2. We’ve been assuming all along that we are conducting a legitimate RCT in the experimental sample <code>$\Omega_s$</code>, and assumption 2 makes this explicit.</p>
+<p>I don’t view this as too strong of an assumption. However, situations in which merely belonging to the experimental sample can have a causal effect (that isn’t mediated by the exposure <span class="math inline">\(D\)</span>) on your response, i.e. violations of Assumption 1, are not impossible to imagine. In particular, the Hawthorne effect refers to a phenomenon in which experimental subjects behave differently in response to their awareness of being observed. (I should note, by the way, that whereas the graph pulled from Hartman in my previous post does not include an arrow from <span class="math inline">\(S\)</span> to <span class="math inline">\(D\)</span>, Figure 1 does have this arrow. The explanation for this arrow is that being included in the experiment causes your exposure to get manipulated by the researcher. The existence of this arrow implies that in general, <span class="math inline">\(S\)</span> <em>does</em> have a causal effect on the response–the point of Assumption 1, however, is that this effect is fully mediated by the exposure <span class="math inline">\(D\)</span>.)</p>
+</div>
+<div id="assumption-2" class="section level3">
+<h3>Assumption 2</h3>
+<p>Moving on to assumption 2, we’ve been assuming all along that we are conducting a legitimate RCT in the experimental sample <span class="math inline">\(\Omega_s\)</span>. Assumption 2 makes this explicit:</p>
 <blockquote>
-<p><strong>Assumption 2 (randomization within the experiment):</strong><code>$$\{Y(1), Y(0), \mathbf{X}\} \perp\!\!\!\perp D \, \mid \, S=1$$</code></p>
+<p><strong>Assumption 2 (randomization within the experiment):</strong><span class="math display">\[\{Y(1), Y(0), \mathbf{X}\} \perp\!\!\!\perp D \, \mid \, S=1\]</span></p>
 </blockquote>
-<p>In terms of our earlier discussion, assumption 2 says that we’re effectively free of concerns about internal validity and so we can focus solely on the issue of external validity.</p>
-<p>In terms of our graphical models, it’s impossible to show what a violation of Assumption 2 would look like. For example, you might think that Figure 2 represents a violation of Assumption 2 because <code>$Z$</code> is a confounder of the effect of <code>$D$</code> on <code>$Y$</code>. But so long as <code>$Z$</code> only confounds this effect in the target sample and not in the experimental sample, we are OK.</p>
+<p>In terms of our decomposition in the first post of the error in estimating the <span class="math inline">\(PATE\)</span>, assumption 2 says that we’re effectively free of any concern about treatment imbalance (internal validity) and we can thus focus solely on the issue of sample selection (external validity). If we define the experimental sample average treatment effect (SATE) as</p>
+<p><span class="math display">\[SATE = \mathbb{E}[Y(1) - Y(0) \mid S = 1 ],\]</span></p>
+<p>Assumption 2 guarantees that we can identify this quantity.</p>
+<p>In terms of our graphical models, it’s impossible to show what a violation of Assumption 2 would look like. For example, you might think that Figure 2 represents a violation of Assumption 2 because <span class="math inline">\(Z\)</span> is a confounder of the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span>. But so long as <span class="math inline">\(Z\)</span> only confounds this effect in the target sample and not in the experimental sample, we are OK.</p>
 <div class="figure">
-<img src="images/Untitled%20(Draft)-2%203-01.jpg" style="width:14.3cm" alt="" />
-<p class="caption">Figure 2: Not necessarilly a violation of Assumption 2</p>
+<img src="images/fig2_erased.jpeg" style="height:7cm" alt="" />
+<p class="caption">Figure 2: Not necessarily a violation of Assumption 2</p>
 </div>
-<p>Finally, we turn to assumption 3, which is by far the most substantive and difficult one to achieve.</p>
+</div>
+<div id="assumption-3" class="section level3">
+<h3>Assumption 3</h3>
+<p>The third and final assumption required for PATE identification gets to the heart of the issues surrounding generalization and is by far the most difficult one to guarantee. It says that there exists a set of covariates W, <em>measured in both the experimental sample and target sample</em>, which satisfies the following:</p>
+<blockquote>
+<p><strong>Assumption 3:</strong></p>
+<ul>
+<li><p>Conditional ignorability<span class="math display">\[Y(1) - Y(0) \perp\!\!\!\perp S \, \mid W \]</span></p></li>
+<li><p>Positivity<span class="math display">\[0 &lt; \text{Pr}(S=1 \mid W) &lt; 1\]</span></p></li>
+</ul>
+</blockquote>
+<p>To see what this assumption provides, let’s step back a moment and consider the main obstacle we are facing in identifying the <span class="math inline">\(PATE\)</span>. Since we are able to identify the <span class="math inline">\(SATE\)</span>, we would like to use it to identify the <span class="math inline">\(PATE\)</span>. According to our set-up, these two quantities are both conditional averages of treatment effects <span class="math inline">\(Y_i(1)-Y_i(0)\)</span>, differing only in the value of the sampling indicator <span class="math inline">\(S\)</span> that appear in the conditioning event. Therefore, they can only differ if the treatment effect is distributed differently within the experimental sample versus within the target population. This concern can be dismissed in two idealized scenarios, and it will help our understanding to go over these scenarios. The first is that the experimental sample is a random sample of the target population. Then, conditioning on the value of <span class="math inline">\(S\)</span> gives us no additional information whatsoever. The second is that the treatments effect is constant. Since constant random variables are independent of everything else, conditioning on the value of <span class="math inline">\(S\)</span> gives us no additional information about <span class="math inline">\(Y(1)-Y(0)=constant\)</span>.</p>
+<p>In the real world, we are in neither of these idealized scenarios: our experimental sample will not be a random sample of our population of interest, and the treatment effect will not be constant across all units.</p>
+<p>What, then, can we do in the real world, to have any hope of estimating the PATE? I claimed in the first <a href="https://evangorstein.github.io/2022/10/05/samplingbiasandcausalinference/">blog post</a> that the assumptions and techniques that we will need for dealing with threats to external validity have analogs to the assumptions and techniques that were developed for obtaining internally valid treatment effect estimates in observational studies. Internal validity is threatened by treatment imbalance, wherein the units receiving one treatment different in relevant respects from the units receiving the other. We address treatment imbalance by finding a set of covariates such that within strata defined by the joint assignment to the variables in this set, the units receiving one treatment do not differ in the relevant respects from the units receiving the other.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>In attempting to transport a causal effect identified in our experimental sample to our target sample, we are dealing with a similar issue of one group of units being unlike a different group of units in some relevant respect. Except now, (1) the groups are defined by sample inclusion and not treatment assignment, and (2) the relevant unlikeness is in treatment effects, i.e. differences in potential outcomes (whereas the relevant unlikeness in the internal validity case was in potential outcomes themselves!) This similarity suggests that we may be able to formulate a strategy for obtaining external validity which parallels the strategy of backdoor adjustment for obtaining internal validity. Indeed we can, and assumption 3 expresses the corresponding assumption. The first part of assumption 3 says that within the strata defined by <span class="math inline">\(W\)</span>, the difference in treatment effects across the samples goes away, such that units in the experimental sample have the same distribution of treatment effects as the units in the target sample. The second part of assumption 3 says that every stratum or value of <span class="math inline">\(W\)</span> which appears in the target sample also appears in the experimental sample<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. In the case that <span class="math inline">\(W\)</span> satisfies both assumptions 1 and 2, we say that it’s an <em>adjustment set</em>. For the adjustment set to be useful to us, we must have it measured in both the experimental sample <em>and</em> in the target population (which, as we will discuss later, is quite a lot to ask). In such a case, we call <span class="math inline">\(W\)</span> a <em>valid adjustment set</em>.</p>
+<p>When we are doing internal identification, there is a graphical criterion which characterizes variable sets that can be used for backdoor adjustment. We might want to know whether there’s a similar graphical criterion that characterizes adjustment sets for external identification. The answer is…sort of. The first part of assumption 3 can be translated to the language of graphs to say that <span class="math inline">\(W\)</span> separates the sampling indicator node from all of the nodes that are treatment effect modifiers. The issue is that whether a variable is an effect modifier does not get expressed in our causal graphs. For a variable to be an effect modifier, it must have a direct arrow into the response, but that alone is not enough. Treatment effect modification occurs when there is some interaction with the treatment, and the presence or absence of interactions are not depicted in a causal graphs.</p>
+<p>Let’s consider an example. Figure 3 shows the causal graph from Hartman, which appears at the end of my first blog post<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In the scenario as described by Hartman, there were disparate impacts of the civil wars across different regions of Liberia. In particular, the northern region was the center of the conflict and experienced higher levels of internal displacement than the southern region. The level of internal displacement experienced by a given village has an effect on the level of trust within the village, and community trust is a modifier of the effect of the exposure on the response.</p>
+<div class="figure">
+<img src="images/Untitled%20(Draft)-3.jpg" style="width:15cm" alt="" />
+<p class="caption">Figure 3: Hartman’s causal graph</p>
+</div>
+<p>In this causal graph we can see that either one of {<code>Region}</code> and {<code>Internal} Displacement}</code> separates the sampling indicator from <code>Community Trust</code>, which is the only thing directly influencing the response other than the exposure <code>CDR</code>. As such, either one of {<code>Region}</code> and {<code>Internal Displacement}</code> satisfies the first part of Assumption 3. What about the other parts of Assumption 3? I mentioned briefly at the end of my first blog post that the authors limit their experimental sample to villages in the north. This implies that {<code>Region}</code> does not satisfy the second part of Assumption 3, the positivity condition, as <span class="math inline">\(Pr(S=1 \mid \text{Region = south})=0\)</span>. Finally, we could consider using {<code>Community Trust</code>} as the adjustment set. The problem with this choice is that <code>Community Trust</code> is not a variable that we’re likely to have measured in the villages in the experiment, let alone in villages all across the country. Thus, the best bet for an adjustment set in this set-up is {<code>Internal Displacement</code>}, assuming that we can measure and observe the levels of displacement all across Liberia, in both the North and South.</p>
+<p>What if we assumed that there were an additional variable in our system which has a direct influence on whether a village is included in the experiment as well as on the response <span class="math inline">\(Y\)</span> and which is unobserved.</p>
+<div class="figure">
+<img src="images/Untitled%20(Draft)-4.jpg" style="width:15cm" alt="" />
+<p class="caption">Figure 4: External Identification is Undecidable</p>
+</div>
+<p>Then our graph would look something like Figure 4, and one wonders if {<code>Internal Displacement}</code> alone remains a valid adjustment set, as it was in Figure 3. The answer is that we cannot know from the graph alone. To determine whether {<code>Internal Displacement}</code> is a valid adjustment set, we need to assess whether <span class="math inline">\(U\)</span> is an effect modifier, i.e. whether there is an interaction between <span class="math inline">\(U\)</span> and <span class="math inline">\(CDR\)</span> on <span class="math inline">\(Y\)</span>, which is not something that is indicated in causal graphs.</p>
+</div>
 </div>
 <div id="identification" class="section level2">
 <h2>Identification</h2>
+<p>We now show that the PATE is identified under Assumptions 1, 2, and 3.</p>
+<span class="math display">\[\begin{align*}
+
+PATE &amp;= E[Y(1)-Y(0) \mid S = 0] &amp;&amp; \text{by definition} \\
+
+&amp;= E\{E[Y(1)-Y(0) \mid S=0, W] \mid S=0\} &amp;&amp; \text{by Law of Iterated Expectations} \\
+&amp;= E\{E[Y(1)-Y(0) \mid S=1, W] \mid S=0\} &amp;&amp; \text{by part 1 of Assumption 3} \\
+&amp;= E\{E(Y(1) \mid S=1, W) - E(Y(0) \mid S=1, W)  \mid S=0\} &amp;&amp; \text{splitting up the inner expectation} \\
+&amp;= E\{E(Y(1) \mid D=1, S=1, W) - E(Y(0) \mid D=0, S=1, W)  \mid S=0\} &amp;&amp; \text{by Assumption 2} \\
+&amp;= E\{E(Y \mid D=1, S=1, W) - E(Y \mid D=0, S=1, W)  \mid S=0\} &amp;&amp; \text{by consistency of potential outcomes}
+
+\end{align*}\]</span>
+<p>If <span class="math inline">\(W\)</span> is discrete, then we have</p>
+<p><span class="math display">\[PATE = \sum_w\{E(Y \mid D=1, S=1, W=w) - E(Y \mid D=0, S=1, W=w)\}Pr(W=w\mid S=0)\]</span></p>
+</div>
+<div id="how-realistic-is-assumption-3-in-practice" class="section level2">
+<h2>How realistic is assumption 3 in practice?</h2>
+<p>Not very, I’d say! The problem, as I see it, is that <span class="math inline">\(W\)</span> must be measured in the target population (or a representative sample thereof) and measuring variables in the target population is hard! Generalization is hard, and this explains why.</p>
+</div>
+<div id="final-notes" class="section level2">
+<h2>Final Notes</h2>
+<p>Notice that our identification of the PATE does not make use of any values of <span class="math inline">\(D\)</span> or <span class="math inline">\(Y\)</span> among units for whom <span class="math inline">\(S\)</span> is 0. This is good because in most set-ups, since we’re not running the experiment for units with <span class="math inline">\(S=0\)</span>, we don’t have this data! If we did measure <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> among units with <span class="math inline">\(S=0\)</span> (presumedly <span class="math inline">\(D\)</span> would all be 0 for these units, since they’re certainly not being treated…?), could we use this to improve our estimate? This becomes the problem of combining randomized trial results with observational studies.</p>
+<p>I believe that a general framework that encompasses not just this framing of external validity, but other generalization and transportation results is the S-recoverability framework in Pearl and Barenboim. I haven’t read the relevant papers, but I think they offer a general framework which includes as a special case everything I’ve covered in this blog post.</p>
+<hr />
+<p><strong>References</strong></p>
+<p>Erin Hartman (2021). <a href="https://erinhartman.com/publication/advances_generalizability_expt_findings/">Generalizing Experimental Results</a>. In <em>Advances in Experimental Political Science</em>.</p>
+<p>Bareinboim, E., &amp; Pearl, J. (2013). A general algorithm for deciding transportability of experimental results. <em>Journal of causal Inference, 1(</em>1), 1-7-134</p>
+<p>Bareinboim, E., Tian, J., &amp; Pearl, J. (2022). Recovering from selection bias in causal and statistical inference. In <em>Probabilistic and Causal Inference: The Works of Judea Pearl</em> (pp. 433-450).</p>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Depending on the discipline, this assumption is referred to as <em>conditional ignorability</em>, <em>conditional exchangeability</em>, or <em>exogeneity</em>, and the identification strategy that goes along with it, backdoor adjustment.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>There is a corresponding positivity assumption required for backdoor adjustment for internal identification.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>With the small change that we’ve added an arrow from the sampling indicator to the exposure, as explained earlier.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
 
     </div>
