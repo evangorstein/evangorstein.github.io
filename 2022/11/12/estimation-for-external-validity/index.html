@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>Estimation for External Validity - Evan Gorstein</title>
+<meta property="og:title" content="Estimation for External Validity - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">14 min read</span>
+    
+
+    <h1 class="article-title">Estimation for External Validity</h1>
+
+    
+    <span class="article-date">2022-11-12</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p><font size="2"></p>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>This is the third in a series of blog posts for a causal inference project on external validity. To summarize the previous posts if you are just joining us, we are interested in assessing the validity of results obtained from an experiment or RCT in a population distinct from the one in which the experiment was run. If we conclude that the results are not in fact valid in this new population, we would like to somehow adjust the experimental results to the new population. For more background, you can find the previous posts <a href="https://evangorstein.github.io/2022/10/05/samplingbiasandcausalinference/">here</a> and <a href="https://evangorstein.github.io/2022/10/20/identifitication-for-external-validity/">here</a>.</p>
+<p>In the last blog post, we discussed the matter of <em>identification</em>, the first order of business in any form of causal inference. It amounts to making some assumptions and showing how given those assumptions, an infinite amount of the observed data would reveal to us what we’re interested in. Identification sets the stage for <em>estimation</em>. Estimation amounts to employing our finite data set to produce a best guess of the quantity we’re interested in.</p>
+<p>Since we’re attempting to generalize experimental data to a new population, naturally the quantity we’re interested in is the average effect of the experimental treatment in the new population. In the example we’ve been working with, this treatment has been a community reconstruction and reconciliation intervention in a country that has just experienced a civil war. We will simulate hypothetical data for our purposes, but there is a real example lurking in the background (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.99.2.287">Fearon et al. (2009)</a>)</p>
+</div>
+<div id="simulating-data" class="section level2">
+<h2>Simulating Data</h2>
+<div class="figure"><span style="display:block;" id="fig:example"></span>
+<img src="images/paste-68D004B9.png" alt="Causal Graph for Field Experiment" width="100%" />
+<p class="caption">
+Figure 1: Causal Graph for Field Experiment
+</p>
+</div>
+<p>Our data will be generated according to the causal graph shown in Figure <a href="#fig:example">1</a>. In particular, we will adopt the following simulation set-up, with numbers taken directly from the chapter “Generalizing Experimental Results” by Erin Hartman appearing in <a href="https://www.cambridge.org/core/books/advances-in-experimental-political-science/51EECAC7C72DC21B2DBFEDE2093E2EC3"><em>Advances in Experimental Political Science</em></a>. Aside for the response, all our variables will be binary to make things simple.</p>
+<p>There are 2000 different villages in our hypothetical country with exactly half in the northern region (<span class="math inline">\(R=1\)</span>) and half in the southern region (<span class="math inline">\(R=0\)</span>). We will consider a scenario in which the northern region experienced the civil war and resulting displacement more severely. Specifically, we will assume that 80% of villages in the north had high internal displacement (<span class="math inline">\(I=1\)</span>), but only 20% of the villages in the south. Internal displacement affects the resulting amount of trust in the village, and so we will assume that whereas community trust is high (<span class="math inline">\(T=1\)</span>) in 70% of the villages without displacement, it is high in only 10% of the villages that experienced high displacement.</p>
+<p>Here is how we create the data in R:</p>
+<pre class="r"><code>library(tidyverse)
+
+region = factor(rep(c(&quot;south&quot;,&quot;north&quot;), each = 1000))
+
+displace_south = factor(rep(c(&quot;low&quot;, &quot;high&quot;), times = c(800, 200)))
+displace_north = factor(rep(c(&quot;low&quot;, &quot;high&quot;), times = c(200, 800)))
+displace = c(displace_south, displace_north)
+
+trust_south_low = factor(rep(c(&quot;low&quot;, &quot;high&quot;), times = c(240, 560)))
+trust_south_high = factor(rep(c(&quot;low&quot;, &quot;high&quot;), times = c(180, 20)))
+trust_north_low = factor(rep(c(&quot;low&quot;, &quot;high&quot;), times = c(60, 140)))
+trust_north_high = factor(rep(c(&quot;low&quot;, &quot;high&quot;), times = c(720, 80)))
+trust = c(trust_south_low, trust_south_high, trust_north_low, trust_north_high)
+
+country = tibble(region, displace, trust)</code></pre>
+<p>Note that no randomness has been invoked in the generation of these variables: these variables can be viewed as simply given to us or fixed (in the language of statistics, “conditioned upon”) for the purposes of our analysis.</p>
+<p>Proceeding, we understand that researchers have carried out a randomized control trial on the villages in the country, but out of practicality, they have only sampled into their experiment villages in the northern region of the country. In particular, we will assume that the 100 villages that end up in their experiment is a simple random sample (SRS) of the 1000 total villages in the north so that every village in the north has an equal probability of ending up in the experiment.</p>
+<pre class="r"><code>set.seed(0)
+samp = country %&gt;%
+  slice_sample(n = 100, weight_by = rep(c(0,1), each = 1000)) #Assign weight of 0 to villages in the south, weight of 1 to villages in the north (weights are automatically standardized to sum to 1)</code></pre>
+<p>To complete our simulation, we specify how community trust and the community intervention jointly shape the response <span class="math inline">\(Y\)</span>, which we will take to be the amount of money contributed by village residents to community-reconstruction projects. We will suppose that the amount of community trust determines the impact of the intervention, so that in communities with high trust, the intervention has an average effect of 75$, whereas in low trust communities, the intervention on average does not make a difference.</p>
+<pre class="r"><code>samp = samp %&gt;%
+  mutate(treat = ifelse(row_number() %in% sample(100, 50), 1, 0)) %&gt;%
+  rowwise() %&gt;%
+  mutate( y = case_when(
+    trust == &quot;low&quot; &amp; treat == 0 ~ rnorm(1, 10, 3),
+    trust == &quot;low&quot; &amp; treat == 1 ~ rnorm(1, 10, 3),
+    trust == &quot;high&quot; &amp; treat == 0 ~ rnorm(1, 50, 10),
+    trust == &quot;high&quot; &amp; treat == 1 ~ rnorm(1, 125, 20) 
+  ))
+
+#Realistically assume that there&#39;s more variability among the larger responses.
+
+samp</code></pre>
+<pre><code>## # A tibble: 100 × 5
+## # Rowwise: 
+##    region displace trust treat     y
+##    &lt;fct&gt;  &lt;fct&gt;    &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 north  high     low       1  9.09
+##  2 north  high     high      0 61.6 
+##  3 north  high     low       1 11.7 
+##  4 north  high     low       0  6.33
+##  5 north  high     low       0  7.27
+##  6 north  high     low       1 12.7 
+##  7 north  high     low       1  8.62
+##  8 north  low      high      0 46.8 
+##  9 north  high     low       0 11.5 
+## 10 north  high     low       1  9.46
+## # … with 90 more rows</code></pre>
+<p>So in our data generating process, randomness enters in exactly three places: first, in the collection of the simple random sample of the northern villages, second, in the randomized treatment assignment, and third, in the generation of the response given trust and treatment in the experiment. It is because of this randomness that we cannot precisely recover the true population average treatment effect, but only approximate it. Naturally, we will want to understand what kind of impact the randomness has on the quality of our estimation. This is the statistical part of causal inference. Note that in the case of a simulation, we know exactly what kind of randomness we’re dealing with since we generated it. In the real world, we would not know how exactly the data was generated, and so we would use the data itself to estimate the uncertainty in our estimators, which is simultaneously quite meta <em>as well as</em> a fundamental and ubiquitous technique that statisticians take for granted.</p>
+<div id="the-estimand" class="section level3">
+<h3>The estimand</h3>
+<p>The most natural estimand in this example is the country-wide average treatment effect. In other words, the target population in the example is the entire country. I note that we are diverging slightly from our set-up in the first blog post, where I wrote that the target population and the experiment sample would be viewed as two separate data sets <span class="math inline">\(\Omega_t\)</span> and <span class="math inline">\(\Omega_s\)</span> and defined the PATE as <span class="math inline">\(E_{\Omega_t}[Y(1)-Y(0)] = E_{\Omega_t\cup\Omega_s}[Y(1)-Y(0) \mid S = 0]\)</span>. In our current example, the target population includes the villages in the experiment so that <span class="math inline">\(\Omega_s \subset \Omega_t\)</span>. We then have</p>
+<p><span class="math display">\[PATE = E_{\Omega_t}[Y(1)-Y(0)] = E_{Ωt\cupΩs}[Y(1)−Y(0)]\]</span> without the conditioning event <span class="math inline">\(S=0\)</span>.</p>
+<p>This essentially comes down to the difference between “transporting” the causal effect versus “generalizing” it, but these are fundamentally the same problem with the same solution. In both cases, we are required to adjust the sample average treatment effect to the distribution of effect modifiers in a target population–in the case of generalization, this target population includes the experimental sample, whereas in transportation, it does not.</p>
+<p>Since we generated the data, we can calculate the <em>PATE</em>:</p>
+<p>First note the proportion of villages in the country with high and low internal displacement:</p>
+<pre class="r"><code>group_by(country, trust) %&gt;% 
+  summarise(prop = n()/nrow(.))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   trust  prop
+##   &lt;fct&gt; &lt;dbl&gt;
+## 1 high    0.4
+## 2 low     0.6</code></pre>
+<p>Now:</p>
+<span class="math display">\[\begin{align*}
+
+PATE &amp;= E[Y(1)-Y(0)] \\
+&amp;= P(T=0)E[Y(1)-Y(0) \mid T=0] + P(T=1)E[Y(1)-Y(0) \mid T=1] \\
+&amp;= 0.6\times\$0 + 0.4\times\$75 \\
+&amp;= \$30
+
+\end{align*}\]</span>
+</div>
+</div>
+<div id="estimators" class="section level2">
+<h2>Estimators</h2>
+<p>The identification result from the last blog post modified to the situation of generalization rather than transportation is the following</p>
+<p><span class="math display">\[PATE = E_{\Omega_t}\{E(Y \mid D=1, S=1, W) - E(Y \mid D=0, S=1, W)\},\]</span></p>
+<p>where <span class="math inline">\(W\)</span> is a valid adjustment set satisfying the assumptions laid out in the last blog post.</p>
+<p>With this identification result, if <span class="math inline">\(W\)</span> is discrete, then we can implement a post-stratification estimator as its sample analog</p>
+<p><span class="math display">\[
+\widehat{PATE_{ps}} = \sum_w\widehat{SATE_w}P_{\Omega_t}(W=w),
+\]</span></p>
+<p>Here, <span class="math inline">\(\widehat{SATE_w}\)</span> is the difference in means between the treatment groups in the experiment within the stratum <span class="math inline">\(W=w\)</span>.</p>
+<p>We’ll implement this estimation for the two valid adjustment sets <span class="math inline">\(W\)</span> in our data-set: <span class="math inline">\(W\)</span> = <code>displace</code> and <span class="math inline">\(W\)</span> = <code>trust</code>. <span class="math inline">\(W\)</span> = <code>displace</code> is the more realistic adjustment set, as it is unlikely the researchers would have any direct measurement of community trust in their experimental villages, let alone villages across the country. Unfortunately, <span class="math inline">\(W\)</span> = <code>displace</code> gives rise to a less precise estimator than <span class="math inline">\(W\)</span> = <code>trust</code>, as we will see shortly.</p>
+<p>First, using <span class="math inline">\(W\)</span> = <code>displace</code>:</p>
+<pre class="r"><code>options(dplyr.summarise.inform = FALSE)
+samp_disp = samp %&gt;% 
+  group_by(displace, treat) %&gt;%
+  summarise(mn = mean(y))
+
+samp_disp</code></pre>
+<pre><code>## # A tibble: 4 × 3
+## # Groups:   displace [2]
+##   displace treat    mn
+##   &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 high         0  11.0
+## 2 high         1  22.4
+## 3 low          0  29.0
+## 4 low          1  88.5</code></pre>
+<pre class="r"><code>wt_high = mean(country$displace == &quot;high&quot;)
+wt_low = mean(country$displace == &quot;low&quot;)
+pate_hat_ps_disp = wt_high*(samp_disp$mn[2]-samp_disp$mn[1]) + wt_low*(samp_disp$mn[4]-samp_disp$mn[3])
+
+pate_hat_ps_disp</code></pre>
+<pre><code>## [1] 35.46664</code></pre>
+<p>Now, using using <span class="math inline">\(W\)</span> = <code>trust</code>:</p>
+<pre class="r"><code>samp_trust = samp %&gt;% 
+  group_by(trust, treat) %&gt;%
+  summarise(mn = mean(y))
+
+samp_trust</code></pre>
+<pre><code>## # A tibble: 4 × 3
+## # Groups:   trust [2]
+##   trust treat     mn
+##   &lt;fct&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 high      0  46.9 
+## 2 high      1 116.  
+## 3 low       0   9.76
+## 4 low       1   9.89</code></pre>
+<pre class="r"><code>wt_high = mean(country$trust == &quot;high&quot;)
+wt_low = mean(country$trust == &quot;low&quot;)
+pate_hat_ps_trust = wt_high*(samp_trust$mn[2]-samp_trust$mn[1]) + wt_low*(samp_trust$mn[4]-samp_trust$mn[3])
+
+pate_hat_ps_trust</code></pre>
+<pre><code>## [1] 27.65521</code></pre>
+<p>Finally, let’s look at the unadjusted sample average treatment effect (SATE).</p>
+<pre class="r"><code>(SATE = mean(samp$y[samp$treat==1]) - mean(samp$y[samp$treat==0]))</code></pre>
+<pre><code>## [1] 25.34194</code></pre>
+<p>Now, let’s simulate many realizations of our data-set, calculating the <span class="math inline">\(SATE\)</span> and our two estimates of the <span class="math inline">\(PATE\)</span>, for each one. The question arises of which randomness we should include in the simulation. Recall, there are three sources of randomness: the drawing of the simple random sample for the experiment, the randomized treatment assignment, and finally the generation of the response among these sampled units. We choose to include all of this randomness in the data generating process in our simulation. The function <code>single_data</code> handles this and simulates a single data-set accordingly<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>:</p>
+<pre class="r"><code>single_data = function() {
+  country %&gt;%
+    slice_sample(n = 100, weight_by = rep(c(0,1), each = 1000)) %&gt;%
+    mutate(treat = ifelse(row_number() %in% sample(100, 50), 1, 0)) %&gt;%
+    rowwise() %&gt;%
+    mutate( y = case_when(
+      trust == &quot;low&quot; &amp; treat == 0 ~ rnorm(1, 10, 3),
+      trust == &quot;low&quot; &amp; treat == 1 ~ rnorm(1, 10, 3),
+      trust == &quot;high&quot; &amp; treat == 0 ~ rnorm(1, 50, 10),
+      trust == &quot;high&quot; &amp; treat == 1 ~ rnorm(1, 125, 20) 
+    ))
+}
+
+estim = function(samp, w) {
+  samp_w = samp %&gt;% 
+  group_by({{w}}, treat) %&gt;%
+  summarise(mn = mean(y))
+  
+  wt_high = mean(pull(country, {{w}}) == &quot;high&quot;)
+  wt_low = mean(pull(country, {{w}}) == &quot;low&quot;)
+  pate_hat_ps_trust = wt_high*(samp_w$mn[2]-samp_w$mn[1]) + wt_low*(samp_w$mn[4]-samp_w$mn[3])
+  
+}
+
+
+single_simul = function() {
+  samp = single_data() 
+  est_trust = estim(samp, trust)
+  est_disp = estim(samp, displace)
+  est_samp = mean(samp$y[samp$treat==1]) - mean(samp$y[samp$treat==0])
+  return(c(&quot;est_trust&quot;=est_trust, &quot;est_disp&quot;=est_disp, &quot;SATE&quot;=est_samp))
+}
+  
+r = 2000
+ests = map_dfr(1:r, ~ single_simul())</code></pre>
+<p>Our estimators’ distributional properties are displayed in Table <a href="#tab:table">1</a>.</p>
+<div id="jtocotbfte" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#jtocotbfte .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jtocotbfte .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jtocotbfte .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jtocotbfte .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jtocotbfte .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jtocotbfte .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jtocotbfte .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jtocotbfte .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jtocotbfte .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jtocotbfte .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jtocotbfte .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jtocotbfte .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jtocotbfte .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jtocotbfte .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jtocotbfte .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jtocotbfte .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jtocotbfte .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jtocotbfte .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jtocotbfte .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jtocotbfte .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jtocotbfte .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jtocotbfte .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jtocotbfte .gt_left {
+  text-align: left;
+}
+
+#jtocotbfte .gt_center {
+  text-align: center;
+}
+
+#jtocotbfte .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jtocotbfte .gt_font_normal {
+  font-weight: normal;
+}
+
+#jtocotbfte .gt_font_bold {
+  font-weight: bold;
+}
+
+#jtocotbfte .gt_font_italic {
+  font-style: italic;
+}
+
+#jtocotbfte .gt_super {
+  font-size: 65%;
+}
+
+#jtocotbfte .gt_two_val_uncert {
+  display: inline-block;
+  line-height: 1em;
+  text-align: right;
+  font-size: 60%;
+  vertical-align: -0.25em;
+  margin-left: 0.1em;
+}
+
+#jtocotbfte .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#jtocotbfte .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jtocotbfte .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#jtocotbfte .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#jtocotbfte .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  <caption><span id="tab:table">Table 1: </span>Summary of Estimators</caption>
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Bias</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Standard Error</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">est_disp</td>
+<td class="gt_row gt_right">0.56</td>
+<td class="gt_row gt_right">10.37</td></tr>
+    <tr><td class="gt_row gt_left">est_trust</td>
+<td class="gt_row gt_right">0.08</td>
+<td class="gt_row gt_right">2.77</td></tr>
+    <tr><td class="gt_row gt_left">SATE</td>
+<td class="gt_row gt_right">&minus;13.10</td>
+<td class="gt_row gt_right">7.35</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>Clearly, the sample average treatment effect (SATE) is a vast underestimate of the PATE. We see that adjusting for displacement or trust will eliminate this bias, but adjusting for the latter produces a much more precise estimate.</p>
+</div>
+<div id="standard-errors" class="section level2">
+<h2>Standard Errors</h2>
+<p>As I hinted to earlier, it turns out that we can estimate the uncertainty in our post-stratification estimator from a single data-set (as opposed to repeatedly simulating the known data-generating process to learn about this uncertainty). From the formula for the estimator, we have</p>
+<p><span class="math display">\[
+\widehat{SE}(\widehat{PATE_{ps}}) = \sqrt{\sum_w{P_{\Omega_t}(W = w)^2\widehat{Var}(\widehat{SATE_{w}})}},
+\]</span></p>
+<p>where <span class="math inline">\(\widehat{Var}(\widehat{SATE_{w}})\)</span> is the standard Neyman variance estimator<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> within strata <span class="math inline">\(W=w\)</span>: <span class="math display">\[\widehat{Var}(\widehat{SATE_{w}}) = \frac{S_{T}(w)^2}{N_{T}(w)} + \frac{S_{C}(w)^2}{N_{C}(w)}\]</span></p>
+<p>Returning to our first sample, the estimated standard error from adjusting with displacement can be calculated as follows:</p>
+<pre class="r"><code>samp_low_trt = filter(samp, displace == &quot;low&quot;, treat == 1) %&gt;%
+  pull(y)
+samp_low_con = filter(samp, displace == &quot;low&quot;, treat == 0) %&gt;%
+  pull(y)
+var_low = var(samp_low_trt)/length(samp_low_trt) + var(samp_low_con)/length(samp_low_con)
+
+samp_high_trt = filter(samp, displace == &quot;high&quot;, treat == 1) %&gt;%
+  pull(y)
+samp_high_con = filter(samp, displace == &quot;high&quot;, treat == 0) %&gt;%
+  pull(y)
+var_high = var(samp_high_trt)/length(samp_high_trt) + var(samp_high_con)/length(samp_high_con)
+
+
+se_disp = sqrt(mean(country$displace == &quot;high&quot;)^2*var_high + mean(country$displace == &quot;low&quot;)^2*var_low)
+
+se_disp</code></pre>
+<pre><code>## [1] 8.411557</code></pre>
+<pre class="r"><code>samp_low_trt = filter(samp, trust == &quot;low&quot;, treat == 1) %&gt;%
+  pull(y)
+samp_low_con = filter(samp, trust == &quot;low&quot;, treat == 0) %&gt;%
+  pull(y)
+var_low = var(samp_low_trt)/length(samp_low_trt) + var(samp_low_con)/length(samp_low_con)
+
+samp_high_trt = filter(samp, trust == &quot;high&quot;, treat == 1) %&gt;%
+  pull(y)
+samp_high_con = filter(samp, trust == &quot;high&quot;, treat == 0) %&gt;%
+  pull(y)
+var_high = var(samp_high_trt)/length(samp_high_trt) + var(samp_high_con)/length(samp_high_con)
+
+
+se_trust = sqrt(mean(country$trust == &quot;high&quot;)^2*var_high + mean(country$trust == &quot;low&quot;)^2*var_low)
+
+se_trust</code></pre>
+<pre><code>## [1] 3.225873</code></pre>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>This code is slow, taking a couple of minutes to run.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://www2.stat.duke.edu/courses/Spring14/sta320.01/Class7.pdf" class="uri">https://www2.stat.duke.edu/courses/Spring14/sta320.01/Class7.pdf</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
