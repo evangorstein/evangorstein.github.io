@@ -707,7 +707,7 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
 \]</span></p>
 <p>This formula pushes the question of estimating the standard error of <span class="math inline">\(SATE_w\)</span>. It turns out that the statistician Jerzy Neyman at the beginning of the 20th century proposed an estimator for just such a quantity<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>: the standard Neyman variance estimator within strata <span class="math inline">\(W=w\)</span> is given by: <span class="math display">\[\widehat{Var}(\widehat{SATE_{w}}) = \frac{S_{T}(w)^2}{N_{T}(w)} + \frac{S_{C}(w)^2}{N_{C}(w)}\]</span></p>
 <p>From just the first sample we generated, we calculate standard error for both our estimates of the <span class="math inline">\(PATE\)</span> with the following code:</p>
-<pre class="r"><code>#Calculate Neyman standard error 
+<pre class="r"><code>#Neyman standard error for estimator adjusting by displacement
 samp_low_trt = filter(samp, displace == &quot;low&quot;, treat == 1) %&gt;%
   pull(y)
 samp_low_con = filter(samp, displace == &quot;low&quot;, treat == 0) %&gt;%
@@ -720,9 +720,10 @@ samp_high_con = filter(samp, displace == &quot;high&quot;, treat == 0) %&gt;%
   pull(y)
 var_high = var(samp_high_trt)/length(samp_high_trt) + var(samp_high_con)/length(samp_high_con)
 
-
 se_disp = sqrt(mean(country$displace == &quot;high&quot;)^2*var_high + mean(country$displace == &quot;low&quot;)^2*var_low)
 
+
+#Neyman standard error for estimator adjusting by trust
 samp_low_trt = filter(samp, trust == &quot;low&quot;, treat == 1) %&gt;%
   pull(y)
 samp_low_con = filter(samp, trust == &quot;low&quot;, treat == 0) %&gt;%
@@ -1196,6 +1197,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
 </table>
 </div>
 <p>The values for the standard error are now closer to the Neyman estimates, as I suspected. On the other hand, we see that the estimator that adjusts for displacement is biased in this simulation! So somehow, the estimator that adjusts for displacement is only unbiased if we include the random sampling in our data generating process. This is curious, and I would like to think more about why it might be–let me know if you have any suggestions.</p>
+<div id="references" class="section level4">
+<h4>References</h4>
+<p>Erin Hartman (2021). Generalizing Experimental Results. In Advances in Experimental Political Science.</p>
+</div>
 </div>
 <div class="footnotes footnotes-end-of-document">
 <hr />
