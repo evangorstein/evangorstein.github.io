@@ -101,7 +101,7 @@ Therefore, <span class="math inline">\(R_\varepsilon^2 := \frac{\operatorname{va
 <div class="line-block"><strong>Lemma 3.3 (Correlation Bound)</strong><br />
 The correlation between <span class="math inline">\(\varepsilon_i\)</span> and the individual-level treatment effects <span class="math inline">\(\tau_i\)</span> is bound in the following way:<br />
 <span class="math display">\[  -\sqrt{1-\operatorname{cor}_{\Omega_S}(w_i, \tau_i)} \leq \rho_{\varepsilon, \tau} \leq \sqrt{1-\operatorname{cor}_{\Omega_S}(w_i, \tau_i)}  \]</span></div>
-<p>These results in tandem provides a path forward for performing sensitivity analysis for the generalization of experimental result.</p>
+<p>These results in tandem provides a path forward for performing sensitivity analysis for generalizing experimental results:</p>
 <ol style="list-style-type: decimal">
 <li>Estimate an upper bound for <span class="math inline">\(\sigma_\tau^2\)</span>, i.e. <span class="math inline">\(\sigma_{\tau,max}\)</span>. Huang provides some suggestions on this front, but the upper bound that I find most obvious, if not most efficient, comes from assuming that the potential outcomes under treatment are positively correlated with the potential outcomes under control. We then have</li>
 </ol>
@@ -125,6 +125,7 @@ The correlation between <span class="math inline">\(\varepsilon_i\)</span> and t
 </ol>
 <p><span class="math display">\[  Bias(\widehat{PATE_C}) \lessapprox \rho_{\varepsilon, \tau} \sqrt{\operatorname{var}_{\Omega_s}\left(w_i\right) \cdot \frac{R_{\varepsilon}^2}{1-R_{\varepsilon}^2} \cdot \sigma_{\tau,max}^2}, \]</span></p>
 <p>the symbol <span class="math inline">\(\lessapprox\)</span> suggesting that, because we’re using <span class="math inline">\(\sigma_{\tau,max}^2\)</span> instead of <span class="math inline">\(\sigma_{\tau}^2\)</span>, we should in theory have an upper bound on the bias.</p>
+<p>We can then check whether any such <span class="math inline">\(|\rho_{\varepsilon, \tau}|\)</span> and <span class="math inline">\(R_{\varepsilon}^2}\)</span> generate a bias larger in absolute value than the estimate itself, i.e. <span class="math inline">\(|Bias(\widehat{PATE_C})| &gt; |\widehat{PATE_C}|\)</span>, which would constitute the overturning of our putative result i.e. the sign of our estimator would be wrong.</p>
 <div id="to-come-implementing-sensitivity-analysis-for-the-running-example" class="section level2">
 <h2>To come: implementing sensitivity analysis for the running example</h2>
 </div>
