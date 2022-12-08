@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>Sensitivity Analysis for Generalization - Evan Gorstein</title>
+<meta property="og:title" content="Sensitivity Analysis for Generalization - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Sensitivity Analysis for Generalization</h1>
+
+    
+    <span class="article-date">2022-12-07</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p><font size="2"></p>
+<p>Recall the following figure.</p>
+<p><img src="images/Untitled%20(Draft)-4.jpg" style="width:15cm" /></p>
+<p>If <span class="math inline">\(U\)</span> acts as a treatment modifier and is unobserved, then we no longer have the identification of our population average treatment effect. Neither Community Trust nor Internal Displacement are valid adjustment sets any longer. Are we out of luck? Not completely. While we won’t be able to pin down our PATE entirely, we can do the following: First, we suspend our belief momentarily, pretend that <span class="math inline">\(U\)</span> doesn’t exist, and estimate the PATE as we did before when we didn’t believe in <span class="math inline">\(U\)</span>. Then, we can attempt to understand how the existence of <span class="math inline">\(U\)</span> drives bias in this estimate we just produced. In particular, we try to understand what <span class="math inline">\(U\)</span> would have to be like in order to bias our estimate so drastically that it overturns our putative results. If <span class="math inline">\(U\)</span> being like this seems implausible, then our results are safe. This procedure is known as sensitivity analysis.</p>
+<p>When we used <em>{Community Trust}</em> as our adjustment set to estimate the PATE in the last blog post, our estimator was</p>
+<p><span class="math display">\[
+\widehat{PATE_C} = \sum_c\widehat{SATE_c}P_{\Omega_t}(C=c),
+\]</span> where <span class="math inline">\(C\)</span> is community trust.</p>
+<p>This estimator can actually be re-written in Horvitz-Thompson form:</p>
+<p><span class="math display">\[
+\widehat{PATE_C} = \frac{1}{n_1}\sum_{i\in\Omega_s}w_iT_iY_i - \frac{1}{n_0}\sum_{i\in\Omega_S}w_i(1-T_i)Y_i,
+\]</span> where the weights are given by <span class="math inline">\(w_i = \frac{P(S_i=1)P(S_i=0 \mid C_i)}{P(S_i=0)P(S_i=1 \mid C_i)}\)</span>.</p>
+<p>Melody Huang develops a framework for sensitivity analysis for PATE estimators of this form <a href="https://arxiv.org/abs/2202.03408">here.</a> There, she shows the following result:</p>
+<div class="line-block"><strong>Theorem 3.1 (Bias of a Weighted Estimator from Omitting a Confounder)</strong><br />
+Assume <span class="math inline">\(Y(1) - Y(0) \perp\!\!\!\perp S \mid \{C, U\}\)</span>. Let <span class="math inline">\(w_i\)</span> be the weights estimated using only <span class="math inline">\(C_i\)</span>, i.e.<br />
+<span class="math inline">\(w_i = \frac{P(S_i=1)P(S_i=0 \mid C_i)}{P(S_i=0)P(S_i=1 \mid C_i)}\)</span> and let <span class="math inline">\(w_i^*\)</span> be the correct weights estimated using <span class="math inline">\(\{C_i, U_i\}\)</span>, i.e. <span class="math inline">\(w_i^* = \frac{P(S_i=1)P(S_i=0 \mid C_i, U_i)}{P(S_i=0)P(S_i=1 \mid C_i, U_i)}\)</span>. Then the bias of the estimator <span class="math inline">\(\widehat{PATE_C}\)</span> is given by<br />
+<span class="math display">\[  Bias(\widehat{PATE_C}) = \begin{cases}\rho_{\varepsilon, \tau} \sqrt{\operatorname{var}_{\Omega_s}\left(w_i\right) \cdot \frac{R_{\varepsilon}^2}{1-R_{\varepsilon}^2} \cdot \sigma_\tau^2} &amp; \text { if } R_{\varepsilon}^2&lt;1 \\ \rho_{\varepsilon, \tau} \sqrt{\operatorname{var}_{\Omega_s}\left(w_i^*\right) \cdot \sigma_\tau^2} &amp; \text { if } R_{\varepsilon}^2=1\end{cases}  \]</span></div>
+<p>This formula requires some explaining. First, define <span class="math inline">\(\tau_i = Y_i(1)-Y_i(0)\)</span> to be the individual treatment effects and <span class="math inline">\(\varepsilon_i=w_i - w_i^*\)</span> to be the differences between the weights we estimate for adjusting with only Community Trust and the true weights for adjusting with Community Trust and U. Now, the three parameters appearing in the formula are defined as follows:</p>
+<ul>
+<li><p><span class="math inline">\(\rho_{\varepsilon, \tau}\)</span> is the correlation between the weights and the treatment effects among the units in the experiment</p></li>
+<li><p><span class="math inline">\(\sigma_\tau^2\)</span> is the variance of the treatment effects among the units in the experiment</p></li>
+<li><p><span class="math inline">\(R_\varepsilon^2\)</span> is the ratio of the variance of <span class="math inline">\(\varepsilon_i\)</span> and the variance of <span class="math inline">\(w_i^*\)</span> among the units in the experiment</p></li>
+</ul>
+<p>In addition to this result, Huang shows the following two lemmas:</p>
+<div class="line-block"><strong>Lemma 3.2 (Variance Decomposition of</strong> <span class="math inline">\(w_i^*\)</span>)<br />
+The variance of the true weights decomposes as<br />
+<span class="math display">\[  \operatorname{var}_{\Omega_s}(w_i^*) = \operatorname{var}_{\Omega_s}(w_i) + \operatorname{var}_{\Omega_s}(\varepsilon_i)  \]</span><br />
+Therefore, <span class="math inline">\(R_\varepsilon^2 := \frac{\operatorname{var}_{\Omega_s}(\varepsilon_i)}{\operatorname{var}_{\Omega_s}(w_i^*)}\)</span> is bound between 0 and 1.</div>
+<div class="line-block"><strong>Lemma 3.3 (Correlation Bound)</strong><br />
+The correlation between <span class="math inline">\(\varepsilon_i\)</span> and the individual-level treatment effects <span class="math inline">\(\tau_i\)</span> is bound in the following way:<br />
+<span class="math display">\[  -\sqrt{1-\operatorname{cor}_{\Omega_S}(w_i, \tau_i)} \leq \rho_{\varepsilon, \tau} \leq \sqrt{1-\operatorname{cor}_{\Omega_S}(w_i, \tau_i)}  \]</span></div>
+<p>will drop all the subscript <span class="math inline">\(\Omega_S\)</span>’s These results in tandem provides a path forward for performing sensitivity analysis for the generalization of experimental result.</p>
+<ol style="list-style-type: decimal">
+<li>Estimate an upper bound for <span class="math inline">\(\sigma_\tau^2\)</span>, i.e. <span class="math inline">\(\sigma_{\tau,max}\)</span>. Huang provides some suggestions on this front, but the upper bound that I find most obvious, if not most efficient, comes from assuming that the potential outcomes under treatment are positively correlated with the potential outcomes under control. We then have</li>
+</ol>
+<span class="math display">\[\begin{align*}
+  \sigma_\tau^2 &amp;:= \operatorname{var}_{\Omega_s}(Y_i(1)-Y_i(0)) \\
+  &amp;= \operatorname{var}_{\Omega_s}(Y_i(1)) + \operatorname{var}_{\Omega_s}(Y_i(0)) - \operatorname{cov}_{\Omega_s}(Y_i(1), Y_i(0)) \\
+  &amp;\leq \operatorname{var}_{\Omega_s}(Y_i(1)) + \operatorname{var}_{\Omega_s}(Y_i(0)),
+\end{align*}\]</span>
+<p>and variances of the potential outcomes can be estimated unbiasedly from the observed data thanks to randomization.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Using <span class="math inline">\(\sigma_{\tau,max}\)</span>, estimate a lower bound for <span class="math inline">\(\operatorname{cor}_{\Omega_S}(w_i, \tau_i)\)</span>, i.e. <span class="math inline">\(\operatorname{cor}^{min}_{\Omega_S}(w_i, \tau_i)\)</span>. This can be done straightforwardly since</li>
+</ol>
+<span class="math display">\[\begin{align*}
+  \operatorname{cor}_{\Omega_S}(w_i, \tau_i) &amp;:= \frac{\operatorname{cov}_{\Omega_S}(w_i, Y_i(1)) - \operatorname{cov}_{\Omega_S}(w_i, Y_i(0))}{\sqrt{\sigma_\tau^2\cdot \operatorname{var}_{\Omega_s}(w_i)}} \\
+  &amp;\geq \frac{\operatorname{cov}_{\Omega_S}(w_i, Y_i(1)) - \operatorname{cov}_{\Omega_S}(w_i, Y_i(1))}{\sqrt{\sigma_{\tau,max}^2\cdot \operatorname{var}_{\Omega_s}(w_i)}}
+\end{align*}\]</span>
+<ol start="3" style="list-style-type: decimal">
+<li>Using <span class="math inline">\(\operatorname{cor}^{min}_{\Omega_S}(w_i, \tau_i)\)</span>, form the upper bound on <span class="math inline">\(|\rho_{\varepsilon, \tau}|\)</span> given in Lemma 3.3:
+<span class="math display">\[ |\rho_{\varepsilon, \tau}| \leq \sqrt{1-\operatorname{cor}^{min}_{\Omega_S}(w_i, \tau_i)}\]</span></li>
+<li>Vary <span class="math inline">\(R_\varepsilon^2\)</span> from 0 to 1 and <span class="math inline">\(\rho_{\varepsilon, \tau}\)</span> from <span class="math inline">\(-\sqrt{1-\operatorname{cor}_{\Omega_S}^{min}(w_i, \tau_i)}\)</span> to <span class="math inline">\(\sqrt{1-\operatorname{cor}_{\Omega_S}^{min}(w_i, \tau_i)}\)</span> and for each pair of values, use the formula in Theorem 3.1 to calculate the bias in the estimate of the PATE:</li>
+</ol>
+<p><span class="math display">\[  Bias(\widehat{PATE_C}) \lessapprox \rho_{\varepsilon, \tau} \sqrt{\operatorname{var}_{\Omega_s}\left(w_i\right) \cdot \frac{R_{\varepsilon}^2}{1-R_{\varepsilon}^2} \cdot \sigma_{\tau,max}^2}, \]</span></p>
+<p>the symbol <span class="math inline">\(\lessapprox\)</span> suggesting that, because we’re using <span class="math inline">\(\sigma_{\tau,max}^2\)</span> instead of <span class="math inline">\(\sigma_{\tau}^2\)</span>, we should in theory have an upper bound on the bias.</p>
+<div id="to-come-implementing-sensitivity-analysis-for-the-running-example" class="section level2">
+<h2>To come: implementing sensitivity analysis for the running example</h2>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

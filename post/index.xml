@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Evan Gorstein</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 07 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sensitivity Analysis for Generalization</title>
+      <link>/2022/12/07/sensitivity-analysis-for-generalization/</link>
+      <pubDate>Wed, 07 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/2022/12/07/sensitivity-analysis-for-generalization/</guid>
+      <description>Recall the following figure.
+If \(U\) acts as a treatment modifier and is unobserved, then we no longer have the identification of our population average treatment effect. Neither Community Trust nor Internal Displacement are valid adjustment sets any longer. Are we out of luck? Not completely. While we won’t be able to pin down our PATE entirely, we can do the following: First, we suspend our belief momentarily, pretend that \(U\) doesn’t exist, and estimate the PATE as we did before when we didn’t believe in \(U\).</description>
+    </item>
+    
     <item>
       <title>Estimation for External Validity</title>
       <link>/2022/11/12/estimation-for-external-validity/</link>

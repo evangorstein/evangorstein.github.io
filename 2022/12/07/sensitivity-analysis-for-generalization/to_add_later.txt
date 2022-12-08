@@ -1,0 +1,68 @@
+
+```{r, echo=FALSE}
+library(tidyverse)
+
+region = factor(rep(c("south","north"), each = 1000))
+
+displace_south = factor(rep(c("low", "high"), times = c(800, 200)))
+displace_north = factor(rep(c("low", "high"), times = c(200, 800)))
+displace = c(displace_south, displace_north)
+
+trust_south_low = factor(rep(c("low", "high"), times = c(240, 560)))
+trust_south_high = factor(rep(c("low", "high"), times = c(180, 20)))
+trust_north_low = factor(rep(c("low", "high"), times = c(60, 140)))
+trust_north_high = factor(rep(c("low", "high"), times = c(720, 80)))
+trust = c(trust_south_low, trust_south_high, trust_north_low, trust_north_high)
+
+country = tibble(region, displace, trust)
+```
+
+```{r}
+set.seed(0)
+country = country %>%
+  mutate(confounder = ifelse(row_number() %in% sample(2000, 1000), 1L, 0L))
+
+group_by(country, region, confounder) %>% summarise(n())
+
+```
+
+```{r}
+#Generate sample
+set.seed(0)
+samp = country %>%
+  slice_sample(n = 100, weight_by = case_when(
+    region == "south" ~ 0, 
+    confounder == 0 ~ 1,
+    confounder == 1 ~ 2
+  )) %>%
+  mutate(treat = ifelse(row_number() %in% sample(100, 50), 1L, 0L))
+
+#Villages in the south have 0 probability of entering the sample
+#Of the villages in the north, the ones with confounder=1 are twice as likely as those with confounder=0 of entering the sample.
+
+#Display sample
+group_by(samp, trust, confounder, treat) %>%
+  summarise(n(), .groups = "drop") 
+```
+
+|                        | Confounder = 0 | Confounder = 1 |
+|:----------------------:|:--------------:|:--------------:|
+| Community Trust = low  |    (10, 10)    |    (10, 10)    |
+| Community Trust = high |   (50, 100)    |   (50, 150)    |
+
+: Table summarizing average potential outcomes under different settings of the confounder and community trust. Values in the table are of form (Y(0), Y(1))
+
+```{r}
+
+samp = samp %>%
+  rowwise() %>%
+  mutate( y = case_when(
+    trust == "low" ~ rnorm(1, 10, 3),
+    trust == "high" & treat == 0 ~ rnorm(1, 50, 10),
+    confounder == 0 ~ rnorm(1, 100, 20),
+    confounder == 1 ~ rnorm(1, 150, 20)
+  ))
+
+#Realistically assume that there's more variability among the larger responses.
+
+```

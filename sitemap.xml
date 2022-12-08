@@ -4,16 +4,36 @@
   
   <url>
     <loc>/categories/</loc>
-    <lastmod>2022-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/causal-inference/</loc>
-    <lastmod>2022-11-12T00:00:00+00:00</lastmod>
+    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/categories/causal-inference/</loc>
+    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/external-validity/</loc>
+    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2022/12/07/sensitivity-analysis-for-generalization/</loc>
+    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/causal-inference/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url>
   
@@ -23,22 +43,7 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2022-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/external-validity/</loc>
-    <lastmod>2022-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/external-validity/</loc>
-    <lastmod>2022-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url>
   
