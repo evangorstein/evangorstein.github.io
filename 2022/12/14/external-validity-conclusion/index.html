@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.79.0" />
+
+
+<title>External Validity: Conclusion - Evan Gorstein</title>
+<meta property="og:title" content="External Validity: Conclusion - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">2 min read</span>
+    
+
+    <h1 class="article-title">External Validity: Conclusion</h1>
+
+    
+    <span class="article-date">2022-12-14</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p><font size="2"></p>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>In these blog posts, following Erin Hartman’s chapter in <em>Advances in Experimental Political Science</em>, titled “Generalizing Experimental Results,” I have investigated how one might go about generalizing an experimentally identified causal effect to a target population. Throughout my investigation, I have adopted Hartman’s case study of a field experiment in Liberia, in which researchers conduct an RCT of samples village from the northern region of the country, but are interested in estimating an effect for the entire country.</p>
+<p>In terms of identification, the important takeaway for me was that in order to point identify the PATE, one must have a “valid adjustment set” of covariates: covariates which separate the sampling indicator from the treatment modifier in the DAG, which are measured among the individuals in the experimental sample, and whose distribution in the target population is known. For discrete covariates, this last requirement becomes more realistic–it seems more implausible that the continuous distributions of some adjustment covariate in the target population would be known.</p>
+<p>In terms of estimation, I have simulated hypothetical data from the field experiment with discrete adjustment covariates and evaluated how an estimator based on direct standardization performs empirically. Direct standardization is only possible when the adjustment set is discrete, but is equivalent to the weighted Horwitz-Thompson estimator with sampling weights, which can be implemented when the adjustment set covariates are continuous. The sampling weights will have be estimated with some binary regression, just as propensity scores are estimated in the context of internal causal identification.</p>
+<p>Finally, in terms of sensitivity analysis, I have described a <a href="https://arxiv.org/abs/2202.03408">framework</a> which, in the presence of an unmeasured variable which both moderates the treatment effect and influences who’s included in the sample, allows one to estimate an upper-bound on the bias of a Horwitz-Thompson weighted estimator that has ignored this unmeasured variable in estimating the sampling weights.</p>
+<p>I think this last part, i.e. the sensitivity analysis, will be the most important part of any generalization effort, since, except for special cases, it’s somewhat unlikely that researchers will be able to exhaustively list all the effect-moderating-sampling-influencers, let alone know what their distribution in the target population is.</p>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+
+    
+  </body>
+</html>
+

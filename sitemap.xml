@@ -3,6 +3,21 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/</loc>
+    <lastmod>2022-12-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2022/12/14/external-validity-conclusion/</loc>
+    <lastmod>2022-12-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2022-12-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/categories/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url>
@@ -13,17 +28,7 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/categories/external-validity/</loc>
-    <lastmod>2022-12-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url>
   

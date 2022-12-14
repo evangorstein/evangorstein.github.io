@@ -6,7 +6,16 @@
     <description>Recent content on Evan Gorstein</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 07 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 14 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>External Validity: Conclusion</title>
+      <link>/2022/12/14/external-validity-conclusion/</link>
+      <pubDate>Wed, 14 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/2022/12/14/external-validity-conclusion/</guid>
+      <description>Conclusion In these blog posts, following Erin Hartman’s chapter in Advances in Experimental Political Science, titled “Generalizing Experimental Results,” I have investigated how one might go about generalizing an experimentally identified causal effect to a target population. Throughout my investigation, I have adopted Hartman’s case study of a field experiment in Liberia, in which researchers conduct an RCT of samples village from the northern region of the country, but are interested in estimating an effect for the entire country.</description>
+    </item>
+    
     <item>
       <title>Sensitivity Analysis for Generalization</title>
       <link>/2022/12/07/sensitivity-analysis-for-generalization/</link>
