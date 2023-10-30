@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Evan Gorstein</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 14 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lord&#39;s paradox is explained by regression to the mean, not causal inference</title>
+      <link>/2023/10/28/lord-s-paradox/</link>
+      <pubDate>Sat, 28 Oct 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/2023/10/28/lord-s-paradox/</guid>
+      <description>The paradox Lord’s paradox originally appeared in a 1967 article published in Psychological Bulletins entitled “A Paradox in the Interpretation of Group Comparisons” (Lord 1967). Here’s the original formulation.
+ A large university is interested in investigating the effects on the students of the diet provided in the university dining halls and any sex difference in these effects. Various types of data are gathered. In particular, the weight of each student at the time of his arrival in September and his weight the following June are recorded.</description>
+    </item>
+    
     <item>
       <title>External Validity: Conclusion</title>
       <link>/2022/12/14/external-validity-conclusion/</link>
