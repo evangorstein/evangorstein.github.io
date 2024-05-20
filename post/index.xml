@@ -2,73 +2,73 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Evan Gorstein</title>
-    <link>//localhost:4321/post/</link>
+    <link>/post/</link>
     <description>Recent content in Posts on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 28 Oct 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:4321/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lord&#39;s paradox is explained by regression to the mean, not causal inference</title>
-      <link>//localhost:4321/2023/10/28/lord-s-paradox/</link>
+      <link>/2023/10/28/lord-s-paradox/</link>
       <pubDate>Sat, 28 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2023/10/28/lord-s-paradox/</guid>
+      <guid>/2023/10/28/lord-s-paradox/</guid>
       <description>The paradox Lord’s paradox originally appeared in a 1967 article published in Psychological Bulletins entitled “A Paradox in the Interpretation of Group Comparisons” (Lord 1967). Here’s the original formulation.&#xA;A large university is interested in investigating the effects on the students of the diet provided in the university dining halls and any sex difference in these effects. Various types of data are gathered. In particular, the weight of each student at the time of his arrival in September and his weight the following June are recorded.</description>
     </item>
     <item>
       <title>External Validity: Conclusion</title>
-      <link>//localhost:4321/2022/12/14/external-validity-conclusion/</link>
+      <link>/2022/12/14/external-validity-conclusion/</link>
       <pubDate>Wed, 14 Dec 2022 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2022/12/14/external-validity-conclusion/</guid>
+      <guid>/2022/12/14/external-validity-conclusion/</guid>
       <description>Conclusion In these blog posts, following Erin Hartman’s chapter in Advances in Experimental Political Science titled “Generalizing Experimental Results,” I have investigated how one might go about generalizing an experimentally identified causal effect to a target population. Throughout my investigation, I have adopted Hartman’s case study of a field study in Liberia, in which researchers conduct an RCT in villages in the north, but are interested in estimating an effect for the entire country.</description>
     </item>
     <item>
       <title>Sensitivity Analysis for Generalization</title>
-      <link>//localhost:4321/2022/12/07/sensitivity-analysis-for-generalization/</link>
+      <link>/2022/12/07/sensitivity-analysis-for-generalization/</link>
       <pubDate>Wed, 07 Dec 2022 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2022/12/07/sensitivity-analysis-for-generalization/</guid>
+      <guid>/2022/12/07/sensitivity-analysis-for-generalization/</guid>
       <description>Intro Recall the following figure:&#xA;If \(U\) acts as an effect modifier and is unobserved, then we no longer have the identification of our population average treatment effect. Neither Community Trust nor Internal Displacement are valid adjustment sets any longer. Are we out of luck? Not completely. While we won’t be able to pin down our PATE entirely, we can do the following: First, we suspend our belief momentarily, pretend that \(U\) doesn’t exist, and estimate the PATE as we did before when \(U\) wasn’t around.</description>
     </item>
     <item>
       <title>Estimation for External Validity</title>
-      <link>//localhost:4321/2022/11/12/estimation-for-external-validity/</link>
+      <link>/2022/11/12/estimation-for-external-validity/</link>
       <pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2022/11/12/estimation-for-external-validity/</guid>
+      <guid>/2022/11/12/estimation-for-external-validity/</guid>
       <description>Background This is the third in a series of blog posts for a causal inference project on external validity. To summarize the previous posts if you are just joining us, we are interested in assessing the validity of results obtained from an experiment or RCT in a population distinct from the one in which the experiment was run. If we conclude that the results are not in fact valid in this new population, we would like to somehow adjust the experimental results to the new population.</description>
     </item>
     <item>
       <title>Identifitication for External Validity</title>
-      <link>//localhost:4321/2022/10/20/identifitication-for-external-validity/</link>
+      <link>/2022/10/20/identifitication-for-external-validity/</link>
       <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2022/10/20/identifitication-for-external-validity/</guid>
+      <guid>/2022/10/20/identifitication-for-external-validity/</guid>
       <description>In my previous blog post, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</description>
     </item>
     <item>
       <title>Sampling bias and causal inference</title>
-      <link>//localhost:4321/2022/10/05/samplingbiasandcausalinference/</link>
+      <link>/2022/10/05/samplingbiasandcausalinference/</link>
       <pubDate>Wed, 05 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2022/10/05/samplingbiasandcausalinference/</guid>
+      <guid>/2022/10/05/samplingbiasandcausalinference/</guid>
       <description>Introduction What can you do when the sample you’ve collected doesn’t represent the population you’re interested in studying? When such a disconnect between sample and population of interest goes unaddressed by the researcher, we say that the study suffers from sampling bias. Ideally, researchers would collect a random sample from their population of interest, in which case, sampling bias is expected to vanish. The issue is that random sampling is hard.</description>
     </item>
     <item>
       <title>Pivoting a cdf</title>
-      <link>//localhost:4321/2021/08/12/pivoting-a-cdf/</link>
+      <link>/2021/08/12/pivoting-a-cdf/</link>
       <pubDate>Thu, 12 Aug 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2021/08/12/pivoting-a-cdf/</guid>
+      <guid>/2021/08/12/pivoting-a-cdf/</guid>
       <description>Introduction The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as quite the surprise to me when I first learned about it this past year in my first year Math Stat class. My surprise was that a single method could be employed to construct confidence sets in every setting (i.e. every parameterized family of distributions in which a real-valued parameter is to be targeted with a confidence set).</description>
     </item>
     <item>
       <title>Randomization Inference Part 2: Attributable Effects</title>
-      <link>//localhost:4321/2021/01/13/attributable-effects/</link>
+      <link>/2021/01/13/attributable-effects/</link>
       <pubDate>Wed, 13 Jan 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2021/01/13/attributable-effects/</guid>
+      <guid>/2021/01/13/attributable-effects/</guid>
       <description>Introduction In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-uniform causal effects.</description>
     </item>
     <item>
       <title>Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic</title>
-      <link>//localhost:4321/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</link>
+      <link>/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</link>
       <pubDate>Fri, 08 Jan 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</guid>
+      <guid>/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</guid>
       <description>Introduction Last semester, I made my way through the first half of Paul Rosenbaum&amp;rsquo;s textbook Design of Observational Studies (2010). Rosenbaum is a leading expert in causal inference, an area of statistical research concerned with the identification of causal effects through the analysis of observational data.&#xA;One piece of advice I&amp;rsquo;ve heard directed towards researchers in the social sciences who are interested in measuring a causal effect is to get a clear image in their head of the randomized experiment that, were it feasible, ethical, etc.</description>
     </item>
   </channel>
