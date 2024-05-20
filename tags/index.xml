@@ -2,46 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Evan Gorstein</title>
-    <link>/tags/</link>
+    <link>//localhost:4321/tags/</link>
     <description>Recent content in Tags on Evan Gorstein</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:4321/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Causal Inference</title>
-      <link>/tags/causal-inference/</link>
-      <pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/causal-inference/</guid>
+      <link>//localhost:4321/tags/causal-inference/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/tags/causal-inference/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>External Validity</title>
-      <link>/tags/external-validity/</link>
-      <pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/external-validity/</guid>
+      <link>//localhost:4321/tags/external-validity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/tags/external-validity/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Identification</title>
-      <link>/tags/identification/</link>
-      <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/identification/</guid>
+      <link>//localhost:4321/tags/identification/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/tags/identification/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>ams</title>
-      <link>/tags/ams/</link>
-      <pubDate>Wed, 13 Jan 2021 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/ams/</guid>
+      <title>Ams</title>
+      <link>//localhost:4321/tags/ams/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/tags/ams/</guid>
       <description></description>
     </item>
-    
   </channel>
 </rss>

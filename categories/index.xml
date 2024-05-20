@@ -2,37 +2,32 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Evan Gorstein</title>
-    <link>/categories/</link>
+    <link>//localhost:4321/categories/</link>
     <description>Recent content in Categories on Evan Gorstein</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 07 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 07 Dec 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:4321/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Causal Inference</title>
-      <link>/categories/causal-inference/</link>
-      <pubDate>Wed, 07 Dec 2022 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/causal-inference/</guid>
+      <link>//localhost:4321/categories/causal-inference/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/categories/causal-inference/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>External Validity</title>
-      <link>/categories/external-validity/</link>
-      <pubDate>Wed, 07 Dec 2022 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/external-validity/</guid>
+      <link>//localhost:4321/categories/external-validity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/categories/external-validity/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Identification</title>
-      <link>/categories/identification/</link>
-      <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/identification/</guid>
+      <link>//localhost:4321/categories/identification/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/categories/identification/</guid>
       <description></description>
     </item>
-    
   </channel>
 </rss>

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.79.0" />
+<meta name="generator" content="Hugo 0.126.1">
 
 
 <title>Lord&#39;s paradox is explained by regression to the mean, not causal inference - Evan Gorstein</title>
 <meta property="og:title" content="Lord&#39;s paradox is explained by regression to the mean, not causal inference - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -90,7 +90,7 @@
 <p>The whole situation is shown by the solid lines in the diagram (Figure 1). Here the two ellipses represent separate scatter-plots for the boys and the girls. The frequency distributions of initial weight are indicated at the top of the diagram and the identical distributions of final weight are indicated on the left side. People falling on the solid 45° line through the origin are people whose initial and final weight are identical. The fact that the center of each ellipse lies on this 45° line represents the fact that there is no mean gain for either sex.</p>
 </blockquote>
 <div class="figure"><span style="display:block;" id="fig:central"></span>
-<img src="images/lord_figure.png" alt="Weight at end of year (Y) versus weight at beginning of year (X)" width="100%" />
+<img src="images/lord_figure.png" alt="Weight at end of year (Y) versus weight at beginning of year (X)" width="50%" />
 <p class="caption">
 Figure 1: Weight at end of year (Y) versus weight at beginning of year (X)
 </p>
@@ -197,7 +197,13 @@ nba_records %&gt;%
   theme_minimal() +
   theme(aspect.ratio=1, legend.position = c(.2, .85), legend.title = element_blank()) +
   guides(color = guide_legend(override.aes = list(linetype = c(0, 0, 1), cex = c(1.5,1.5,0) ) ) )</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-4-1.png" width="100%" /></p>
+<pre><code>## Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2
+## 3.5.0.
+## ℹ Please use the `legend.position.inside` argument of `theme()` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-4-1.png" width="50%" /></p>
 <p>This is generally the picture we get if we look at any two consecutive seasons.</p>
 </div>
 <div id="regression-to-the-mean-is-baked-into-the-bivariate-normal" class="section level3">
@@ -239,7 +245,7 @@ abline(0,1, col = &quot;yellow&quot;, lwd = 2)
 legend(.5, 7.5, legend = c(&quot;girls&quot;, &quot;boys&quot;, &quot;x=y&quot;), 
        col = c(&quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;), pch = 1)</code></pre>
 <div class="figure"><span style="display:block;" id="fig:lord-data"></span>
-<img src="/2023/10/28/lord-s-paradox/index_files/figure-html/lord-data-1.png" alt="Simulating Lord's data as two bivariate normal distributions" width="100%" />
+<img src="/2023/10/28/lord-s-paradox/index_files/figure-html/lord-data-1.png" alt="Simulating Lord's data as two bivariate normal distributions" width="50%" />
 <p class="caption">
 Figure 2: Simulating Lord’s data as two bivariate normal distributions
 </p>
@@ -279,7 +285,7 @@ dag1_t %&gt;%
   geom_dag_edges() +
   geom_dag_text(label = node_labels) +
   theme_dag()</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-5-1.png" width="100%" /></p>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-5-1.png" width="50%" /></p>
 <p>Of course, in Lord’s paradox, there’s another variable in the mix, which is the weight gain during the year, aka the change score. This variable can be expressed as the difference between <span class="math inline">\(W_F\)</span> and <span class="math inline">\(W_I\)</span>.</p>
 <p>If we call this variable <span class="math inline">\(Y\)</span> and add it to a DAG, then we might get something like this:</p>
 <pre class="r"><code>dag2 &lt;- dagitty(&quot;dag{
@@ -304,7 +310,7 @@ dag2_t %&gt;%
   geom_dag_edges(aes(label = edge_labels), vjust = -1) +
   geom_dag_text(label = node_labels) +
   theme_dag()</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-6-1.png" width="100%" /></p>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-6-1.png" width="50%" /></p>
 <p>The +1 and -1 on the edges into <span class="math inline">\(Y\)</span> indicate that <span class="math inline">\(Y = W_F-W_I\)</span>.</p>
 <p>So far, we haven’t made any parametric assumptions–just causal ones. If we further assume that each node is a linear combination of its parents plus independent noise, then we can put path coefficients on all the edges of our DAG:</p>
 <pre class="r"><code>dag2_t &lt;- dag2_t %&gt;%
@@ -317,7 +323,7 @@ dag2_t %&gt;%
   geom_dag_text(label = node_labels) +
   theme_dag()</code></pre>
 <div class="figure"><span style="display:block;" id="fig:pearl2b"></span>
-<img src="/2023/10/28/lord-s-paradox/index_files/figure-html/pearl2b-1.png" alt="The DAG that appears in Judea Pearl's article about Lord's paradox (his Figure 2b)" width="100%" />
+<img src="/2023/10/28/lord-s-paradox/index_files/figure-html/pearl2b-1.png" alt="The DAG that appears in Judea Pearl's article about Lord's paradox (his Figure 2b)" width="50%" />
 <p class="caption">
 Figure 3: The DAG that appears in Judea Pearl’s article about Lord’s paradox (his Figure 2b)
 </p>
@@ -336,7 +342,7 @@ pearl &lt;-   &#39;
 set.seed(100)
 fit1b &lt;- sem(pearl, data=df_xy)
 summary(fit1b)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 24 iterations
+<pre><code>## lavaan 0.6.17 ended normally after 1 iteration
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -405,7 +411,7 @@ W_F &amp;= 1.43 + 0.64W_I + \epsilon_F \\
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-lord1967paradox" class="csl-entry">
 Lord, Frederic M. 1967. <span>“A Paradox in the Interpretation of Group Comparisons.”</span> <em>Psychological Bulletin</em> 68 (5): 304.
 </div>
@@ -439,9 +445,6 @@ Tennant, Peter WG, Georgia D Tomova, Kellyn F Arnold, and Mark S Gilthorpe. 2022
       <footer class="footer">
         <ul class="footer-links">
           <li>
-            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
-          </li>
-          <li>
             <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
           </li>
         </ul>
@@ -468,6 +471,9 @@ Tennant, Peter WG, Georgia D Tomova, Kellyn F Arnold, and Mark S Gilthorpe. 2022
 
 
     
+  
+
+
   </body>
 </html>
 
