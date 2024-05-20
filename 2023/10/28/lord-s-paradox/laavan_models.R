@@ -1,14 +1,19 @@
 library(lavaan)
 library(MASS)
-library(dplyr)
-Sigma = matrix(c(1, .6, .6, 1), 2, 2)
-set.seed(100)
-xy_girls = mvrnorm(n = 10000, c(4, 4), Sigma)
-xy_boys = mvrnorm(n = 10000, c(6, 6), Sigma)
-xy <- rbind(xy_boys, xy_girls)
-colnames(xy) = c("WI", "WF")
-df_xy <- as_tibble(xy) %>%
-  mutate(S = if_else(row_number() > 10000, 0, 1))
+library(tidyverse)
+set.seed(770)
+n = 300 # number of students of each sex
+mu_girls = c(75,75) # Girls average weight (kg) 
+mu_boys = c(85,85) # Boys average weight (kg)
+sd = 5 # standard deviation
+cor = matrix(c(1,.7,.7,1), 2, 2) #Correlation matrix
+Sigma = sd^2*cor
+data_girls = mvrnorm(n=n, mu_girls, Sigma)
+data_boys = mvrnorm(n=n, mu_boys, Sigma)
+data = rbind(data_girls, data_boys)
+colnames(data) = c("WI", "WF")
+data = as.data.frame(data) %>%
+  mutate(S = if_else(row_number() <= n, "girl", "boy"))
 
 
 pearl <- '
@@ -22,15 +27,7 @@ new_sem <- '
   W =~ WI + WF
   
 '
-newest_sem <- '
-  W ~  S
-  W =~WI
-  WF ~ WI
-  
-'
-
-
-fit_new <- sem(newest_sem,
+fit_new <- sem(new_sem,
                data = data)
 
 summary(fit_new, fit.measures = TRUE)
