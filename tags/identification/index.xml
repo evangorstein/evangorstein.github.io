@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Identification on Evan Gorstein</title>
-    <link>/tags/identification/</link>
+    <link>//localhost:4321/tags/identification/</link>
     <description>Recent content in Identification on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 20 Oct 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="/tags/identification/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:4321/tags/identification/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Identifitication for External Validity</title>
-      <link>/2022/10/20/identifitication-for-external-validity/</link>
+      <link>//localhost:4321/2022/10/20/identifitication-for-external-validity/</link>
       <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>/2022/10/20/identifitication-for-external-validity/</guid>
+      <guid>//localhost:4321/2022/10/20/identifitication-for-external-validity/</guid>
       <description>In my previous blog post, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</description>
     </item>
   </channel>

@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Causal Inference on Evan Gorstein</title>
-    <link>/categories/causal-inference/</link>
+    <link>//localhost:4321/categories/causal-inference/</link>
     <description>Recent content in Causal Inference on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 07 Dec 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="/categories/causal-inference/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:4321/categories/causal-inference/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Sensitivity Analysis for Generalization</title>
-      <link>/2022/12/07/sensitivity-analysis-for-generalization/</link>
+      <link>//localhost:4321/2022/12/07/sensitivity-analysis-for-generalization/</link>
       <pubDate>Wed, 07 Dec 2022 00:00:00 +0000</pubDate>
-      <guid>/2022/12/07/sensitivity-analysis-for-generalization/</guid>
+      <guid>//localhost:4321/2022/12/07/sensitivity-analysis-for-generalization/</guid>
       <description>Intro Recall the following figure:&#xA;If \(U\) acts as an effect modifier and is unobserved, then we no longer have the identification of our population average treatment effect. Neither Community Trust nor Internal Displacement are valid adjustment sets any longer. Are we out of luck? Not completely. While we won’t be able to pin down our PATE entirely, we can do the following: First, we suspend our belief momentarily, pretend that \(U\) doesn’t exist, and estimate the PATE as we did before when \(U\) wasn’t around.</description>
     </item>
     <item>
       <title>Estimation for External Validity</title>
-      <link>/2022/11/12/estimation-for-external-validity/</link>
+      <link>//localhost:4321/2022/11/12/estimation-for-external-validity/</link>
       <pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate>
-      <guid>/2022/11/12/estimation-for-external-validity/</guid>
+      <guid>//localhost:4321/2022/11/12/estimation-for-external-validity/</guid>
       <description>Background This is the third in a series of blog posts for a causal inference project on external validity. To summarize the previous posts if you are just joining us, we are interested in assessing the validity of results obtained from an experiment or RCT in a population distinct from the one in which the experiment was run. If we conclude that the results are not in fact valid in this new population, we would like to somehow adjust the experimental results to the new population.</description>
     </item>
     <item>
       <title>Identifitication for External Validity</title>
-      <link>/2022/10/20/identifitication-for-external-validity/</link>
+      <link>//localhost:4321/2022/10/20/identifitication-for-external-validity/</link>
       <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>/2022/10/20/identifitication-for-external-validity/</guid>
+      <guid>//localhost:4321/2022/10/20/identifitication-for-external-validity/</guid>
       <description>In my previous blog post, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</description>
     </item>
   </channel>

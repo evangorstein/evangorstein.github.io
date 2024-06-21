@@ -2,66 +2,66 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>/</loc>
+    <loc>//localhost:4321/</loc>
     <lastmod>2023-10-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2023/10/28/lord-s-paradox/</loc>
+    <loc>//localhost:4321/2023/10/28/lord-s-paradox/</loc>
     <lastmod>2023-10-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/post/</loc>
+    <loc>//localhost:4321/post/</loc>
     <lastmod>2023-10-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2022/12/14/external-validity-conclusion/</loc>
+    <loc>//localhost:4321/2022/12/14/external-validity-conclusion/</loc>
     <lastmod>2022-12-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/categories/</loc>
+    <loc>//localhost:4321/categories/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/categories/causal-inference/</loc>
+    <loc>//localhost:4321/categories/causal-inference/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/categories/external-validity/</loc>
+    <loc>//localhost:4321/categories/external-validity/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2022/12/07/sensitivity-analysis-for-generalization/</loc>
+    <loc>//localhost:4321/2022/12/07/sensitivity-analysis-for-generalization/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/tags/causal-inference/</loc>
+    <loc>//localhost:4321/tags/causal-inference/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2022/11/12/estimation-for-external-validity/</loc>
+    <loc>//localhost:4321/2022/11/12/estimation-for-external-validity/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/tags/external-validity/</loc>
+    <loc>//localhost:4321/tags/external-validity/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/tags/</loc>
+    <loc>//localhost:4321/tags/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/tags/identification/</loc>
+    <loc>//localhost:4321/tags/identification/</loc>
     <lastmod>2022-10-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/categories/identification/</loc>
+    <loc>//localhost:4321/categories/identification/</loc>
     <lastmod>2022-10-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2022/10/20/identifitication-for-external-validity/</loc>
+    <loc>//localhost:4321/2022/10/20/identifitication-for-external-validity/</loc>
     <lastmod>2022-10-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2022/10/05/samplingbiasandcausalinference/</loc>
+    <loc>//localhost:4321/2022/10/05/samplingbiasandcausalinference/</loc>
     <lastmod>2022-10-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2021/08/12/pivoting-a-cdf/</loc>
+    <loc>//localhost:4321/2021/08/12/pivoting-a-cdf/</loc>
     <lastmod>2021-08-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/tags/ams/</loc>
+    <loc>//localhost:4321/tags/ams/</loc>
     <lastmod>2021-01-13T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2021/01/13/attributable-effects/</loc>
+    <loc>//localhost:4321/2021/01/13/attributable-effects/</loc>
     <lastmod>2021-01-13T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</loc>
+    <loc>//localhost:4321/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</loc>
     <lastmod>2021-01-08T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/about/</loc>
+    <loc>//localhost:4321/about/</loc>
   </url>
 </urlset>

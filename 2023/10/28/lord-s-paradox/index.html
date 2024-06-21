@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.126.1">
 
 
-<title>Lord&#39;s paradox is explained by regression to the mean, not causal inference - Evan Gorstein</title>
-<meta property="og:title" content="Lord&#39;s paradox is explained by regression to the mean, not causal inference - Evan Gorstein">
+<title>Lord&#39;s paradox is explained by regression to the mean, not causal modelling - Evan Gorstein</title>
+<meta property="og:title" content="Lord&#39;s paradox is explained by regression to the mean, not causal modelling - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -62,10 +62,10 @@
 
   <article class="article">
     
-    <span class="article-duration">20 min read</span>
+    <span class="article-duration">16 min read</span>
     
 
-    <h1 class="article-title">Lord&#39;s paradox is explained by regression to the mean, not causal inference</h1>
+    <h1 class="article-title">Lord&#39;s paradox is explained by regression to the mean, not causal modelling</h1>
 
     
     <span class="article-date">2023-10-28</span>
@@ -89,7 +89,7 @@
 <p>He finds the same to be true for the boys. Although the weight of individual boys and girls has usually changed during the course of the year, perhaps by a considerable amount, the group of girls considered as a whole has not changed in weight, nor has the group of boys. A sort of dynamic equilibrium has been maintained during the year.</p>
 <p>The whole situation is shown by the solid lines in the diagram (Figure 1). Here the two ellipses represent separate scatter-plots for the boys and the girls. The frequency distributions of initial weight are indicated at the top of the diagram and the identical distributions of final weight are indicated on the left side. People falling on the solid 45° line through the origin are people whose initial and final weight are identical. The fact that the center of each ellipse lies on this 45° line represents the fact that there is no mean gain for either sex.</p>
 </blockquote>
-<div class="figure"><span style="display:block;" id="fig:central"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:central"></span>
 <img src="images/lord_figure.png" alt="Weight at end of year (Y) versus weight at beginning of year (X)" width="50%" />
 <p class="caption">
 Figure 1: Weight at end of year (Y) versus weight at beginning of year (X)
@@ -116,298 +116,152 @@ Figure 1: Weight at end of year (Y) versus weight at beginning of year (X)
 <h3>Regression to the mean in the NBA</h3>
 <p>The Denver Nuggets had a great season last year, winning the number 1 seed in the Western Conference and eventually the NBA championship. They brought back most of their guys this year (and didn’t make any big acquisitions). Should they expect to have a better or worse record this year than they did last year?</p>
 <p>We can attempt to answer this question with data. In particular, we can look at all the previous times<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> the Nuggets had a good season (defined as an above .500 winning percentage) and see how their record compared the following season.</p>
-<pre class="r"><code>library(readxl)
-library(tidyverse)
+<pre class="r"><code>library(tidyverse)
 
 # read and wrangle data
-correct_year = str_c(2010:2000, &quot;-&quot;, str_pad(11:1, 2, pad = 0))
-names(correct_year) =  as.character(
-  c(40483, 40087, 39692, 39295, 38899, 38504, 38108, 37712, 37316, 36923, 36526)
-  )
-nba_records &lt;- read_excel(&quot;data/Historical_NBA_Performance.xlsx&quot;) %&gt;%
-  mutate(Year = coalesce(correct_year[Year], Year)) %&gt;% # Because Excel is stupid and interpreted things as dates 
-  rename(win_perc = `Winning Percentage`) %&gt;%
-  mutate(Year_n = as.integer(str_sub(Year, 1, 4)))
-
+records &lt;- read_csv(&quot;data/Team_Records.csv&quot;) %&gt;%
+  select(Season, Team, `W/L%`) %&gt;%
+  rename(win_perc = `W/L%`) %&gt;%
+  mutate(Team = str_remove(Team, &quot;\\*&quot;)) %&gt;%
+  mutate(Year_n = as.integer(str_sub(Season, 1, 4))) %&gt;%
+  #records in 2017-18 are for only part of the season so we drop this final season from the data
+  filter(Year_n &lt; 2017)
 
 # show denver data
-denver &lt;- nba_records %&gt;%
-  filter(Team == &quot;Nuggets&quot;) 
-
+denver &lt;- records %&gt;%
+  filter(Team == &quot;Denver Nuggets&quot;) %&gt;%
+  arrange(Year_n)
+slice_head(denver, n = 10)</code></pre>
+<pre><code>## # A tibble: 10 × 4
+##    Season  Team           win_perc Year_n
+##    &lt;chr&gt;   &lt;chr&gt;             &lt;dbl&gt;  &lt;int&gt;
+##  1 1974-75 Denver Nuggets    0.774   1974
+##  2 1975-76 Denver Nuggets    0.714   1975
+##  3 1976-77 Denver Nuggets    0.61    1976
+##  4 1977-78 Denver Nuggets    0.585   1977
+##  5 1978-79 Denver Nuggets    0.573   1978
+##  6 1979-80 Denver Nuggets    0.366   1979
+##  7 1980-81 Denver Nuggets    0.451   1980
+##  8 1981-82 Denver Nuggets    0.561   1981
+##  9 1982-83 Denver Nuggets    0.549   1982
+## 10 1983-84 Denver Nuggets    0.463   1983</code></pre>
+<pre class="r"><code># compare denver&#39;s record in winning seasons with their record the following season
 denver %&gt;%
-  arrange(Year_n) %&gt;%
-  slice_head(n = 10)</code></pre>
-<pre><code>## # A tibble: 10 × 5
-##    Year    Team    Record win_perc Year_n
-##    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;  &lt;int&gt;
-##  1 1976-77 Nuggets 50-32     0.61    1976
-##  2 1977-78 Nuggets 48-34     0.585   1977
-##  3 1978-79 Nuggets 47-35     0.573   1978
-##  4 1979-80 Nuggets 30-52     0.366   1979
-##  5 1980-81 Nuggets 37-45     0.451   1980
-##  6 1981-82 Nuggets 46-36     0.561   1981
-##  7 1982-83 Nuggets 45-37     0.549   1982
-##  8 1983-84 Nuggets 38-44     0.463   1983
-##  9 1984-85 Nuggets 52-30     0.634   1984
-## 10 1985-86 Nuggets 47-35     0.573   1985</code></pre>
-<pre class="r"><code># identify seasons in which denver had a winning record and compare their record in these seasons to the seasons that followed
-denver = denver %&gt;%
-  arrange(Year_n) 
-
-idx_good &lt;- which(denver$win_perc &gt; .5)
-idx_after &lt;- idx_good + 1
-
-sum(denver$win_perc[idx_good] &gt; denver$win_perc[idx_after])</code></pre>
-<pre><code>## [1] 16</code></pre>
-<p>In 16 out of the 21 seasons in which Denver had a winning record, their record the season after was worse. Their record the following season wasn’t necessarily bad. In fact, in 15 of the 21 cases, they achieved an above 500 record the following season. Make sense? We’re starting to see what we mean by regression towards the mean.</p>
-<p>We can get a better estimate of the probability of having a better record next year than this year given that this year you had a winning record if we incorporate the data from every NBA team, not just Denver.</p>
-<pre class="r"><code>nba_records %&gt;%
+  mutate(next_win_perc = lead(win_perc)) %&gt;%
+  drop_na(next_win_perc) %&gt;%
+  filter(win_perc &gt; 0.5) %&gt;%
+  summarise(
+    n_winning_record = n(),
+    as_good_next_season = sum(next_win_perc &gt;= win_perc),
+    winning_next_season = sum(next_win_perc &gt; 0.5)
+  )</code></pre>
+<pre><code>## # A tibble: 1 × 3
+##   n_winning_record as_good_next_season winning_next_season
+##              &lt;int&gt;               &lt;int&gt;               &lt;int&gt;
+## 1               23                   5                  17</code></pre>
+<p>In 18 out of the 23 seasons in which Denver had a winning record, their record the season after was worse. Their record the following season wasn’t necessarily bad. In fact, in 17 cases, they achieved a winning record the following season. It just wasn’t as good as the season before.</p>
+<p>We can get a better estimate of the probability of having a better record next year than this year given that this year you had a winning record if we incorporate the data from every NBA team, not just Denver.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<pre class="r"><code>records %&gt;%
   arrange(Year_n) %&gt;%
   group_by(Team) %&gt;%
-  mutate(pre_win_perc = lag(win_perc)) %&gt;%
+  mutate(next_win_perc = lead(win_perc)) %&gt;%
+  drop_na(next_win_perc) %&gt;%
   ungroup() %&gt;%
-  filter(pre_win_perc &gt; .5) %&gt;%
-  summarise(n_seasons = n(), estimated_prob = mean(win_perc &gt;= pre_win_perc))</code></pre>
-<pre><code>## # A tibble: 1 × 2
-##   n_seasons estimated_prob
-##       &lt;int&gt;          &lt;dbl&gt;
-## 1       707          0.376</code></pre>
-<p>Our estimate, based on <span class="math inline">\(n=707\)</span> seasons worth of data, says that there is a less than <span class="math inline">\(40\%\)</span> chance of having as good a record next season as you did this season if you were above <span class="math inline">\(500\)</span> this season.</p>
-<p>A final thing we can do is to look at a particular two season slice and see which teams are regressing towards the mean of 500 and which are diverging away from the mean. For the 2014-15 and 2015-16 season, shown below, we can see that there are more teams regressing towards the mean than diverging away.</p>
-<pre class="r"><code>library(ggrepel)
-nba_records %&gt;%
-  filter(2015 &gt;= Year_n &amp; Year_n &gt;= 2014) %&gt;%
-  arrange(Year_n) %&gt;%
-  group_by(Team) %&gt;%
-  mutate(pre_win_perc = lag(win_perc)) %&gt;%
-  filter(Year_n == 2015) %&gt;%
-  mutate(category = case_when(
-    (pre_win_perc &lt; win_perc &amp; pre_win_perc &lt; .5) | (pre_win_perc &gt; win_perc &amp; pre_win_perc &gt; .5) ~ &quot;cat1&quot;,
-    (pre_win_perc &gt; win_perc &amp; pre_win_perc &lt; .5) | (pre_win_perc &lt; win_perc &amp; pre_win_perc &gt; .5) ~ &quot;cat2&quot;
-  )) %&gt;%
-  ggplot(aes(pre_win_perc, win_perc, color = category)) +
-  geom_point() +
-  geom_text_repel(aes(label = Team), max.overlaps = 20, size = 3, key_glyph = &quot;blank&quot;) +
-  geom_abline(aes(col = &quot;line&quot;, slope=1, intercept = 0)) +
-  scale_color_manual(
-    breaks = c(&quot;cat1&quot;, &quot;cat2&quot;, &quot;line&quot;), 
-    values = c(&quot;red&quot;, &quot;green&quot;, &quot;black&quot;),
-    labels = c(&quot;Regressing towards mean&quot;, &quot;Diverging away from mean&quot;, &quot;2015-16 wp = 2014-15 wp&quot;)) +
-  labs(x = &quot;2014-15 win percentage&quot;, y = &quot;2015-16 win percentage&quot;) +
-  theme_minimal() +
-  theme(aspect.ratio=1, legend.position = c(.2, .85), legend.title = element_blank()) +
-  guides(color = guide_legend(override.aes = list(linetype = c(0, 0, 1), cex = c(1.5,1.5,0) ) ) )</code></pre>
-<pre><code>## Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2
-## 3.5.0.
-## ℹ Please use the `legend.position.inside` argument of `theme()` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-4-1.png" width="50%" /></p>
-<p>This is generally the picture we get if we look at any two consecutive seasons.</p>
+  filter(win_perc &gt; 0.5) %&gt;%
+  summarise(
+    n_winning_record = n(),
+    as_good_next_season = sum(next_win_perc &gt;= win_perc),
+    winning_next_season = sum(next_win_perc &gt; 0.5)
+  )</code></pre>
+<pre><code>## # A tibble: 1 × 3
+##   n_winning_record as_good_next_season winning_next_season
+##              &lt;int&gt;               &lt;int&gt;               &lt;int&gt;
+## 1              725                 269                 539</code></pre>
+<p>In only <span class="math inline">\(269/725 &lt; 40\%\)</span> of the times that a team had an above <span class="math inline">\(500\)</span> this season were they able to match their record the following season.</p>
+<p>We can also look at a particular pair of consecutive seasons and see which teams are regressing towards the mean of 500 and which are diverging away it. For the latest pair of seasons in our dataset, 2015-16 to 2016-17, there are more teams regressing towards the mean than diverging away.</p>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>What’s important to note about regression to the mean is that it is a statistical phenomenon, not a physical force<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. In particular, while all our examples so far have demonstrated regression to the mean over time, regression to the mean works just as well moving backwards in time. Let’s show the same plot, but color the teams based on whether they regress to the mean backwards in time:</p>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>In this particular case, there was actually one more team that was diverging away from a 50% record (backwards in time) than regressing towards it. But this is not what you should expect (and you can check other pairs of years if you don’t believe me). In general, whether you are moving backwards or forwards in time makes no difference–either way, the conditional expectation gets pulled toward the mean of 500.</p>
 </div>
 <div id="regression-to-the-mean-is-baked-into-the-bivariate-normal" class="section level3">
 <h3>Regression to the mean is baked into the bivariate normal</h3>
-<p>If random variables <span class="math inline">\((X,Y)\)</span> are drawn from a bivariate normal distribution <span class="math display">\[
+<p>As I mentioned, regression to the mean is better thought of as a statistical artifact than as a physical force. Where does this statistical artifact come from? If random variables <span class="math inline">\((X,Y)\)</span> are drawn from a bivariate normal distribution <span class="math display">\[
 (X,Y) \sim N((\mu_X, \mu_Y),
 \begin{bmatrix}
 \sigma^2_X &amp; \sigma_{XY} \\
 \sigma_{XY} &amp; \sigma^2_Y
 \end{bmatrix}),
-\]</span> then the conditional expectation of one given the other<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> is</p>
+\]</span> then the conditional expectation of one given the other<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> is</p>
 <span class="math display" id="eq:condexp">\[\begin{align}
 E[Y \mid X=x] &amp;= \mu_Y + \frac{\sigma_{XY}}{\sigma_X^2}(x-\mu_X) \\
 &amp;= \mu_Y + \rho \frac{\sigma_Y}{\sigma_X}(x-\mu_X)  \tag{1}
 \end{align}\]</span>
-<p>Suppose now that <span class="math inline">\(X \overset{D}{=} Y\)</span> so in particular <span class="math inline">\(\mu_X = \mu_Y\)</span> and <span class="math inline">\(\sigma_X = \sigma_Y,\)</span> and that <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are not anti-correlated, i.e. <span class="math inline">\(\rho\geq0\)</span>. Substituting into <a href="#eq:condexp">(1)</a>, we see that conditional expectations are weighted averages:</p>
+<p>Suppose now that X and Y have the same marginal distribution, so <span class="math inline">\(\mu_X = \mu_Y\)</span> and <span class="math inline">\(\sigma_X = \sigma_Y.\)</span> If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> have non-negative correlation, i.e. <span class="math inline">\(\rho\geq0\)</span>, then substituting into <a href="#eq:condexp">(1)</a>, we see that the conditional expectation becomes a weighted average:</p>
 <span class="math display" id="eq:weight">\[\begin{equation}
 E[Y \mid X=x] = \rho x + (1-\rho)\mu_Y \tag{2}
 \end{equation}\]</span>
-<p>If <span class="math inline">\(x &gt; \mu_X = \mu_Y\)</span>, then <span class="math inline">\(E[Y \mid X=x] \leq x\)</span>, as it is pulled down towards the mean. On the other hand, if <span class="math inline">\(x&lt; \mu_X\)</span>, then <span class="math inline">\(E[Y \mid X=x] \geq x\)</span>, as it is pulled up towards the mean. This is the phenomenon of regression to the mean. The value of <span class="math inline">\(\rho\)</span> determines how much regressing occurs. For large values of <span class="math inline">\(\rho\)</span> close to 1, there is not much regressing (for <span class="math inline">\(\rho=1,\)</span> no regressing at all). For low values of <span class="math inline">\(\rho\)</span> close to 0, there is much regressing. I’m curious whether there are any other bivariate distributions with regression to the mean.</p>
+<p>If <span class="math inline">\(x &gt; \mu_X = \mu_Y\)</span>, then <span class="math inline">\(E[Y \mid X=x] \leq x\)</span>, as it is pulled down towards the mean. On the other hand, if <span class="math inline">\(x&lt; \mu_X\)</span>, then <span class="math inline">\(E[Y \mid X=x] \geq x\)</span>, as it is pulled up towards the mean. We call this regression to the mean. The value of <span class="math inline">\(\rho\)</span> determines how much regressing occurs. For large values of <span class="math inline">\(\rho\)</span> close to 1, there is not much regressing (for <span class="math inline">\(\rho=1,\)</span> no regressing at all). For low values of <span class="math inline">\(\rho\)</span> close to 0, there is much regressing. I’m curious whether there are any other bivariate distributions with regression to the mean.</p>
 </div>
-<div id="simulating-lords-data-with-the-bivariate-normal" class="section level3">
-<h3>Simulating Lord’s data with the bivariate normal</h3>
+<div id="regression-to-the-mean-in-lords-data" class="section level3">
+<h3>Regression to the mean in Lord’s data</h3>
 <p>We can simulate students’ pre- and post-year weights as a bivariate normal in R.</p>
 <pre class="r"><code>library(MASS)
-Sigma = matrix(c(1,.6,.6,1), 2, 2)
-set.seed(100)
-xy_girls = mvrnorm(n=1000, c(4,4), Sigma)
-xy_boys = mvrnorm(n=1000, c(6,6), Sigma)
-par(pty=&quot;s&quot;)
-plot(xy_girls, xlim = c(0, 8), ylim = c(0, 8), col = &quot;blue&quot;, 
-     xlab = &quot;Pre-year weight&quot;, ylab = c(&quot;Post-year weight&quot;))
-points(xy_boys, col = &quot;green&quot;)
-lm_girls = lm(xy_girls[,2] ~ xy_girls[,1])
-lm_boys = lm(xy_boys[,2] ~ xy_boys[,1])
-abline(lm_girls, col = &quot;blue&quot;, lwd = 2)
-abline(lm_boys, col = &quot;green&quot;, lwd = 2)
-abline(0,1, col = &quot;yellow&quot;, lwd = 2)
-legend(.5, 7.5, legend = c(&quot;girls&quot;, &quot;boys&quot;, &quot;x=y&quot;), 
-       col = c(&quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;), pch = 1)</code></pre>
-<div class="figure"><span style="display:block;" id="fig:lord-data"></span>
-<img src="/2023/10/28/lord-s-paradox/index_files/figure-html/lord-data-1.png" alt="Simulating Lord's data as two bivariate normal distributions" width="50%" />
-<p class="caption">
-Figure 2: Simulating Lord’s data as two bivariate normal distributions
-</p>
-</div>
-<p>There is on average no increase or decrease in weight during the year among the boys, nor is there among the girls. And yet, for each fixed weight, the average boy who starts at that weight at the beginning of the year weighs at the end of the year 0.8 units more than the average girl starting at that weight.</p>
-<p>For example, a boy and a girl who both weigh 5 units at the beginning of the school year will be expected to weigh 5.4 and 4.6 units, respectively, at the end of the school year. If you think about it, this is because both the boy and the girl are regressing towards their respective means. The boy starts the year below the average weight for boys and so regression to the mean says that we should expect him to gain weight. On the other hand, the girl who starts the year at the same weight as the boy, has a weight that is above the average for girls and so for her, regressing to the mean means losing weight.</p>
-<p>Using the formula for the conditional expectation of post-year weight given pre-year weight <a href="#eq:weight">(2)</a>, it’s not too difficult to see that no matter what the starting weight is, if a boy and a girl both start at that weight, the boy’s expected final weight will be larger than the girl’s expected final weight by exactly <span class="math inline">\((1-\rho(X,Y))(\mu_{boys} - \mu_{girls}) = 0.4*2 = 0.8\)</span>.</p>
+n = 300 # number of students of each sex
+mu_girls = c(75,75) # Girls average weight (kg) 
+mu_boys = c(85,85) # Boys average weight (kg)
+sd = 5 # standard deviation
+cor = matrix(c(1,.7,.7,1), 2, 2) #Correlation matrix
+Sigma = sd^2*cor
+set.seed(770)
+data_girls = mvrnorm(n=n, mu_girls, Sigma)
+data_boys = mvrnorm(n=n, mu_boys, Sigma)
+data = rbind(data_girls, data_boys)
+colnames(data) = c(&quot;WI&quot;, &quot;WF&quot;)
+lord = as.data.frame(data) %&gt;%
+  mutate(S = if_else(row_number() &lt;= n, &quot;girl&quot;, &quot;boy&quot;))</code></pre>
+<p>Here’s our data, along with the parallel regression lines for each gender, similar to the figure that appears in Lord’s paper:</p>
+<pre class="r"><code>#Now let’s run the regression that Statistician 2 did and extract the coefficients
+ancov &lt;- lm(WF ~ WI + S, data = lord)
+coef = coef(ancov)
+coef_boys = coef[c(1,2)]
+coef_girls = c(coef[1] + coef[3], coef[2])
+#And now let’s plot:
+par(pty = &quot;s&quot;)
+plot(lord$WI, 
+     lord$WF,  
+     col = if_else(lord$S == &quot;girl&quot;, &quot;orange&quot;, &quot;blue&quot;), 
+     xlab = &quot;Pre-semester weight&quot;,  
+     ylab = &quot;Post-semester weight&quot;, 
+     asp = 1)
+abline(coef = coef_girls, col = &quot;orange&quot;, lwd = 2, lty = &quot;dashed&quot;)
+abline(coef = coef_boys, col = &quot;blue&quot;, lwd = 2, lty = &quot;dashed&quot;)
+abline(0,1, col = &quot;black&quot;, lwd = 2)
+legend(&quot;topleft&quot;, legend = c(&quot;girls&quot;, &quot;boys&quot;), 
+       col = c(&quot;orange&quot;, &quot;blue&quot;), pch = 1)</code></pre>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>There is on average no increase or decrease in weight during the year among the boys, nor is there among the girls. And yet, for each fixed weight, the average boy who starts at that weight at the beginning of the year weighs at the end of the year <span class="math inline">\((1-\rho(X,Y))(\mu_{boys} - \mu_{girls}) = (1-0.7)\times10 = 3\)</span> kg more than the average girl who starts at that weight. One way of understanding this is to say that both the boy and the girl are expected to regress to their own gender’s mean weight. Because the mean for girls is lower than the mean for boys, this means that if the boy and girl start at the same weight in between, regression means different things for the two of them. For the girl, regression means losing weight while for the boy it means, gaining.</p>
+<p>To recap, what we’ve shown is that whenever you have bivariate normal data and the components have identical marginal distributions, you get regression to the mean. When you have two different bivariate distributions, and within each group, there’s regression to the mean, you get Lord’s paradox.</p>
 </div>
 </div>
 <div id="causal-inference" class="section level2">
 <h2>Causal inference</h2>
-<p>So far, we’ve seen that when you have bivariate normal data and the components have identical marginal distributions, you get regression to the mean. When you have two different bivariate distributions, and within each group, there’s regression to the mean, you’re at risk of encountering Lord’s paradox.</p>
-<p>Are we done? Have we solved the paradox and understood it completely? From the perspective of causal inference, our understanding so far is not enough. This perspective is not satisfied with mere joint distributions, but rather seeks to identify and estimate the causal relationships between the variables in the problem.</p>
-<p>In Figure <a href="#fig:lord-data">2</a>, there are three explicit variables. Let’s establish some new notation for these variables, which we’ll use for the rest of the post: <span class="math inline">\(W_I\)</span> represents the weight of a student before the school year, <span class="math inline">\(W_F\)</span>, the weight of the student after the school year, and <span class="math inline">\(S\)</span>, the student’s sex. The data are simulated such that <span class="math display">\[
-(W_I,W_F) \mid S \sim N((\mu_S, \mu_S),
-\begin{bmatrix}
-1 &amp; 0.6 \\
-0.6 &amp; 1
-\end{bmatrix})
-\]</span>where <span class="math inline">\(\mu_1 = 6\)</span> (<span class="math inline">\(\mu_0 = 4\)</span>) are the mean weight of male (female) students before and after the school year. While this model more or less specifies the joint distribution of the variables <span class="math inline">\(W_I\)</span>, <span class="math inline">\(W_F\)</span>, and <span class="math inline">\(S\)</span>, it doesn’t specify the causal relationships between them. We’ll later discuss whether it even makes sense to talk about causality in Lord’s paradox. However, if we do insist on bring causality into the picture, the causal relationships between the three variables are not up for too much debate: because there is a temporal arrangement in the determination of the three variables, namely <span class="math inline">\(S\)</span> precedes <span class="math inline">\(W_I\)</span>, which in turn precedes <span class="math inline">\(W_F\)</span>, we must have something like</p>
-<pre class="r"><code>library(dagitty)
-library(ggdag)
-dag1 &lt;- dagitty(&quot;dag{
-               W_I -&gt; W_F ;
-               S -&gt; W_I ;
-               S -&gt; W_F
-               S [exposure]
-               }&quot;) 
-dag1_t = dag1 %&gt;%
-  tidy_dagitty(layout=&quot;circle&quot;, seed = 100) 
-
-node_labels = c(&quot;S&quot;, expression(W[F]), expression(W[I]))
-
-dag1_t %&gt;%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_dag_point() +
-  geom_dag_edges() +
-  geom_dag_text(label = node_labels) +
-  theme_dag()</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-5-1.png" width="50%" /></p>
-<p>Of course, in Lord’s paradox, there’s another variable in the mix, which is the weight gain during the year, aka the change score. This variable can be expressed as the difference between <span class="math inline">\(W_F\)</span> and <span class="math inline">\(W_I\)</span>.</p>
-<p>If we call this variable <span class="math inline">\(Y\)</span> and add it to a DAG, then we might get something like this:</p>
-<pre class="r"><code>dag2 &lt;- dagitty(&quot;dag{
-               W_I -&gt; W_F ;
-               S -&gt; W_I ;
-               S -&gt; W_F ;
-               W_I -&gt; Y ;
-               W_F -&gt; Y
-               S [exposure]
-               }&quot;)
-
-dag2_t = dag2 %&gt;%
-  tidy_dagitty(layout=&quot;auto&quot;, seed = 100) %&gt;%
-  mutate(edge_labels = c (&quot;&quot;, &quot;&quot;, &quot;+1&quot;, &quot;&quot;, &quot;-1&quot;, NA))
-
-node_labels = c(&quot;S&quot;, expression(W[F]), expression(W[I]), &quot;Y&quot;)
-
-
-dag2_t %&gt;%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_dag_point() +
-  geom_dag_edges(aes(label = edge_labels), vjust = -1) +
-  geom_dag_text(label = node_labels) +
-  theme_dag()</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-6-1.png" width="50%" /></p>
-<p>The +1 and -1 on the edges into <span class="math inline">\(Y\)</span> indicate that <span class="math inline">\(Y = W_F-W_I\)</span>.</p>
-<p>So far, we haven’t made any parametric assumptions–just causal ones. If we further assume that each node is a linear combination of its parents plus independent noise, then we can put path coefficients on all the edges of our DAG:</p>
-<pre class="r"><code>dag2_t &lt;- dag2_t %&gt;%
-  mutate(edge_labels = c(&quot;b&quot;, &quot;a&quot;, &quot;+1&quot;, &quot;c&quot;, &quot;-1&quot;, NA)) 
-
-dag2_t %&gt;%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_dag_point() +
-  geom_dag_edges(aes(label = edge_labels), vjust=-1) +
-  geom_dag_text(label = node_labels) +
-  theme_dag()</code></pre>
-<div class="figure"><span style="display:block;" id="fig:pearl2b"></span>
-<img src="/2023/10/28/lord-s-paradox/index_files/figure-html/pearl2b-1.png" alt="The DAG that appears in Judea Pearl's article about Lord's paradox (his Figure 2b)" width="50%" />
-<p class="caption">
-Figure 3: The DAG that appears in Judea Pearl’s article about Lord’s paradox (his Figure 2b)
-</p>
+<p>Are we done? Have we solved the paradox and understood it completely? From a causal perspective, our understanding so far is insufficient. This perspective is not satisfied with mere joint distributions, but rather seeks to identify and estimate the causal relationships between the variables in the problem.</p>
+<p>In a 2016 paper, Judea Pearl proposes a causal model for Lord’s hypothetical study <span class="citation">(<a href="#ref-pearl2016">Pearl 2016</a>)</span>. In particular, he suggests that the DAG for Lord’s study must be given by:</p>
+<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>Here, S stands for sex, <span class="math inline">\(W_I\)</span> for initial weight of a student, <span class="math inline">\(W_F\)</span> for final weight, and <span class="math inline">\(Y\)</span> for the difference between the two weights, <span class="math inline">\(Y = W_F - W_I\)</span>.</p>
+<p>Given this DAG, we can attribute causal estimands to each of the statisticians in the paradox. The first statistician, who looks at the average change score within each gender and compares them, can be seen as estimating the total effect of sex on the change score. Meanwhile, by conditioning on initial weight, the second statistician estimates the direct effect of sex on the final weight, i.e. the effect of sex on final weight that is not mediated by initial weight, at least according to this DAG.</p>
 </div>
-<p>Given this DAG, we can easily see that statistician 1 is estimating b+a*c-a = b + a(c-1), whereas statistician 2 is simply estimating b. From the fact that statistician 1 concludes that there’s no difference in the diet’s effect between the genders, we conclude that <span class="math inline">\(b = a(1-c)\)</span>. Let’s see if we can fit the structural model to the data we previously generated</p>
-<pre class="r"><code>library(lavaan)
-xy &lt;- rbind(xy_boys, xy_girls)
-colnames(xy) = c(&quot;WI&quot;, &quot;WF&quot;)
-df_xy &lt;- as_tibble(xy) %&gt;%
-  mutate(S = if_else(row_number() &gt; 1000, 0, 1))
-
-pearl &lt;-   &#39;
-    WI ~ 1 + S
-    WF ~ 1 + S + WI
-&#39;
-set.seed(100)
-fit1b &lt;- sem(pearl, data=df_xy)
-summary(fit1b)</code></pre>
-<pre><code>## lavaan 0.6.17 ended normally after 1 iteration
-## 
-##   Estimator                                         ML
-##   Optimization method                           NLMINB
-##   Number of model parameters                         7
-## 
-##   Number of observations                          2000
-## 
-## Model Test User Model:
-##                                                       
-##   Test statistic                                 0.000
-##   Degrees of freedom                                 0
-## 
-## Parameter Estimates:
-## 
-##   Standard errors                             Standard
-##   Information                                 Expected
-##   Information saturated (h1) model          Structured
-## 
-## Regressions:
-##                    Estimate  Std.Err  z-value  P(&gt;|z|)
-##   WI ~                                                
-##     S                 1.972    0.046   43.007    0.000
-##   WF ~                                                
-##     S                 0.701    0.049   14.342    0.000
-##     WI                0.644    0.017   37.505    0.000
-## 
-## Intercepts:
-##                    Estimate  Std.Err  z-value  P(&gt;|z|)
-##    .WI                4.013    0.032  123.782    0.000
-##    .WF                1.431    0.073   19.526    0.000
-## 
-## Variances:
-##                    Estimate  Std.Err  z-value  P(&gt;|z|)
-##    .WI                1.051    0.033   31.623    0.000
-##    .WF                0.620    0.020   31.623    0.000</code></pre>
-<p>Our parameter estimates are <span class="math inline">\(\hat{a}=1.972\)</span>, <span class="math inline">\(\hat{b}=0.701\)</span>, and <span class="math inline">\(\hat{c} = 0.644\)</span>. According to the fitted model, the girls’ weights before and after the school year are given by</p>
-<p><span class="math display">\[\begin{align}
-W_I &amp;= 4.01 + \epsilon_I \\
-W_F &amp;= 1.43 + 0.64W_I + \epsilon_F,
-\end{align}\]</span> where <span class="math inline">\(\epsilon_I\)</span> and <span class="math inline">\(\epsilon_F\)</span> are independently distributed</p>
-<span class="math display">\[\begin{align}
-\epsilon_I &amp;\sim N(0, 1.05) \\
-\epsilon_F &amp;\sim N(0, 0.62)
-\end{align}\]</span>
-<p>4.01 and 1.05 are close to <span class="math inline">\(4\)</span> and <span class="math inline">\(1\)</span>, so this model gets the marginal distribution of <span class="math inline">\(W_I\)</span> correct. Less trivially, we have</p>
-<p><span class="math display">\[\begin{align}
-W_F &amp;= 1.43 + 0.64W_I + \epsilon_F \\
-&amp;= 4.00 + 0.64\epsilon_I + \epsilon_F \\
-&amp;\sim N(4.00, 1.05),
-\end{align}\]</span> so the mean and variance of <span class="math inline">\(W_F\)</span> are also close to 4 and 1. Also, just as Pearl <span class="citation">(<a href="#ref-pearl2016">Pearl 2016</a>)</span> suspected, we have <span class="math inline">\(\hat{b}=0.701 \approx 1.97*(1-0.64) = \hat{a}(1-\hat{c}).\)</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> This structural causal model fits the data well.</p>
-</div>
-<div id="conclusion-causal-inference-is-dumb-in-this-setting" class="section level2">
-<h2>Conclusion: Causal inference is dumb in this setting</h2>
-<p>Let me provide Lord’s explanation of his paradox, the paragraph that immediate follows the excerpt I quoted at the top from the original article.</p>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Unfortunately, I don’t think this causal analysis by Pearl is particularly elucidating, nor does it resolve the question of which statistician was correct. I think the fundamental confusion in Pearl’s approach is to think of sex and weight as hypothetically manipulable variables. We don’t really know what it means to intervene on someone’s weight or sex–the counterfactual and its downstream effects would be extremely complicated, and it’s somewhat absurd to try to model and estimate them</p>
+<p>In fact, I think it is this attempt to do causal inference about non-manipulable variable that confuses Lord himself. In the paragraph that immediate follows the excerpt I quoted at the top of the blog post, Lord offers his own take on the matter:</p>
 <blockquote>
 <p>In the writer’s opinion, the explanation is that with the data usually available for such studies, there simply is no logical or statistical procedure that can be counted on to make proper allowances for uncontrolled preexisting differences between groups. The researcher wants to know how the groups would have compared if there had been no preexisting uncontrolled differences. The usual research study of this type is attempting to answer a question that simply cannot be answered in any rigorous way on the basis of available data.</p>
 </blockquote>
-<p>In this writer’s opinion, the stated goal of these researchers makes very little sense. In particular, let us be clear that the clause “[had there] been no preexisting uncontrolled differences” refers to a counterfactual in which boys and girls weigh the same. Whether this counterfactual even makes sense, I’ll leave up to debate. What is certainly the case is that this counterfactual cannot possibly be relevant to any dietician or university administrator seeking to make a decision about the new dining hall.</p>
-<p>Thus, I think the main reason that Lord’s paradox is a paradox is that we’re being asked to view sex as a treatment or exposure, when that doesn’t make a whole lot of sense. I think much of the confusion is downstream of this basic confusion. A corollary of the fact that it doesn’t make a whole lot of sense to view sex as treatment is that it doesn’t make a whole lot of sense to talk about the effect of sex. This means that, in particular, the stated goal of targeting the effect of sex on the students’ weight under the new dining hall diet is a confused one at best.</p>
-<p>Thus, I’m ultimately unsatisfied with the causal perspective that we walked through above. It’s great that we’ve managed to find a set of causal parameters such that each statistician can be said to be estimating one or another of them. But what does <span class="math inline">\(a\)</span> or <span class="math inline">\(b\)</span> or <span class="math inline">\(c\)</span> even mean?? For example, how am I supposed to understand the direct effect of sex on follow up weight, aka <span class="math inline">\(b\)</span>. Does it correspond to a difference in the eating patterns of males and females during their year in college? Or to something else?</p>
-<p>A recent paper titled “Lord’s paradox explained” <span class="citation">(<a href="#ref-tennant2022">Tennant et al. 2022</a>)</span> doubles down on a causal explanation of Lord’s paradox and attempts to explain the meaning of the parameters <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, and <span class="math inline">\(c\)</span>, using terms like “endogenous change” and “exogenous change.” I have to be honest, I didn’t understand what they were getting at at all.</p>
-<p>On the other hand, I do think regression to the mean shows us what’s really going on.</p>
-<p>So why did I go through the exercise of adopting a causal perspective, displaying the DAG and fitting the SEM? Well, two reasons.</p>
-<p>1. I wanted to understand what Pearl and others were talking about.</p>
-<p>2. In an observational study in which you have a genuine exposure variable, as well as a genuine baseline measurement, then you are very much encouraged to approach the problem causally and draw a DAG. In this DAG, you should safely assume that the arrow of causality between baseline measurement and exposure goes from the former to the latter and not vice versa: you wouldn’t be calling it a baseline measurement otherwise. In such a case, it makes sense to include the baseline measurement in your regression, because it’s a potential confounder. That is, ANCOVA (rather than change-score analysis) is the way to go in the setting where you can rigorously define a causal effect that you are trying to estimate (as opposed to trying to work your way through Lord’s paradox.)</p>
+<p>Lord here characterizes the research question as “how the groups would have compared [had there] been no preexisting uncontrolled differences”. To be clear, Lord refers here to a counterfactual in which boys and girls enter college with equal average weights. What would this world look like? More to the point, why would it be of any relevance to a university administrator trying to evaluate the new dining hall?</p>
+<p>After all this, it seems quite clear to me that the first statistician, the one who reports that there is no difference in how the members of the two sexes respond to the new dining hall, gets things right. I must admit, I don’t have an elaborate justification of their approach, or a causal framework that shows that their estimator is targeting such-and-such causal estimand.</p>
+<p>What I do have, however, is an explanation for why we would expect to see the data we did even without one sex reacting differently to the new dining hall. We’ve seen already that the fact that a male and female student with the same weight at the beginning of the year tend to finish the year at different weights is a mathematical consequence of a property of the bivariate normal distribution, known as regression to the mean. We therefore don’t need to posit a differential effect of dining hall based on sex to explain Lord’s data. And according to the principal of parsimony, we should not posit such an effect unless we need to.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>
@@ -418,9 +272,6 @@ Lord, Frederic M. 1967. <span>“A Paradox in the Interpretation of Group Compar
 <div id="ref-pearl2016" class="csl-entry">
 Pearl, Judea. 2016. <span>“Lord<span>’</span>s Paradox Revisited <span></span> (Oh Lord! Kumbaya!).”</span> <em>Journal of Causal Inference</em> 4 (2). <a href="https://doi.org/10.1515/jci-2016-0021">https://doi.org/10.1515/jci-2016-0021</a>.
 </div>
-<div id="ref-tennant2022" class="csl-entry">
-Tennant, Peter WG, Georgia D Tomova, Kellyn F Arnold, and Mark S Gilthorpe. 2022. <span>“OP09<span></span>lord<span>’</span>s <span>‘</span>Paradox<span>’</span> Explained: The 50-Year Warning on the Analyses of <span>‘</span>Change Scores<span>’</span>*.”</span> <em>SSM Annual Scientific Meeting</em>, August. <a href="https://doi.org/10.1136/jech-2022-ssmabstracts.9">https://doi.org/10.1136/jech-2022-ssmabstracts.9</a>.
-</div>
 </div>
 </div>
 <div class="footnotes footnotes-end-of-document">
@@ -428,9 +279,11 @@ Tennant, Peter WG, Georgia D Tomova, Kellyn F Arnold, and Mark S Gilthorpe. 2022
 <ol>
 <li id="fn1"><p>Maybe more precisely, the line Y=X is the major axis of the the ellipses that represent the contour lines of the boys’ and girls’ bivariate distributions. But I think it’s better to say, “it’s the line straight through the data.”<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>And indeed, is the very reason we call them “regression lines.” The origins of the term go back to Francis Galton, who was studying the heights of pairs of fathers and sons, and noticed regression to the mean, when he fit a linear model with OLS. The name stuck, even though most of the time when you fit a linear regression model, X and Y variables aren’t measurements of the same variable, so regression to the mean isn’t happening (at least literally).<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>Our data from <a href="%5Bhttps://data.world/gmoney/nba-team-records-by-year">data.world</a> actually goes up through the 2016-2017 season<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
-<li id="fn4"><p>A derivation can be found here <a href="https://math.stackexchange.com/questions/1531865/conditional-expectation-of-a-bivariate-normal-distribution" class="uri">https://math.stackexchange.com/questions/1531865/conditional-expectation-of-a-bivariate-normal-distribution</a><a href="#fnref4" class="footnote-back">↩︎</a></p></li>
-<li id="fn5"><p>As we increase the sample size, the parameter estimates for <span class="math inline">\((a,b,c)\)</span> would converge to <span class="math inline">\((2, 0.8, 0.6)\)</span>.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Our data from <a href="https://www.kaggle.com/datasets/boonpalipatana/nba-season-records-from-every-year/data">Kaggle</a> actually only goes up through the 2017-2018 season<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>To avoid some hassle, the following fails to consider cases when a team changed its name between seasons.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>And for this reason, the name “regression to the mean,” which makes it sound like a physical force, is somewhat misleading.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>A derivation can be found here <a href="https://math.stackexchange.com/questions/1531865/conditional-expectation-of-a-bivariate-normal-distribution" class="uri">https://math.stackexchange.com/questions/1531865/conditional-expectation-of-a-bivariate-normal-distribution</a><a href="#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>The point being made in this last paragraph is the same as in Gellman, Hill, and Vehtari’s discussion of regression to the mean at the end of Chapter 6 of their textbook <em>Regression and Other Stories–</em>the idea, essentially, is to think carefully about the default data generating model and its various implications before concluding that it’s inadequate based on the data you’ve observed.<a href="#fnref7" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
