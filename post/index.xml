@@ -9,11 +9,11 @@
     <lastBuildDate>Thu, 04 Jul 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:4321/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Regression</title>
+      <title>Linear Regression</title>
       <link>//localhost:4321/2024/07/04/linear-regression/</link>
       <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
       <guid>//localhost:4321/2024/07/04/linear-regression/</guid>
-      <description>Today I’m going back to the basics, because I want to discuss something that has confused me for a while about the “error term” in regression. This will probably not be news for most of you, but maybe it will be helpful to someone out there who found this confusing as well.&#xA;Let’s consider the simple case with just a single predictor and suppose we have observed pairs \(\{(x_i, y_i), i=1,\ldots,n\}\).</description>
+      <description>I’m going back to the basics to discuss something that has confused me for a while about the “error term” in linear regression in the hopes that it might be helpful to someone out there who finds this confusing as well.&#xA;Let’s consider the simple case with just a single predictor and suppose we have observed pairs \(\{(x_i, y_i), i=1,\ldots,n\}\). When we do linear regression, we view each data pair \((x_i, y_i)\) as the partially observed realization of a triplet of random variables \((X_i, Y_i, \varepsilon_i)\) satisfying the equation</description>
     </item>
     <item>
       <title>Lord&#39;s paradox is explained by regression to the mean, not causal modelling</title>
