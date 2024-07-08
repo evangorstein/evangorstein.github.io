@@ -70,24 +70,22 @@
       
 
 
-<p><font size="1.5"></p>
+<p><font size="2"></p>
 <p>I’m going back to the basics to discuss something that has confused me for a while about the “error term” in linear regression in the hopes that it might be helpful to someone out there who finds this confusing as well.</p>
 <p>Let’s consider the simple case with just a single predictor and suppose we have observed pairs <span class="math inline">\(\{(x_i, y_i), i=1,\ldots,n\}\)</span>. When we do linear regression, we view each data pair <span class="math inline">\((x_i, y_i)\)</span> as the partially observed realization of a triplet of random variables <span class="math inline">\((X_i, Y_i, \varepsilon_i)\)</span> satisfying the equation</p>
 <span class="math display" id="eq:reg-eq">\[\begin{equation}
   Y_i = \beta_0 + \beta_1X_i + \varepsilon_i
-  
   \tag{1}
 \end{equation}\]</span>
 <p>for some fixed but unknown constants <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p>
 <p>Although this may seem like a model, these equations on their own do not impose any restrictions on our data. After all, algebra allows us to rearrange the terms appearing in an equation, so that <a href="#eq:reg-eq">(1)</a> is equivalent to</p>
 <span class="math display" id="eq:reg-eq2">\[\begin{equation}
   \varepsilon_i = Y_i - (\beta_0 + \beta_1X_i).
-  
   \tag{2}
 \end{equation}\]</span>
 <p>Now what’s stopping us from choosing any arbitrary <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> and taking <a href="#eq:reg-eq2">(2)</a> to be a definition of <span class="math inline">\(\varepsilon_i\)</span>. From this, we see that Equation <a href="#eq:reg-eq">(1)</a> is trivially satisfied unless we say something additional about <span class="math inline">\(\varepsilon_i\)</span>.</p>
-<div id="uncorrelated-with-predictor" class="section level1">
-<h1>Uncorrelated with predictor</h1>
+<div id="uncorrelated-with-predictor" class="section level2">
+<h2>Uncorrelated with predictor</h2>
 <p>One thing we could say about <span class="math inline">\(\varepsilon_i\)</span> to give Equation <a href="#eq:reg-eq">(1)</a> some teeth is that <span class="math inline">\(\operatorname{Cor}(X_i, \varepsilon_i) = 0\)</span>. Let’s take a closer look at what this condition implies in tandem with Equation <a href="#eq:reg-eq">(1)</a>.</p>
 <p>If we were to proceed as before and select arbitrary <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, then taking Equation <a href="#eq:reg-eq">(1)</a> as a definition of <span class="math inline">\(\varepsilon_i\)</span> will almost certainly result in an <span class="math inline">\(\varepsilon_i\)</span> that is correlated with <span class="math inline">\(X_i\)</span>. However, there will always be a particular choice of <span class="math inline">\(\beta_1\)</span> such that the satisfaction of Equation <a href="#eq:reg-eq">(1)</a> actually guarantees that <span class="math inline">\(\operatorname{Cor}(X_i, \varepsilon_i) = 0\)</span>, irrespective of the distribution of <span class="math inline">\((X_i, Y_i)\)</span>.</p>
 <p>To see this, note that for any <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, the satisfaction of Equation <a href="#eq:reg-eq">(1)</a> implies that</p>
@@ -101,13 +99,15 @@
 <p>from which its clear that the choice <span class="math inline">\(\beta_1 = \operatorname{Cov}(X_i, Y_i)/\operatorname{Var}(X_i)\)</span> (and only this choice) will lead to <span class="math inline">\(\operatorname{Cov}(X_i, \varepsilon_i) = 0\)</span>. Of course, for this to work, we’ll need <span class="math inline">\(\operatorname{Cov}(X_i, Y_i)/\operatorname{Var}(X_i)\)</span> to not depend on <span class="math inline">\(i\)</span>, that is, to be the same for each data pair. If we assume that the <span class="math inline">\((X_i, Y_i)\)</span> pairs are independently and identically distributed, then this follows.</p>
 <p>So we can think of the equation <span class="math inline">\(\operatorname{Cor}(X, \varepsilon) = 0\)</span> as an <em>identifying condition.</em><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Without this condition, <span class="math inline">\(\beta_1\)</span> could be anything; by imposing <span class="math inline">\(\operatorname{Cor}(X, \varepsilon) = 0\)</span>, we <em>identify</em> <span class="math inline">\(\beta_1\)</span> with <span class="math inline">\(\operatorname{Cov}(X, Y)/\operatorname{Var}(X)\)</span>. Moreover, the condition <span class="math inline">\(\operatorname{Cor}(X, \varepsilon) = 0\)</span> imposes no restrictions on the distribution of our data, as long as we accept this identification of <span class="math inline">\(\beta_1\)</span> with <span class="math inline">\(\operatorname{Cov}(X, Y)/\operatorname{Var}(X)\)</span>.</p>
 </div>
-<div id="what-is-operatornamecovxyoperatornamevarx" class="section level1">
-<h1>What is <span class="math inline">\(\operatorname{Cov}(X,Y)/\operatorname{Var}(X)\)</span>?</h1>
-<p>Continuing without making any assumptions about our data, let’s say we want to predict <span class="math inline">\(Y\)</span> with a linear function of <span class="math inline">\(X\)</span>: <span class="math display">\[
+<div id="what-is-operatornamecovxyoperatornamevarx" class="section level2">
+<h2>What is <span class="math inline">\(\operatorname{Cov}(X,Y)/\operatorname{Var}(X)\)</span>?</h2>
+<p>Continuing without making any assumptions about our data, let’s say we want to predict <span class="math inline">\(Y\)</span> with a linear function of <span class="math inline">\(X\)</span>:
+<span class="math display">\[
 Y \approx b_0 + b_1X
 \]</span></p>
 <p>A criterion for evaluating our approximating function might be the mean squared error, <span class="math inline">\(\operatorname{MSE}(b_0, b_1) = \operatorname{E}[(Y-b_0 - b_1X))^2]\)</span>. By setting the derivatives of the MSE with respect to <span class="math inline">\(b_0\)</span> and <span class="math inline">\(b_1\)</span> equal to <span class="math inline">\(0\)</span>, you can show that <span class="math inline">\(\operatorname{Cov}(X,Y)/\operatorname{Var}(X)\)</span> is the value of the <span class="math inline">\(b_1\)</span> in the tuple <span class="math inline">\((b_0, b_1)\)</span> that minimizes this criterion.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> For this reason, <span class="math inline">\(\operatorname{Cov}(X,Y)/\operatorname{Var}(X)\)</span> might be a quantity we’re interested in.</p>
 <p>In terms of estimation, the ordinary least squares (OLS) estimator takes a plug-in form as the ratio of the <em>sample</em> covariance and <em>sample</em> variance, i.e. <span class="math inline">\(\hat{\beta_1} = \widehat{\operatorname{Cov}(X, Y)}/\widehat{\operatorname{Var}(X)}\)</span>. This statistic will converge in large samples to <span class="math inline">\(\beta_1 = \operatorname{Cov}(X,Y)/\operatorname{Var}(X)\)</span> in this assumption-less setting.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> We can also apply the Central Limit Theorem with no further assumptions to show that <span class="math inline">\(\hat{\beta_1}\)</span> is asymptotically normal. By estimating its variance, we can then obtain approximate confidence intervals for and conduct hypothesis tests about <span class="math inline">\(\beta_1 = \operatorname{Cov}(X,Y)/\operatorname{Var}(X)\)</span>, so long as we have a sufficiently large sample. If you’re curious about the details, I recommend taking a look at Sections 5.2 and 7.1-2 of the online textbook <a href="https://mattblackwell.github.io/gov2002-book/">A User’s Guide to Statistical Inference and Regression</a>.</p>
+</div>
 <div id="mean-independent-of-predictor" class="section level2">
 <h2>Mean independent of predictor</h2>
 <p>Another possible thing we could say about <span class="math inline">\(\varepsilon\)</span> to give Equation <a href="#eq:reg-eq">(1)</a> teeth is that it’s mean independent of <span class="math inline">\(X\)</span>, i.e. <span class="math inline">\(\operatorname{E}[\varepsilon \mid X] = \operatorname{E}[\varepsilon] = 0\)</span>.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> First note that this assumption actually implies the first one since <span class="math inline">\(\operatorname{Cov}(\varepsilon, X) = \operatorname{E}[X\varepsilon] = \operatorname{E}[X\operatorname{E}[\varepsilon \mid X]] = \operatorname{E}[X*0] = 0\)</span>. Therefore, this assumption also identifies <span class="math inline">\(\beta_1\)</span> with <span class="math inline">\(\operatorname{Cov}(X, Y)/\operatorname{Var}(X)\)</span>. However, this assumption is not <em>only</em> an identifying condition, since it also imposes real restrictions on the distribution of our data. Specifically, it implies that the conditional mean of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> is actually linear in <span class="math inline">\(X\)</span>. I would venture to say that most conditional mean functions aren’t actually linear in the collected predictors, so mean independence should be viewed as a somewhat näive assumption.</p>
@@ -123,7 +123,6 @@ Y \approx b_0 + b_1X
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-wang2019" class="csl-entry">
 Wang, Bingkai, Elizabeth L. Ogburn, and Michael Rosenblum. 2019. <span>“Analysis of Covariance in Randomized Trials: More Precision and Valid Confidence Intervals, Without Model Assumptions.”</span> <em>Biometrics</em> 75 (4): 1391–1400. <a href="https://doi.org/10.1111/biom.13062">https://doi.org/10.1111/biom.13062</a>.
-</div>
 </div>
 </div>
 </div>
