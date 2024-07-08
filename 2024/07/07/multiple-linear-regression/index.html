@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.126.1">
+
+
+<title>Multiple Linear Regression - Evan Gorstein</title>
+<meta property="og:title" content="Multiple Linear Regression - Evan Gorstein">
+
+
+  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">1 min read</span>
+    
+
+    <h1 class="article-title">Multiple Linear Regression</h1>
+
+    
+    <span class="article-date">2024-07-07</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>Now we estimate <span class="math inline">\(Var(X)^{-1}Cov(X, Y)\)</span> Note that because block diagonal matrices can be inverted block by block, we will still be estimating <span class="math inline">\(Cov(T, Y)/Var(T)\)</span> as long as <span class="math inline">\(T\)</span> is uncorrelated with all the other included predictors. So OLS estimator from the full model will converge to the same coefficient. But the precision of the estimator will be greater if the added covariates are associated with the response because we will have a reduced <span class="math inline">\(\sigma^2\)</span> in <span class="math inline">\(\sigma^2Var(X)^{-1}\)</span>, while the relevant diagonal entry of <span class="math inline">\(Var(X)^{-1}\)</span> doesn’t change. See <a href="https://onlinelibrary.wiley.com/doi/am-pdf/10.1111/biom.13062" class="uri">https://onlinelibrary.wiley.com/doi/am-pdf/10.1111/biom.13062</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  
+
+
+  </body>
+</html>
+
