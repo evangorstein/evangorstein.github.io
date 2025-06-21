@@ -112,10 +112,10 @@ country = tibble(region, displace, trust)</code></pre>
 <p>Proceeding, we understand that researchers have carried out a randomized control trial on the villages in the country, but out of practicality, they have only sampled into their experiment villages in the northern region of the country. In particular, we will assume that the 100 villages that end up in their experiment is a simple random sample (SRS) of the 1000 total villages in the north so that every village in the north has an equal probability of ending up in the experiment.</p>
 <pre class="r"><code>set.seed(0)
 samp = country %&gt;%
-  slice_sample(n = 100, weight_by = rep(c(0,1), each = 1000)) #Assign weight of 0 to villages in the south, weight of 1 to villages in the north (weights are automatically standardized to sum to 1)</code></pre>
+  slice_sample(n = 100, weight_by = rep(c(0,1), each = 1000)) %&gt;% #Assign 0 weight of being included in the experimental sample to villages in the south
+  mutate(treat = ifelse(row_number() %in% sample(100, 50), 1, 0)) #Assign treatment randomly to units in experiment </code></pre>
 <p>To complete our simulation, we specify how community trust and the community intervention jointly shape the response <span class="math inline">\(Y\)</span>, which we will take to be the amount of money contributed by village residents to community-reconstruction projects. We will suppose that the amount of community trust determines the impact of the intervention, so that in communities with high trust, the intervention has an average effect of 75$, whereas in low trust communities, the intervention on average does not make a difference.</p>
-<pre class="r"><code>samp = samp %&gt;%
-  mutate(treat = ifelse(row_number() %in% sample(100, 50), 1, 0)) %&gt;%
+<pre class="r"><code>samp = samp %&gt;% 
   rowwise() %&gt;%
   mutate( y = case_when(
     trust == &quot;low&quot; &amp; treat == 0 ~ rnorm(1, 10, 3),
@@ -141,7 +141,7 @@ samp</code></pre>
 ##  8 north  low      high      0 46.8 
 ##  9 north  high     low       0 11.5 
 ## 10 north  high     low       1  9.46
-## # … with 90 more rows</code></pre>
+## # ℹ 90 more rows</code></pre>
 <p>So in our data generating process, randomness enters in exactly three places: first, in the collection of the simple random sample of the northern villages, second, in the randomized treatment assignment, and third, in the generation of the response given trust and treatment in the experiment. It is because of this randomness that we cannot precisely recover the true population average treatment effect, but only approximate it. Naturally, we will want to understand what kind of impact the randomness has on the quality of our estimation. This is the statistical part of causal inference. Note that in the case of a simulation, we know exactly what kind of randomness we’re dealing with since we generated it. In the real world, we would not know how exactly the data was generated, and so we would use the data itself to estimate the uncertainty in our estimators, which is simultaneously quite meta <em>as well as</em> a fundamental and ubiquitous technique that statisticians take for granted.</p>
 <div id="the-estimand" class="section level3">
 <h3>The estimand</h3>
@@ -149,7 +149,7 @@ samp</code></pre>
 <p><span class="math display">\[PATE = E_{\Omega_t}[Y(1)-Y(0)] = E_{Ωt\cupΩs}[Y(1)−Y(0)]\]</span> without the conditioning event <span class="math inline">\(S=0\)</span>.</p>
 <p>This essentially comes down to the difference between “transporting” the causal effect versus “generalizing” it, but these are fundamentally the same problem with the same solution. In both cases, we are required to adjust the sample average treatment effect to the distribution of effect modifiers in a target population–in the case of generalization, this target population includes the experimental sample, whereas in transportation, it does not.</p>
 <p>Since we generated the data, we can calculate the <em>PATE</em>:</p>
-<p>First note the proportion of villages in the country with high and low internal displacement:</p>
+<p>First note the proportion of villages in the country with high and low community trust:</p>
 <pre class="r"><code>group_by(country, trust) %&gt;% 
   summarise(prop = n()/nrow(.))</code></pre>
 <pre><code>## # A tibble: 2 × 2
@@ -259,14 +259,26 @@ single_simul = function(data_gen_fun) {
 <pre class="r"><code>r = 2000
 ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
 <p>The distribution of the various estimates across simulations is summarized in Table <a href="#tab:table">1</a>.</p>
-<div id="jtocotbfte" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+<div id="jtocotbfte" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jtocotbfte table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jtocotbfte thead, #jtocotbfte tbody, #jtocotbfte tfoot, #jtocotbfte tr, #jtocotbfte td, #jtocotbfte th {
+  border-style: none;
+}
+
+#jtocotbfte p {
+  margin: 0;
+  padding: 0;
 }
 
 #jtocotbfte .gt_table {
   display: table;
   border-collapse: collapse;
+  line-height: normal;
   margin-left: auto;
   margin-right: auto;
   color: #333333;
@@ -289,16 +301,9 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#jtocotbfte .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
+#jtocotbfte .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 #jtocotbfte .gt_title {
@@ -317,12 +322,24 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   color: #333333;
   font-size: 85%;
   font-weight: initial;
-  padding-top: 0;
-  padding-bottom: 6px;
+  padding-top: 3px;
+  padding-bottom: 5px;
   padding-left: 5px;
   padding-right: 5px;
   border-top-color: #FFFFFF;
   border-top-width: 0;
+}
+
+#jtocotbfte .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
 }
 
 #jtocotbfte .gt_bottom_border {
@@ -398,6 +415,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   width: 100%;
 }
 
+#jtocotbfte .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
 #jtocotbfte .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
@@ -421,6 +442,7 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
 #jtocotbfte .gt_empty_group_heading {
@@ -496,6 +518,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   border-top-width: 2px;
 }
 
+#jtocotbfte .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
 #jtocotbfte .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
@@ -545,6 +571,16 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   border-top-color: #D3D3D3;
 }
 
+#jtocotbfte .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
 #jtocotbfte .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
@@ -575,8 +611,8 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
 #jtocotbfte .gt_footnote {
   margin: 0px;
   font-size: 90%;
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -632,20 +668,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   font-size: 65%;
 }
 
-#jtocotbfte .gt_two_val_uncert {
-  display: inline-block;
-  line-height: 1em;
-  text-align: right;
-  font-size: 60%;
-  vertical-align: -0.25em;
-  margin-left: 0.1em;
-}
-
 #jtocotbfte .gt_footnote_marks {
-  font-style: italic;
-  font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
+  position: initial;
 }
 
 #jtocotbfte .gt_asterisk {
@@ -653,45 +679,46 @@ ests = map_dfr(1:r, ~ single_simul(single_data))</code></pre>
   vertical-align: 0;
 }
 
-#jtocotbfte .gt_slash_mark {
-  font-size: 0.7em;
-  line-height: 0.7em;
-  vertical-align: 0.15em;
+#jtocotbfte .gt_indent_1 {
+  text-indent: 5px;
 }
 
-#jtocotbfte .gt_fraction_numerator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: 0.45em;
+#jtocotbfte .gt_indent_2 {
+  text-indent: 10px;
 }
 
-#jtocotbfte .gt_fraction_denominator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: -0.05em;
+#jtocotbfte .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jtocotbfte .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jtocotbfte .gt_indent_5 {
+  text-indent: 25px;
 }
 </style>
-<table class="gt_table">
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <caption><span id="tab:table">Table 1: </span>Performance of estimators 
  in simulation</caption>
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Estimator</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Bias</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Standard Error</th>
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Estimator">Estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Bias">Bias</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Standard Error">Standard Error</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">est_disp</td>
-<td class="gt_row gt_right">0.56</td>
-<td class="gt_row gt_right">10.37</td></tr>
-    <tr><td class="gt_row gt_left">est_trust</td>
-<td class="gt_row gt_right">0.08</td>
-<td class="gt_row gt_right">2.77</td></tr>
-    <tr><td class="gt_row gt_left">SATE</td>
-<td class="gt_row gt_right">&minus;13.10</td>
-<td class="gt_row gt_right">7.35</td></tr>
+    <tr><td headers="Estimator" class="gt_row gt_left">SATE</td>
+<td headers="Bias" class="gt_row gt_right">−13.10</td>
+<td headers="sd" class="gt_row gt_right">7.35</td></tr>
+    <tr><td headers="Estimator" class="gt_row gt_left">est_disp</td>
+<td headers="Bias" class="gt_row gt_right">0.56</td>
+<td headers="sd" class="gt_row gt_right">10.37</td></tr>
+    <tr><td headers="Estimator" class="gt_row gt_left">est_trust</td>
+<td headers="Bias" class="gt_row gt_right">0.08</td>
+<td headers="sd" class="gt_row gt_right">2.77</td></tr>
   </tbody>
   
   
@@ -758,14 +785,26 @@ single_data_new = function() {
 <pre class="r"><code>r = 2000
 ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
 <p>How do we do?</p>
-<div id="chwgswhwyo" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+<div id="chwgswhwyo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#chwgswhwyo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#chwgswhwyo thead, #chwgswhwyo tbody, #chwgswhwyo tfoot, #chwgswhwyo tr, #chwgswhwyo td, #chwgswhwyo th {
+  border-style: none;
+}
+
+#chwgswhwyo p {
+  margin: 0;
+  padding: 0;
 }
 
 #chwgswhwyo .gt_table {
   display: table;
   border-collapse: collapse;
+  line-height: normal;
   margin-left: auto;
   margin-right: auto;
   color: #333333;
@@ -788,16 +827,9 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#chwgswhwyo .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
+#chwgswhwyo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 #chwgswhwyo .gt_title {
@@ -816,12 +848,24 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   color: #333333;
   font-size: 85%;
   font-weight: initial;
-  padding-top: 0;
-  padding-bottom: 6px;
+  padding-top: 3px;
+  padding-bottom: 5px;
   padding-left: 5px;
   padding-right: 5px;
   border-top-color: #FFFFFF;
   border-top-width: 0;
+}
+
+#chwgswhwyo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
 }
 
 #chwgswhwyo .gt_bottom_border {
@@ -897,6 +941,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   width: 100%;
 }
 
+#chwgswhwyo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
 #chwgswhwyo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
@@ -920,6 +968,7 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
 #chwgswhwyo .gt_empty_group_heading {
@@ -995,6 +1044,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   border-top-width: 2px;
 }
 
+#chwgswhwyo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
 #chwgswhwyo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
@@ -1044,6 +1097,16 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   border-top-color: #D3D3D3;
 }
 
+#chwgswhwyo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
 #chwgswhwyo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
@@ -1074,8 +1137,8 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
 #chwgswhwyo .gt_footnote {
   margin: 0px;
   font-size: 90%;
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -1131,20 +1194,10 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   font-size: 65%;
 }
 
-#chwgswhwyo .gt_two_val_uncert {
-  display: inline-block;
-  line-height: 1em;
-  text-align: right;
-  font-size: 60%;
-  vertical-align: -0.25em;
-  margin-left: 0.1em;
-}
-
 #chwgswhwyo .gt_footnote_marks {
-  font-style: italic;
-  font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
+  position: initial;
 }
 
 #chwgswhwyo .gt_asterisk {
@@ -1152,45 +1205,46 @@ ests = map_dfr(1:r, ~ single_simul(single_data_new))</code></pre>
   vertical-align: 0;
 }
 
-#chwgswhwyo .gt_slash_mark {
-  font-size: 0.7em;
-  line-height: 0.7em;
-  vertical-align: 0.15em;
+#chwgswhwyo .gt_indent_1 {
+  text-indent: 5px;
 }
 
-#chwgswhwyo .gt_fraction_numerator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: 0.45em;
+#chwgswhwyo .gt_indent_2 {
+  text-indent: 10px;
 }
 
-#chwgswhwyo .gt_fraction_denominator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: -0.05em;
+#chwgswhwyo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#chwgswhwyo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#chwgswhwyo .gt_indent_5 {
+  text-indent: 25px;
 }
 </style>
-<table class="gt_table">
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <caption><span id="tab:unnamed-chunk-14">Table 2: </span>Performance of estimators in 
  simulation two</caption>
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Estimator</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Bias</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Standard Error</th>
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Estimator">Estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Bias">Bias</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Standard Error">Standard Error</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">est_disp</td>
-<td class="gt_row gt_right">&minus;2.19</td>
-<td class="gt_row gt_right">8.84</td></tr>
-    <tr><td class="gt_row gt_left">est_trust</td>
-<td class="gt_row gt_right">0.04</td>
-<td class="gt_row gt_right">3.01</td></tr>
-    <tr><td class="gt_row gt_left">SATE</td>
-<td class="gt_row gt_right">&minus;14.90</td>
-<td class="gt_row gt_right">6.49</td></tr>
+    <tr><td headers="Estimator" class="gt_row gt_left">SATE</td>
+<td headers="Bias" class="gt_row gt_right">−14.90</td>
+<td headers="sd" class="gt_row gt_right">6.49</td></tr>
+    <tr><td headers="Estimator" class="gt_row gt_left">est_disp</td>
+<td headers="Bias" class="gt_row gt_right">−2.19</td>
+<td headers="sd" class="gt_row gt_right">8.84</td></tr>
+    <tr><td headers="Estimator" class="gt_row gt_left">est_trust</td>
+<td headers="Bias" class="gt_row gt_right">0.04</td>
+<td headers="sd" class="gt_row gt_right">3.01</td></tr>
   </tbody>
   
   

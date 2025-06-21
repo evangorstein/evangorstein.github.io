@@ -69,7 +69,7 @@
       <link>//localhost:4321/2021/01/13/attributable-effects/</link>
       <pubDate>Wed, 13 Jan 2021 00:00:00 +0000</pubDate>
       <guid>//localhost:4321/2021/01/13/attributable-effects/</guid>
-      <description>Introduction In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-uniform causal effects.</description>
+      <description>Introduction In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-constant causal effects.</description>
     </item>
     <item>
       <title>Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic</title>
