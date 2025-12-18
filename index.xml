@@ -13,7 +13,7 @@
       <link>/2025/09/03/notes-on-generalized-linear-models/</link>
       <pubDate>Wed, 03 Sep 2025 00:00:00 +0000</pubDate>
       <guid>/2025/09/03/notes-on-generalized-linear-models/</guid>
-      <description>In this and the following few posts, I will be going through Chapter 3 of Simon Wood’s textbook Generalized Linear Models (2017), which covers GLMs (as a prerequisite for understanding GAMs). I supplement my paraphrasing of the textbook with implementations in R that demonstrate the theory.&#xA;Theory A generalized linear model (GLM) does two things:&#xA;It equates a smooth, monotonic transformation of the expectation of some target variable to a learned linear function of a set of predictor variables.</description>
+      <description>In this and the following few posts, I will be going through Chapter 3 of Simon Wood’s textbook Generalized Additive Models (2017), which covers GLMs (as a prerequisite for understanding GAMs). I supplement my paraphrasing of the textbook with implementations in R that demonstrate the theory.&#xA;Theory A generalized linear model (GLM) does two things:&#xA;It equates a smooth, monotonic transformation of the expectation of some target variable to a learned linear function of a set of predictor variables.</description>
     </item>
     <item>
       <title>Linear Regression</title>
