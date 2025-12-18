@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.126.1">
@@ -10,7 +10,7 @@
 <meta property="og:title" content="Linear Regression - Evan Gorstein">
 
 
-  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -70,7 +70,6 @@
       
 
 
-<p><font size="2"></p>
 <p>I’m going back to the basics to discuss something that has confused me for a while about the “error term” in linear regression in the hopes that it might be helpful to someone out there who finds this confusing as well.</p>
 <p>Let’s consider the simple case with just a single predictor and suppose we have observed pairs <span class="math inline">\(\{(x_i, y_i), i=1,\ldots,n\}\)</span>. When we do linear regression, we view each data pair <span class="math inline">\((x_i, y_i)\)</span> as the partially observed realization of a triplet of random variables <span class="math inline">\((X_i, Y_i, \varepsilon_i)\)</span> satisfying the equation</p>
 <span class="math display" id="eq:reg-eq">\[\begin{equation}
@@ -120,9 +119,12 @@ Y \approx b_0 + b_1X
 <div id="takeaways" class="section level2">
 <h2>Takeaways</h2>
 <p>So linear regression can be a useful tool even when the linear model doesn’t actually hold, the reason being that <span class="math inline">\(\operatorname{Cov}(X, Y)/\operatorname{Var}(X)\)</span> is the minimizer among all linear predictors of the MSE, and OLS will automatically converge to <span class="math inline">\(\operatorname{Cov}(X, Y)/\operatorname{Var}(X)\)</span> in large samples. This is a fact that has implications beyond those discussed here. One example relates to the usage of linear regression models to estimate the average treatment effect from a randomized experiment. In this context, you don’t necessarily need to worry about violations of linearity when you add baseline covariates to this model. To see why this is, notice that even if your model is wrong, OLS always automatically (asymptotically) targets <span class="math inline">\(\operatorname{Var}(X)^{-1}\operatorname{Cov}(X, Y)\)</span>, where <span class="math inline">\(X\)</span> is now a vector, one of whose components is the treatment variable <span class="math inline">\(A\)</span>, and <span class="math inline">\(\operatorname{Var}(X)\)</span> is its variance-covariance matrix. Since the treatment is randomized, it’s uncorrelated with the rest of the components of <span class="math inline">\(X\)</span>; <span class="math inline">\(\operatorname{Var}(X)^{-1}\)</span> will therefore have a block diagonal structure, and the component of <span class="math inline">\(\operatorname{Var}(X)^{-1}\operatorname{Cov}(X, Y)\)</span> that corresponds to the coefficient on <span class="math inline">\(A\)</span> will just be <span class="math inline">\(\operatorname{Cov}(A, Y)/\operatorname{Var}(A)\)</span>, the coefficient from the simple linear regression model that includes only <span class="math inline">\(A\)</span>. Because <span class="math inline">\(A\)</span> is binary, this latter model is saturated, hence correctly specified, and therefore <span class="math inline">\(\operatorname{Cov}(A, Y)/\operatorname{Var}(A)\)</span> is the average treatment effect. So even though the model that includes the baseline covariates is wrong, the coefficient on <span class="math inline">\(A\)</span> in the OLS estimate from this model is not asymptotically biased for the treatment effect. Given the gains in precision that come from including these baseline covariates in the model, one should therefore default to including these baseline covariates in linear regression models for RCT data. For more on this, check out <span class="citation">Wang, Ogburn, and Rosenblum (<a href="#ref-wang2019">2019</a>)</span>.</p>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="references" class="section level4 unnumbered">
+<h4>References</h4>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-wang2019" class="csl-entry">
 Wang, Bingkai, Elizabeth L. Ogburn, and Michael Rosenblum. 2019. <span>“Analysis of Covariance in Randomized Trials: More Precision and Valid Confidence Intervals, Without Model Assumptions.”</span> <em>Biometrics</em> 75 (4): 1391–1400. <a href="https://doi.org/10.1111/biom.13062">https://doi.org/10.1111/biom.13062</a>.
+</div>
 </div>
 </div>
 </div>

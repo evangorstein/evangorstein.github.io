@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.126.1">
@@ -10,7 +10,7 @@
 <meta property="og:title" content="Identifitication for External Validity - Evan Gorstein">
 
 
-  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -70,7 +70,6 @@
       
 
 
-<p><font size="2"></p>
 <p>In my previous <a href="https://evangorstein.github.io/2022/10/05/samplingbiasandcausalinference/">blog post</a>, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</p>
 <div id="tldr-of-causal-identification" class="section level2">
 <h2>Tl;dr of causal identification</h2>
@@ -86,9 +85,9 @@
 <p><strong>Assumption 1 (causal irrelevance of the sampling indicator):</strong><span class="math display">\[Y(s,d)=Y(d)\quad\]</span> for all <span class="math inline">\(s\in\{0,1\}\)</span>.</p>
 </blockquote>
 <p>Finally, in causal graph notation, it says the following:</p>
-<div class="figure">
-<img src="images/fig1_erased.jpeg" style="width:9.5cm;height:7cm" alt="" />
-<p class="caption">Figure 1: Violation of Assumption 1</p>
+<div class="float">
+<img src="images/fig1_erased.jpeg" style="width:9.5cm;height:7cm" alt="Figure 1: Violation of Assumption 1" />
+<div class="figcaption">Figure 1: Violation of Assumption 1</div>
 </div>
 <p>I don’t view this as too strong of an assumption. However, situations in which merely belonging to the experimental sample can have a causal effect (that isn’t mediated by the exposure <span class="math inline">\(D\)</span>) on your response, i.e. violations of Assumption 1, are not impossible to imagine. In particular, the Hawthorne effect refers to a phenomenon in which experimental subjects behave differently in response to their awareness of being observed. (I should note, by the way, that whereas the graph pulled from Hartman in my previous post does not include an arrow from <span class="math inline">\(S\)</span> to <span class="math inline">\(D\)</span>, Figure 1 does have this arrow. The explanation for this arrow is that being included in the experiment causes your exposure to get manipulated by the researcher. The existence of this arrow implies that in general, <span class="math inline">\(S\)</span> <em>does</em> have a causal effect on the response–the point of Assumption 1, however, is that this effect is fully mediated by the exposure <span class="math inline">\(D\)</span>.)</p>
 </div>
@@ -102,9 +101,9 @@
 <p><span class="math display">\[SATE = \mathbb{E}[Y(1) - Y(0) \mid S = 1 ],\]</span></p>
 <p>Assumption 2 guarantees that we can identify this quantity.</p>
 <p>In terms of our graphical models, it’s impossible to show what a violation of Assumption 2 would look like. For example, you might think that Figure 2 represents a violation of Assumption 2 because <span class="math inline">\(Z\)</span> is a confounder of the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span>. But so long as <span class="math inline">\(Z\)</span> only confounds this effect in the target sample and not in the experimental sample, we are OK.</p>
-<div class="figure">
-<img src="images/fig2_erased.jpeg" style="height:7cm" alt="" />
-<p class="caption">Figure 2: Not necessarily a violation of Assumption 2</p>
+<div class="float">
+<img src="images/fig2_erased.jpeg" style="height:7cm" alt="Figure 2: Not necessarily a violation of Assumption 2" />
+<div class="figcaption">Figure 2: Not necessarily a violation of Assumption 2</div>
 </div>
 </div>
 <div id="assumption-3" class="section level3">
@@ -123,15 +122,15 @@
 <p>In attempting to transport a causal effect identified in our experimental sample to our target sample, we are dealing with a similar issue of one group of units being unlike a different group of units in some relevant respect. Except now, (1) the groups are defined by sample inclusion and not treatment assignment, and (2) the relevant unlikeness is in treatment effects, i.e. differences in potential outcomes (whereas the relevant unlikeness in the internal validity case was in potential outcomes themselves!) This similarity suggests that we may be able to formulate a strategy for obtaining external validity which parallels the strategy of backdoor adjustment for obtaining internal validity. Indeed we can, and assumption 3 expresses the corresponding assumption. The first part of assumption 3 says that within the strata defined by <span class="math inline">\(W\)</span>, the difference in treatment effects across the samples goes away, such that units in the experimental sample have the same distribution of treatment effects as the units in the target sample. The second part of assumption 3 says that every stratum or value of <span class="math inline">\(W\)</span> which appears in the target sample also appears in the experimental sample<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. In the case that <span class="math inline">\(W\)</span> satisfies both assumptions 1 and 2, we say that it’s an <em>adjustment set</em>. For the adjustment set to be useful to us, we must have it measured in both the experimental sample <em>and</em> in the target population (which, as we will discuss later, is quite a lot to ask). In such a case, we call <span class="math inline">\(W\)</span> a <em>valid adjustment set</em>.</p>
 <p>When we are doing internal identification, there is a graphical criterion which characterizes variable sets that can be used for backdoor adjustment. We might want to know whether there’s a similar graphical criterion that characterizes adjustment sets for external identification. The answer is…sort of. The first part of assumption 3 can be translated to the language of graphs to say that <span class="math inline">\(W\)</span> separates the sampling indicator node from all of the nodes that are treatment effect modifiers. The issue is that whether a variable is an effect modifier does not get expressed in our causal graphs. For a variable to be an effect modifier, it must have a direct arrow into the response, but that alone is not enough. Treatment effect modification occurs when there is some interaction with the treatment, and the presence or absence of interactions are not depicted in a causal graphs.</p>
 <p>Let’s consider an example. Figure 3 shows the causal graph from Hartman, which appears at the end of my first blog post<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. In the scenario as described by Hartman, there were disparate impacts of the civil wars across different regions of Liberia. In particular, the northern region was the center of the conflict and experienced higher levels of internal displacement than the southern region. The level of internal displacement experienced by a given village has an effect on the level of trust within the village, and community trust is a modifier of the effect of the exposure on the response.</p>
-<div class="figure">
-<img src="images/Untitled%20(Draft)-3.jpg" style="width:15cm" alt="" />
-<p class="caption">Figure 3: Hartman’s causal graph</p>
+<div class="float">
+<img src="images/Untitled%20(Draft)-3.jpg" style="width:15cm" alt="Figure 3: Hartman’s causal graph" />
+<div class="figcaption">Figure 3: Hartman’s causal graph</div>
 </div>
 <p>In this causal graph we can see that either one of {<code>Region}</code> and {<code>Internal} Displacement}</code> separates the sampling indicator from <code>Community Trust</code>, which is the only thing directly influencing the response other than the exposure <code>CDR</code>. As such, either one of {<code>Region}</code> and {<code>Internal Displacement}</code> satisfies the first part of Assumption 3. What about the other parts of Assumption 3? I mentioned briefly at the end of my first blog post that the authors limit their experimental sample to villages in the north. This implies that {<code>Region}</code> does not satisfy the second part of Assumption 3, the positivity condition, as <span class="math inline">\(Pr(S=1 \mid \text{Region = south})=0\)</span>. Finally, we could consider using {<code>Community Trust</code>} as the adjustment set. The problem with this choice is that <code>Community Trust</code> is not a variable that we’re likely to have measured in the villages in the experiment, let alone in villages all across the country. Thus, the best bet for an adjustment set in this set-up is {<code>Internal Displacement</code>}, assuming that we can measure and observe the levels of displacement all across Liberia, in both the North and South.</p>
 <p>What if we assumed that there were an additional variable in our system which has a direct influence on whether a village is included in the experiment as well as on the response <span class="math inline">\(Y\)</span> and which is unobserved.</p>
-<div class="figure">
-<img src="images/Untitled%20(Draft)-4.jpg" style="width:15cm" alt="" />
-<p class="caption">Figure 4: External Identification is Undecidable</p>
+<div class="float">
+<img src="images/Untitled%20(Draft)-4.jpg" style="width:15cm" alt="Figure 4: External Identification is Undecidable" />
+<div class="figcaption">Figure 4: External Identification is Undecidable</div>
 </div>
 <p>Then our graph would look something like Figure 4, and one wonders if {<code>Internal Displacement}</code> alone remains a valid adjustment set, as it was in Figure 3. The answer is that we cannot know from the graph alone. To determine whether {<code>Internal Displacement}</code> is a valid adjustment set, we need to assess whether <span class="math inline">\(U\)</span> is an effect modifier, i.e. whether there is an interaction between <span class="math inline">\(U\)</span> and <span class="math inline">\(CDR\)</span> on <span class="math inline">\(Y\)</span>, which is not something that is indicated in causal graphs.</p>
 </div>

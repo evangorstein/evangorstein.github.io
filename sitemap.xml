@@ -2,69 +2,72 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//localhost:4321/</loc>
+    <loc>/</loc>
+    <lastmod>2025-10-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/post/</loc>
+    <lastmod>2025-10-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/2025/09/03/notes-on-generalized-linear-models/</loc>
+    <lastmod>2025-09-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/2024/07/04/linear-regression/</loc>
     <lastmod>2024-07-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2024/07/04/linear-regression/</loc>
-    <lastmod>2024-07-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:4321/post/</loc>
-    <lastmod>2024-07-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>//localhost:4321/2023/10/28/lord-s-paradox/</loc>
+    <loc>/2023/10/28/lord-s-paradox/</loc>
     <lastmod>2023-10-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2022/12/14/external-validity-conclusion/</loc>
+    <loc>/2022/12/14/external-validity-conclusion/</loc>
     <lastmod>2022-12-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/causal-inference/</loc>
+    <loc>/categories/causal-inference/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/external-validity/</loc>
+    <loc>/categories/external-validity/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2022/12/07/sensitivity-analysis-for-generalization/</loc>
+    <loc>/2022/12/07/sensitivity-analysis-for-generalization/</loc>
     <lastmod>2022-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/causal-inference/</loc>
+    <loc>/tags/causal-inference/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2022/11/12/estimation-for-external-validity/</loc>
+    <loc>/2022/11/12/estimation-for-external-validity/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/external-validity/</loc>
+    <loc>/tags/external-validity/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2022-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/identification/</loc>
+    <loc>/tags/identification/</loc>
     <lastmod>2022-10-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/identification/</loc>
+    <loc>/categories/identification/</loc>
     <lastmod>2022-10-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2022/10/20/identifitication-for-external-validity/</loc>
+    <loc>/2022/10/20/identifitication-for-external-validity/</loc>
     <lastmod>2022-10-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2022/10/05/samplingbiasandcausalinference/</loc>
+    <loc>/2022/10/05/samplingbiasandcausalinference/</loc>
     <lastmod>2022-10-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2021/08/12/pivoting-a-cdf/</loc>
+    <loc>/2021/08/12/pivoting-a-cdf/</loc>
     <lastmod>2021-08-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/ams/</loc>
+    <loc>/tags/ams/</loc>
     <lastmod>2021-01-13T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2021/01/13/attributable-effects/</loc>
+    <loc>/2021/01/13/attributable-effects/</loc>
     <lastmod>2021-01-13T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</loc>
+    <loc>/2021/01/08/randomization-inference-part-1-the-wilcoxon-signed-rank-statistic/</loc>
     <lastmod>2021-01-08T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/about/</loc>
+    <loc>/about/</loc>
   </url>
 </urlset>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.126.1">
+
+
+<title>Notes on Generalized Linear Models - Evan Gorstein</title>
+<meta property="og:title" content="Notes on Generalized Linear Models - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">19 min read</span>
+    
+
+    <h1 class="article-title">Notes on Generalized Linear Models</h1>
+
+    
+    <span class="article-date">2025-09-03</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>In this and the following few posts, I will be going through Chapter 3 of Simon Wood’s textbook <em>Generalized Linear Models</em> <span class="citation">(<a href="#ref-wood2017generalized">2017</a>)</span>, which covers GLMs (as a prerequisite for understanding GAMs). I supplement my paraphrasing of the textbook with implementations in R that demonstrate the theory.</p>
+<div id="theory" class="section level1">
+<h1>Theory</h1>
+<p>A generalized linear model (GLM) does two things:</p>
+<ol style="list-style-type: decimal">
+<li>It equates a smooth, monotonic transformation of the expectation of some target variable to a learned linear function of a set of predictor variables.</li>
+<li>It specifies the distribution of the target variable to be some specific exponential family.</li>
+</ol>
+<p>That is, a GLM says
+<span class="math display" id="eq:linear">\[
+\tag{1}
+g(\mathbb{E}(Y)) = \beta_0 + \beta_1X_1 + \cdots + \beta_k X_k \equiv \eta  
+\]</span>
+and
+<span class="math display" id="eq:expo">\[
+\tag{2}
+Y \sim \text{some exponential family},
+\]</span>
+where <span class="math inline">\(Y\)</span> is the target variable, <span class="math inline">\(X_1, \ldots, X_k\)</span> are the predictor variables, <span class="math inline">\(\beta_0, \ldots, \beta_k\)</span> are weights to be learned, and <span class="math inline">\(g\)</span> is the smooth monotonic function known as the “link function”.</p>
+<p>What is an exponential family?<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> In the univariate case, a family of distributions is an exponential family with <em>canonical parameter</em> <span class="math inline">\(\theta\)</span> if its probability density function <span class="math inline">\(f_\theta\)</span> takes the form</p>
+<p><span class="math display">\[
+f_\theta(y) = \exp[ \{y\theta - b(\theta)\}/a(\phi) + c(y, \phi) ],
+\]</span></p>
+<p>for some known, specific functions <span class="math inline">\(b\)</span>, <span class="math inline">\(a\)</span>, and <span class="math inline">\(c\)</span> and some parameter <span class="math inline">\(\phi\)</span>. In some cases, <span class="math inline">\(\phi\)</span>, which is known as the <em>scale parameter</em> because it usually plays a role in determining the variance of <span class="math inline">\(Y\)</span>, will in fact be unknown, which, according to Wikipedia, would render our family an “overdispersed” exponential family.</p>
+<p>As an example, the normal distribution is an exponential family since</p>
+<p><span class="math display">\[\begin{align}
+f_\mu(y) &amp;= \frac{1}{\sigma\sqrt{2\pi}} \exp\left[-\frac{(y-\mu)^2}{2\sigma^2}\right] \\
+&amp; = \exp\left[\frac{-y^2 + 2y\mu - \mu^2}{2\sigma^2} - \log(\sigma\sqrt{2\pi})  \right] \\
+&amp;= \exp\left[\frac{y\mu - \mu^2/2}{\sigma^2} - \frac{y^2}{2\sigma^2} -  \log(\sigma\sqrt{2\pi}) \right]
+\end{align}\]</span></p>
+<p>Here, the canonical parameter is <span class="math inline">\(\theta=\mu\)</span>, the scale parameter is <span class="math inline">\(\phi = \sigma^2\)</span>, and the functions in the generic definition are given by</p>
+<ul>
+<li><span class="math inline">\(a(\phi) = a(\sigma^2) = \sigma^2\)</span></li>
+<li><span class="math inline">\(b(\theta) = b(\mu) = \mu^2/2\)</span></li>
+<li><span class="math inline">\(c(y, \phi) = c(y, \sigma^2) = -y^2/(2\sigma^2) - \log(\sigma\sqrt{2\pi})\)</span></li>
+</ul>
+<p><br />
+How do we simultaneously specify a linear model for the transformed mean of <span class="math inline">\(Y\)</span> <a href="#eq:linear">(1)</a> while also ensuring that <span class="math inline">\(Y\)</span> has the pdf of an exponential family <a href="#eq:expo">(2)</a>? It’s actually quite easy because of the following property of exponential families:</p>
+<p><span class="math display" id="eq:mean">\[
+\tag{3}
+\mathbb{E}(Y) = b&#39;(\theta)
+\]</span></p>
+<p>In the normal case, we get <span class="math inline">\(\mathbb{E}(Y) = b&#39;(\theta) = b&#39;(\mu) = \frac{d}{d\mu}\mu^2/2 = \mu\)</span>, as one would hope.</p>
+<p>Eq <a href="#eq:mean">(3)</a> directly follows by applying the general fact that the expectation of the score function vanishes:
+<span class="math display">\[
+\mathbb{E}\left[\frac{\partial}{\partial\theta}\log f_\theta(y)\right] = 0
+\]</span>
+to the score function for an exponential family:
+<span class="math display" id="eq:score">\[
+\tag{4}
+\frac{\partial}{\partial\theta}\log f_\theta(y) = \frac{\partial l}{\partial \theta} = (y - b&#39;(\theta))/a(\phi)
+\]</span></p>
+<p>The implication of <a href="#eq:mean">(3)</a> is that the linear model in Eq. <a href="#eq:linear">(1)</a> is in fact a model for the canonical parameter <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display" id="eq:canonical">\[
+\tag{5}
+\theta = b&#39;^{-1}(g^{-1}(\beta_0 + \beta_1X_1 + \cdots + \beta_k X_k)) = b&#39;^{-1}(g^{-1}(\eta)))
+\]</span></p>
+<p><br />
+We can also derive a generic expression for the variance of <span class="math inline">\(Y\)</span> in terms of the functions <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, and <span class="math inline">\(c\)</span>. First note that the second derivative of the log-likelihood is</p>
+<p><span class="math display">\[
+\frac{\partial^2 l}{\partial\theta^2} = -b&#39;&#39;(\theta)/a(\phi)
+\]</span></p>
+<p>Then apply the general fact <span class="math inline">\(\mathbb{E}\left(\partial^2l/\partial\theta^2\right) = -\mathbb{E}\left\{ (\partial l / \partial \theta)^2 \right\}\)</span> along with <a href="#eq:score">(4)</a> to find that</p>
+<p><span class="math display">\[
+b&#39;&#39;(\theta)/a(\phi) = \mathbb{E}\left\{ (Y - b&#39;(\theta))^2/a(\phi)^2 \right\} = \mathop{\mathrm{Var}}(Y) / a(\phi)^2
+\]</span>
+so
+<span class="math display" id="eq:var">\[
+\tag{6}
+\mathop{\mathrm{Var}}(Y) = b&#39;&#39;(\theta)a(\phi)
+\]</span></p>
+<p>In principal, <span class="math inline">\(a\)</span> can be anything, but if <span class="math inline">\(\phi\)</span> is unknown, estimation will be difficult unless we have <span class="math inline">\(a(\phi) = \phi/\omega\)</span> for some known <span class="math inline">\(\omega\)</span>. In most cases this <span class="math inline">\(\omega\)</span> will just be 1, but in the normal case, using a different <span class="math inline">\(\omega_i\)</span> for each sample <span class="math inline">\(i\)</span> corresponds to weighted regression.</p>
+<p>Finally, let’s relate the variance <span class="math inline">\(\mathop{\mathrm{Var}}(Y)\)</span> to the mean <span class="math inline">\(\mu \equiv \mathbb{E}(Y)\)</span>. By <a href="#eq:mean">(3)</a>, we have <span class="math inline">\(\theta = b&#39;^{-1}(\mu)\)</span>, so by <a href="#eq:var">(6)</a>, we have
+<span class="math display">\[
+\mathop{\mathrm{Var}}(Y) = b&#39;&#39;(b&#39;^{-1}(\mu))a(\phi) = b&#39;&#39;(b&#39;^{-1}(\mu))\phi / \omega .
+\]</span>
+We define <span class="math inline">\(V(\mu) = b&#39;&#39;(b&#39;^{-1}(\mu)) / \omega\)</span> so that we get the following relationship between variance and mean:</p>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(Y) = V(\mu)\phi
+\]</span></p>
+<p>In the normal case, we get that <span class="math inline">\(V(\mu)\)</span> is just the constant function <span class="math inline">\(1/\omega\)</span>, which makes sense because the mean and variance of a normal random variable are independent parameters, i.e. there shouldn’t be any equation relating the two.</p>
+</div>
+<div id="fitting" class="section level1">
+<h1>Fitting</h1>
+<p>We fit generalized linear models to a sample of data point <span class="math inline">\(\{(\mathbf{X}_i, Y_i)\}_{i=1}^n\)</span> that we assume were generated independently by the model. Given observed design matrix <span class="math inline">\(\mathbf{X}\)</span> and response vector <span class="math inline">\(\mathbf{y}\)</span>, the log-likelihood of <span class="math inline">\(\boldsymbol{\beta}\)</span> is given by</p>
+<p><span class="math display" id="eq:loglik">\[\begin{align}
+l(\boldsymbol{\beta}) = \sum_i \log f_{\theta_i}(y_i) &amp;= \sum_i \{ y_i \theta_i - b_i(\theta_i)\}/a_i(\phi) + c_i(y_i, \phi) \\
+\tag{7}
+&amp;= \sum_i \omega_i \{ y_i \theta_i - b_i(\theta_i)\}/\phi + c_i(y_i, \phi),
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(\theta_i = b_i&#39;^{-1}(g^{-1}(\beta_0 + \beta_1X_{i1} + \cdots + \beta_k X_{ik}))\)</span>. While the <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span> functions vary with the sample index <span class="math inline">\(i\)</span>, this is just to allow, for example, for different binomial denominators for each observation of a binomial response.</p>
+<p>We would like to use Newton’s method to maximize the log-likelihood, which requires the gradient vector and Hessian of the log-likelihood. For the gradient, we have each partial derivative given by</p>
+<p><span class="math display">\[
+\frac{\partial l}{\partial \beta_j}=\frac{1}{\phi} \sum_i \omega_i\left(y_i \frac{\partial \theta_i}{\partial \beta_j}-b_i^{\prime}\left(\theta_i\right) \frac{\partial \theta_i}{\partial \beta_j}\right)
+\]</span></p>
+<p>By the chain rule, we have
+<span class="math display">\[
+\frac{\partial \theta_i}{\partial \beta_j} = \frac{\partial \theta_i}{\partial \mu_i}\frac{\partial \mu_i}{\partial \eta_i}\frac{\partial \eta_i}{\partial \beta_j} = \frac{1}{b_i&#39;&#39;(\theta_i)}\frac{1}{g&#39;(\mu_i)}X_{ij}
+\]</span></p>
+<p>We thus arrive at</p>
+<p><span class="math display">\[\begin{align}
+\frac{\partial l}{\partial \beta_j} &amp;= \frac{1}{\phi} \sum_i \frac{y_i - b_i&#39;(\theta_i)}{g&#39;(\mu_i)b_i&#39;&#39;(\theta_i)/\omega_i}X_{ij} \\
+&amp;= \frac{1}{\phi} \sum_i \frac{y_i - \mu_i}{g&#39;(\mu_i)V_i(\mu_i)}X_{ij}
+\end{align}\]</span></p>
+<p>Differentiating again (plus lots of algebra) gets you</p>
+<p><span class="math display">\[
+\frac{\partial^2 l}{\partial \beta_j \partial \beta_k} = -\frac{1}{\phi} \sum_i \frac{X_{i k} X_{i j} \alpha_i\left(\mu_i\right)}{g^{\prime}\left(\mu_i\right)^2 V_i\left(\mu_i\right)},
+\]</span>
+where <span class="math inline">\(\alpha_i\left(\mu_i\right)=1+\left(y_i-\mu_i\right)\left\{V_i^{\prime}\left(\mu_i\right) / V_i\left(\mu_i\right)+g^{\prime \prime}\left(\mu_i\right) / g^{\prime}\left(\mu_i\right)\right\}\)</span>. Note that the expected value of these second derivatives is the same, but with <span class="math inline">\(\alpha_i(\mu_i)=1\)</span>. If we define sample weights <span class="math inline">\(w_i = \alpha_i(\mu_i) / \left[g&#39;(\mu_i)^2V_i(\mu_i)\right]\)</span>, then the Hessian of the log-likelihood is given by <span class="math inline">\(-\mathbf{X}\mathbf{W}\mathbf{X}/\phi\)</span>, where <span class="math inline">\(\mathbf{W}= \text{diag}(w_i)\)</span>. If we use <span class="math inline">\(\alpha_i(\mu_i)=1\)</span> in the definition of <span class="math inline">\(w_i\)</span>, then this matrix becomes the expected Hessian or Fisher matrix, and we refer to these <span class="math inline">\(w_i\)</span> as <em>Fisher weights</em>.</p>
+<p>Defining <span class="math inline">\(\mathbf{G}= \text{diag}(g&#39;(\mu_i)/\alpha_i(\mu_i))\)</span>, we can write the gradient vector as <span class="math inline">\(\mathbf{X}^T\mathbf{W}\mathbf{G}(\mathbf{y}- \boldsymbol{\mu})/\phi\)</span>. The Newton updates then take the following form:</p>
+<p><span class="math display">\[\begin{align}
+\boldsymbol{\beta}^{k+1} &amp;= \boldsymbol{\beta}^k + (\mathbf{X}\mathbf{W}\mathbf{X})^{-1}\mathbf{X}^T\mathbf{W}\mathbf{G}(\mathbf{y}- \boldsymbol{\mu}) \\
+&amp;= (\mathbf{X}\mathbf{W}\mathbf{X})^{-1}\mathbf{X}^T\mathbf{W}\left\{\mathbf{G}(\mathbf{y}- \boldsymbol{\mu}) + \mathbf{X}\boldsymbol{\beta}^k\right\} \\
+&amp;= (\mathbf{X}\mathbf{W}\mathbf{X})^{-1}\mathbf{X}^T\mathbf{W}\mathbf{z},
+\end{align}\]</span>
+where <span class="math inline">\(z_i = g&#39;(\mu_i)(y_i - \mu_i)/\alpha_i(\mu_i) + \eta^k_i\)</span> and <span class="math inline">\(\eta^k_i\)</span> is the linear predictor for the <span class="math inline">\(i\)</span>th sample at the <span class="math inline">\(k\)</span>th iteration of the algorithm, i.e. <span class="math inline">\(\eta^k_i = \mathbf{X}_i\boldsymbol{\beta}^k\)</span>.</p>
+<p>Notice that this looks like the solution to a weighted least squares problem where the “pseudodata” response vector is <span class="math inline">\(\mathbf{z}\)</span>. If we could come up with some way to initialize <span class="math inline">\(\hat{\eta}_i\)</span>’s, then we could repeatedly perform the following two steps in an “iteratively re-weighted least squares” (IRLS) algorithm:</p>
+<ol style="list-style-type: decimal">
+<li>Let <span class="math inline">\(\hat{\mu}_i = g^{-1}(\hat{\eta}_i)\)</span>. Compute weights <span class="math inline">\(w_i = \alpha_i(\hat{\mu}_i)/\left[g&#39;(\hat{\mu}_i)^2V_i(\hat{\mu}_i)\right]\)</span> and pseudodata <span class="math inline">\(z_i = g&#39;(\hat{\mu}_i)(y_i - \hat{\mu}_i)/\alpha_i(\hat{\mu}_i) + \hat{\eta}_i\)</span>.</li>
+<li>Solve the weighted linear least squares problem
+<span class="math display">\[
+\hat{\boldsymbol{\beta}} = \text{argmin}_\boldsymbol{\beta}\sum_i w_i(z_i - \mathbf{X}_i \boldsymbol{\beta})^2
+\]</span>
+and set <span class="math inline">\(\hat{\eta}_i = \mathbf{X}_i \hat{\boldsymbol{\beta}}\)</span></li>
+</ol>
+<p>We can choose to initialize <span class="math inline">\(\hat{\eta_i}\)</span> with <span class="math inline">\(\hat{\eta_i} = g(y_i + \delta_i)\)</span>, where <span class="math inline">\(\delta_i\)</span> is usually <span class="math inline">\(0\)</span> but can be a small constant to ensure that <span class="math inline">\(g(y_i + \delta_i)\)</span> is finite. Convergence can be based on monitoring the change in deviance (to be defined).</p>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>Let’s generate some data from a Poisson GLM with the canonical log link function and then implement the IRLS algorithm to fit a model to it.</p>
+<pre class="r"><code>set.seed(770)
+n = 100
+beta0 = .2
+beta1 = -.3
+beta2 = -.1
+beta3 = 0.5
+X = matrix(runif(3*n, 0, 10), nrow = n)
+eta = beta0 + beta1 * X[, 1] + beta2 * X[, 2] + beta3 * X[, 3]
+mu = exp(eta)
+y = rpois(n, mu)
+df = data.frame(x1 = X[, 1],
+                x2 = X[, 2],
+                x3 = X[, 3],
+                y = y)
+head(df)</code></pre>
+<pre><code>##         x1       x2        x3  y
+## 1 1.206914 2.850740 0.3074856  0
+## 2 5.103305 9.526061 4.9813128  3
+## 3 7.053215 5.140721 8.8975493 13
+## 4 2.056158 7.037657 7.2838872 17
+## 5 5.658848 3.583195 8.7529416 11
+## 6 3.973796 8.302636 6.1331514  2</code></pre>
+<p>If we fit this model with the built-in R implementation, we get the following:</p>
+<pre class="r"><code>r_results = glm(y ~ x1 + x2 + x3, family = poisson, data = df)
+summary(r_results)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ x1 + x2 + x3, family = poisson, data = df)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  0.18415    0.19189   0.960    0.337    
+## x1          -0.29564    0.01514 -19.524  &lt; 2e-16 ***
+## x2          -0.10064    0.01295  -7.774  7.6e-15 ***
+## x3           0.50590    0.02207  22.927  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 1343.4  on 99  degrees of freedom
+## Residual deviance:  111.1  on 96  degrees of freedom
+## AIC: 347.14
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Now let’s implement the fitting ourselves.</p>
+<p>First, let’s implement functions for computing the weights and pseudodata for given estimated fitted values at the current iteration of the algorithm. We will use Fisher weights, meaning that we will set <span class="math inline">\(\alpha(\mu) = 1\)</span>. Since we are using a log link function, we have <span class="math inline">\(g(\mu) = \log(\mu)\)</span>, so that <span class="math inline">\(g&#39;(\mu) = 1/\mu\)</span>. Moreover, for the Poisson family, we have <span class="math inline">\(V(\mu) = \mu\)</span>. It follows that the weights are simply <span class="math inline">\(w_i = \mu_i\)</span> and the pseudodata is <span class="math inline">\(z_i = (y_i - \mu_i)/\mu_i + \eta_i\)</span></p>
+<pre class="r"><code>compute_pois_weights = function(mu) mu
+compute_pois_pd = function(y, mu, eta) (y - mu)/mu + eta </code></pre>
+<p>Now let’s implement the iterative algorithm</p>
+<pre class="r"><code>solve_pois_glm = function(X, y, niter=5, delta=1e-6) {
+  eta = log(y + delta)
+  beta_iters = vector(&quot;list&quot;, niter)
+  for (i in 1:niter) {
+    mu = exp(eta)
+    w = compute_pois_weights(mu)
+    z = compute_pois_pd(y, mu, eta)
+    mod = lm(z ~ X, weights = w)
+    beta = coef(mod)
+    beta_iters[[i]] = beta
+    eta = beta[1] + X %*% beta[-1]
+  }
+  
+  return(beta_iters)
+}
+my_results = solve_pois_glm(X, y)
+my_results</code></pre>
+<pre><code>## [[1]]
+## (Intercept)          X1          X2          X3 
+##  0.70378922 -0.26714950 -0.08785818  0.43391791 
+## 
+## [[2]]
+## (Intercept)          X1          X2          X3 
+##  0.29384507 -0.29271270 -0.09932996  0.49209379 
+## 
+## [[3]]
+## (Intercept)          X1          X2          X3 
+##   0.1883488  -0.2955920  -0.1006075   0.5053931 
+## 
+## [[4]]
+## (Intercept)          X1          X2          X3 
+##   0.1841580  -0.2956353  -0.1006412   0.5058986 
+## 
+## [[5]]
+## (Intercept)          X1          X2          X3 
+##   0.1841525  -0.2956353  -0.1006412   0.5058993</code></pre>
+<p>Let’s compare our final estimates to R’s.</p>
+<p>Our estimates are</p>
+<pre class="r"><code>my_results[[5]]</code></pre>
+<pre><code>## (Intercept)          X1          X2          X3 
+##   0.1841525  -0.2956353  -0.1006412   0.5058993</code></pre>
+<p>And R’s estimates are:</p>
+<pre class="r"><code>coef(r_results)</code></pre>
+<pre><code>## (Intercept)          x1          x2          x3 
+##   0.1841525  -0.2956353  -0.1006412   0.5058993</code></pre>
+<p>Identical!</p>
+</div>
+</div>
+<div id="large-sample-distribution-of-hatboldsymbolbeta" class="section level1">
+<h1>Large sample distribution of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span></h1>
+<p>In the limit as the sample size <span class="math inline">\(n\)</span> goes to infinity, we have that the maximum likelihood estimator <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> follows a normal distribution centered at the true parameter <span class="math inline">\(\boldsymbol{\beta}\)</span> and with variance-covariance matrix equal to the inverse of the Fisher information matrix <span class="math inline">\(\mathcal{I} = \mathbb{E}[\hat{\mathcal{I}}]\)</span>, where <span class="math inline">\(\hat{\mathcal{I}}\)</span> is the Hessian of the negative log-likelihood. In the previous section, we derived this Hessian to be equal to <span class="math inline">\(\hat{\mathcal{I}} = \mathbf{X}\mathbf{W}\mathbf{X}/ \phi\)</span> (and the expected Hessian i.e. Fisher information matrix is the same with <span class="math inline">\(\alpha(\mu) = 1\)</span> used in the definition of <span class="math inline">\(\mathbf{W}\)</span>), so the asymptotic distribution of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> is
+<span class="math display" id="eq:as-dist">\[
+\tag{8}
+\hat{\boldsymbol{\beta}} \sim N(\boldsymbol{\beta}, \phi(\mathbf{X}^T\mathbf{W}\mathbf{X})^{-1})
+\]</span></p>
+<p>In the Poisson case, <span class="math inline">\(\phi=1\)</span>. Let’s extract this variance-covariance matrix from our fitting function and compare our estimated standard errors with R’s:</p>
+<pre class="r"><code>solve_pois_glm = function(X, y, niter=5, delta=1e-6) {
+  eta = log(y + delta)
+  beta_iters = vector(&quot;list&quot;, niter)
+  for (i in 1:niter) {
+    mu = exp(eta)
+    w = compute_pois_weights(mu)
+    z = compute_pois_pd(y, mu, eta)
+    mod = lm(z ~ X, weights = w)
+    beta = coef(mod)
+    beta_iters[[i]] = beta
+    eta = beta[1] + X %*% beta[-1]
+  }
+  X_design = model.matrix(mod)
+  # Get variance-covariance matrix of estimates
+  # Exploiting R&#39;s vector recycling for efficient diagonal multiplication
+  XtWX = t(X_design) %*% (as.vector(w) * X_design)
+  cov_matrix = solve(XtWX)
+  
+  return(list(
+    beta_iters = beta_iters,
+    vcov = cov_matrix
+  ))
+}
+my_results = solve_pois_glm(X, y)</code></pre>
+<p>R’s standard errors are</p>
+<pre class="r"><code>summary(r_results)$coefficients[, &quot;Std. Error&quot;]</code></pre>
+<pre><code>## (Intercept)          x1          x2          x3 
+##  0.19188983  0.01514193  0.01294584  0.02206519</code></pre>
+<p>And ours are:</p>
+<pre class="r"><code>sqrt(diag(my_results$vcov))</code></pre>
+<pre><code>## (Intercept)          X1          X2          X3 
+##  0.19188962  0.01514193  0.01294584  0.02206517</code></pre>
+<p>Close to identical!</p>
+</div>
+<div id="comparing-models-with-a-hypothesis-test" class="section level1">
+<h1>Comparing models with a hypothesis test</h1>
+<p>Consider the test of a nested generalized linear model:</p>
+<p><span class="math display">\[
+H_0: \mathbf{g}(\boldsymbol{\mu}) = \mathbf{X}_0\boldsymbol{\beta}_0 \quad \text{versus} \quad H_1: \mathbf{g}(\boldsymbol{\mu}) = \mathbf{X}_1\boldsymbol{\beta}_1,
+\]</span>
+where <span class="math inline">\(\mathbf{X}_0\)</span> has a strict subset of the columns of <span class="math inline">\(\mathbf{X}_1\)</span>.</p>
+<p>If we can compute the maximized log-likelihood under both models, we can perform a likelihood ratio test. This test is based on the fact that under <span class="math inline">\(H_0\)</span>, two times the difference in maximized log-likelihoods asymptotically follows a chi-squared distribution with degrees of freedom equal to the difference in model sizes:</p>
+<p><span class="math display" id="eq:lrt">\[
+\tag{9}
+2(l(\hat{\boldsymbol{\beta}_1}) - l(\hat{\boldsymbol{\beta}_0})) \sim \chi^2_{p_1-p_0}
+\]</span></p>
+<p>Note that we cannot compute the log-likelihoods in the case where the scale parameter is not known, so we will need a different approach. In Poisson and binomial models, we do know the scale parameter, so we can use this test. For example, up to an additive constant, the log-likelihood for our running example (a Poisson GLM with the canonical link, aka Poisson regression) is</p>
+<p><span class="math display">\[
+l(\boldsymbol{\beta}) = \sum_i y_i\boldsymbol{\beta}^T\mathbf{X}_i - \exp(\boldsymbol{\beta}^T\mathbf{X}_i)
+\]</span></p>
+<p>Let’s show empirically for our running example that the null test distribution is correct. We will generate a fourth spurious predictor variable that will have no effect on the response and fit the Poisson model with and without the inclusion of this fourth covariate. We will compute the LRT test statistic for this scenario over many replications and plot the distribution.</p>
+<pre class="r"><code># Function to simulate data and compute the test statistic
+# mu is the ground truth expected value of the response
+# X_null is the design matrix under the null
+# X_full is the design matrix under the full model
+simul_pois_glm = function(X_null, X_full, mu) {
+  y = rpois(n, mu)
+  fit_null = glm.fit(x = X_null, y = y, family = poisson())
+  fit_full = glm.fit(x = X_full, y = y, family = poisson())
+  
+  # Deviance = 2 * phi * (LogLik_saturated - LogLik_model)
+  # phi = 1 for Poisson
+  # Dev_null - Dev_full = 2 * (LogLik_full - LogLik_null)
+  test_stat = fit_null$deviance - fit_full$deviance
+  return(test_stat)
+}
+# Simulate
+set.seed(771)
+df$x4 = runif(n, 0, 10) # spurious predictor
+X_null = model.matrix(~ x1 + x2 + x3, data = df)
+X_full = model.matrix(~ x1 + x2 + x3 + x4, data = df)
+B = 5000
+# Recall that mu was previously generated with only x1, x2, and x3 (i.e. from the null model)
+test_stats = replicate(B, simul_pois_glm(X_null, X_full, mu))</code></pre>
+<p>We get the following distribution with the theoretical chi-squared density with one degree of freedom overlaid:</p>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>On the other hand, if we consider testing the significance of <span class="math inline">\(\beta_2\)</span>, which we know is non-zero, we get the following distribution of test statistics:</p>
+<pre class="r"><code>X_full = X_null
+X_null = model.matrix(~ x1 + x3, data = df)
+test_stats = replicate(B, simul_pois_glm(X_null, X_full, mu))
+hist(test_stats, probability=T)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>While the null distribution for the test statistic has been verified in this particular example, in general, the usual caveats about hypothesis tests apply. Specifically relevant to the case of generalized linear models is the distributional assumption about the response, e.g. that it is Poisson in our working example.</p>
+<p>Let’s explore how robust the test is if the response does not actually follow the assumed distribution. Suppose, for example, that instead of having a Poisson distribution, the response has a negative binomial distribution.</p>
+<pre class="r"><code># Function to simulate data and compute the likelihood ratio test statistic
+# The data is simulated from a negative binomial, so the models are mis-specified
+# mu is the ground truth expected value of the response
+# X_null is the design matrix under the null
+# X_full is the design matrix under the full model
+# theta is the auxiliary parameter in the negative binomial distribution
+# such that the variance of the random variable equals mu + mu^2/theta
+# As theta goes to infinity, we recover the Poisson distribution
+simul_misspec_pois_glm = function(X_null, X_full, mu, theta=10) {
+  y = rnbinom(n, size=theta, mu=mu)
+  fit_null = glm.fit(x = X_null, y = y, family = poisson())
+  fit_full = glm.fit(x = X_full, y = y, family = poisson())
+  test_stat = fit_null$deviance - fit_full$deviance
+  return(test_stat)
+}
+X_null = model.matrix(~ x1 + x2 + x3, data = df)
+X_full = model.matrix(~ x1 + x2 + x3 + x4, data = df)
+test_stats = replicate(B, simul_misspec_pois_glm(X_null, X_full, mu))</code></pre>
+<p>We get the following distribution with the theoretical chi-squared density with one degree of freedom overlaid:</p>
+<pre class="r"><code>hist(test_stats, probability=T)
+curve(dchisq(x, ncol(X_full)-ncol(X_null)), from=0, to=max(test_stats), add=TRUE)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+The assumed null distribution is closer to 0 than the empirical null distribution of the test statistics, meaning that we’d have an inflated false positive rate if we were to use this assumed null to perform the hypothesis test.</p>
+<p>If we crank up <span class="math inline">\(\theta\)</span>, we end up approaching the Poisson distribution, so the test becomes valid:</p>
+<pre class="r"><code>test_stats = replicate(B, simul_misspec_pois_glm(X_null, X_full, mu, theta=1000))
+hist(test_stats, probability=T)
+curve(dchisq(x, ncol(X_full)-ncol(X_null)), from=0, to=max(test_stats), add=TRUE)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="deviance-and-scaled-deviance" class="section level1">
+<h1>Deviance and scaled deviance</h1>
+<p>In my R function <code>simul_pois_glm</code> above, I rely on the <code>deviance</code> of the object returned by <code>glm.fit</code>. What is this quantity? It can be interpreted in a way similar to the residual sum of squares in ordinary linear models. That is to say, it is some measure of the imperfection of the model at capturing the full variation in the data. To define it, we must introduce the notion of a saturated model. A saturated GLM is essentially one that has one parameter for every data point in the sample. Such a model has sufficient degrees of freedom to stipulate that the expected value of each data point is equal to its observed value, and the maximum log-likelihood under this model is an upper bound on the maximum log-likelihood of any GLM with fewer parameters.</p>
+<p>The deviance of a model with estimated parameter vector <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> is defined as
+<span class="math display">\[
+D = 2\phi\{l_{\text{saturated}} - l(\hat{\boldsymbol{\beta}})\}
+\]</span></p>
+<p>Counter-intuitively, because the factor <span class="math inline">\(\phi\)</span> is included in this definition of the deviance, the deviance is independent of it because it cancels out with the <span class="math inline">\(\phi\)</span> that appears in the denominator of the log-likelihood <a href="#eq:loglik">(7)</a>. Thus, we can calculate the deviance even if we don’t know <span class="math inline">\(\phi\)</span>.</p>
+<p>In contrast, we define the <em>scaled deviance</em> by
+<span class="math display">\[
+D^* = 2\{l_{\text{saturated}} - l(\hat{\boldsymbol{\beta}})\},
+\]</span> and this quantity cannot be calculated without knowledge of the scale parameter.</p>
+<p>It’s clear that we can re-express the log-likelihood ratio test statistic <a href="#eq:lrt">(9)</a> as a difference in scaled deviances <span class="math inline">\(D^*_0 - D^*_1\)</span>. Of course, if the scale parameter is unknown, there is no way for us to calculate this. For the binomial and Poisson distributions, for which the scale parameter is 1, the scaled deviance and regular deviance are equal, hence why we could use the <code>deviance</code> in our definition of <code>simul_pois_glm</code> above.</p>
+</div>
+<div id="handling-unknown-phi" class="section level1">
+<h1>Handling unknown <span class="math inline">\(\phi\)</span></h1>
+<p>What do we do if <span class="math inline">\(\phi\)</span> is unknown? Although we have seen how to obtain the ML estimator <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> for <span class="math inline">\(\boldsymbol{\beta}\)</span> without estimating <span class="math inline">\(\phi\)</span>, we have only shown how to do hypothesis testing for the case where <span class="math inline">\(\phi\)</span> is known. Moreover, if <span class="math inline">\(\phi\)</span> is unknown, we will need to estimate it we want to get standard errors for <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>, since the asymptotic variance of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> includes a factor of <span class="math inline">\(\phi\)</span> <a href="#eq:as-dist">(8)</a>.</p>
+<p>One approach to estimating <span class="math inline">\(\phi\)</span> is based on the approximation <span class="math inline">\(D^* \sim \chi^2_{n-p}\)</span>. If we take this approximation at face value, then because the expected value of a <span class="math inline">\(\chi^2_{n-p}\)</span> random variable is <span class="math inline">\(n-p\)</span> and <span class="math inline">\(\phi = D/D*\)</span>, the following is a reasonable estimator:</p>
+<p><span class="math display" id="eq:dev-based-phi">\[
+\tag{10}
+\hat{\phi}_D = D / (n - p)
+\]</span></p>
+<p>To do hypothesis testing, we could take this estimator of <span class="math inline">\(\phi\)</span>, <span class="math inline">\(\hat{\phi}_D\)</span>, and use it to estimate the difference in scaled deviances, i.e. the twice log-likelihood ratio statistic, using the following statistic:</p>
+<p><span class="math display">\[
+(D_0 - D_1)/\hat{\phi}_D
+\]</span></p>
+<p>Let’s explore this using a Gamma GLM. We set the ground-truth <span class="math inline">\(\phi=0.5\)</span> representing some under-dispersion (<span class="math inline">\(\mathop{\mathrm{Var}}(y) =\mathbb{E}(y)^2/2\)</span>).</p>
+<pre class="r"><code>phi = 0.5</code></pre>
+<p>We will use the same covariates and mean as before with our Poisson regression. That means that even though it’s not canonical (the canonical link function for a Gamma glm would be the inverse function), we are using a log link function. This is actually a more reasonable link function in most cases since the mean of the Gamma must be positive, so using an inverse link function (or identity link, which is another popular choice) would place a constraint on the linear predictor <span class="math inline">\(\eta\)</span> to be positive.</p>
+<p>Here’s our procedure for simulating from the Gamma GLM and fitting a model (<code>X_null</code> and <code>X_full</code> are the same sets of covariates as before–recall that in particular, <code>X_null</code> is what we used to generate <code>mu</code> so the null model is true):</p>
+<pre class="r"><code># Function to simulate data and compute the test statistic
+# mu is the ground truth expected value of the response
+# X_null is the design matrix under the null
+# X_full is the design matrix under the full model
+simul_gamma_glm = function(X_null, X_full, mu, phi) {
+  y = rgamma(n, shape = 1/phi, scale = mu*phi)
+  fit_null = glm.fit(x = X_null, y = y, family = Gamma(&quot;log&quot;))
+  fit_full = glm.fit(x = X_full, y = y, family = Gamma(&quot;log&quot;))
+  
+  #Deviance = 2 * phi * (LogLik_saturated - LogLik_model)
+  dif_devs = fit_null$deviance - fit_full$deviance
+  phi_hat = fit_full$deviance / fit_full$df.residual
+  test_stat = dif_devs / phi_hat
+  return(c(test_stat, phi_hat))
+}
+# Simulate
+set.seed(1050)
+# Recall that mu was previously generated with only x1, x2, and x3 (i.e. from the null model)
+results = replicate(B, simul_gamma_glm(X_null, X_full, mu, phi))</code></pre>
+<pre class="r"><code>library(latex2exp)
+hist(results[2,], probability=T, 
+     main = TeX(r&quot;(Distribution of $\hat{\phi}_D)&quot;),
+     xlab = TeX(r&quot;($\hat{\phi}_D)&quot;))
+abline(v = phi, lwd=2, col=&quot;red&quot;)
+legend(&quot;topright&quot;, legend = &quot;True value&quot;, lwd=2, col=&quot;red&quot;)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>hist(results[1,], probability=T, 
+     main = TeX(r&quot;(Distribution of $(D_0 - D_1)/\hat{\phi}_D$)&quot;),
+     xlab = TeX(r&quot;($(D_0 - D_1)/\hat{\phi}_D$)&quot;))
+curve(dchisq(x, ncol(X_full)-ncol(X_null)), 
+      from=0, to=max(test_stats), add=TRUE)
+legend(&quot;top&quot;, legend=&quot;Theoretical\nchi-squared\ndistribution&quot;, lwd=1, bty=&quot;n&quot;)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>Not bad. Again, this estimator is based on the approximation <span class="math inline">\(D/\phi \sim \chi^2_{n-p}\)</span>. Another approximation available to us is <span class="math inline">\(X^2/\phi \sim  \chi^2_{n-p}\)</span>, where <span class="math inline">\(X^2\)</span> is the so-called <em>Pearson statistic</em> defined by</p>
+<p><span class="math display">\[
+X^2 = \sum_{i=1}^n\frac{(y_i-\hat{\mu}_i)^2}{V(\hat{\mu_i})}.
+\]</span></p>
+<p>From this approximation, we get the estimator
+<span class="math display">\[
+\hat{\phi}_P = X^2/(n-p)
+\]</span></p>
+<p>Let’s see how this looks:</p>
+<pre class="r"><code># Function to simulate data and compute the test statistic
+# mu is the ground truth expected value of the response
+# X_null is the design matrix under the null
+# X_full is the design matrix under the full model
+simul_gamma_glm = function(X_null, X_full, mu, phi, pearson=FALSE) {
+  y = rgamma(n, shape = 1/phi, scale = mu*phi)
+  fit_null = glm.fit(x = X_null, y = y, family = Gamma(&quot;log&quot;))
+  fit_full = glm.fit(x = X_full, y = y, family = Gamma(&quot;log&quot;))
+  
+  #Deviance = 2 * phi * (LogLik_saturated - LogLik_model)
+  dif_devs = fit_null$deviance - fit_full$deviance
+  if (pearson) {
+    # V(mu) = mu^2 for Gamma
+    phi_hat = sum((fit_full$y - fit_full$fitted.values)^2 / fit_full$fitted.values^2) / 
+      fit_full$df.residual
+  } else {
+    phi_hat = fit_full$deviance / fit_full$df.residual
+  }
+  test_stat = dif_devs / phi_hat
+  return(c(test_stat, phi_hat))
+}
+
+set.seed(1050)
+results = replicate(B, simul_gamma_glm(X_null, X_full, mu, phi, pearson=TRUE))</code></pre>
+<pre class="r"><code>library(latex2exp)
+hist(results[2,], probability=T, 
+     main = TeX(r&quot;(Distribution of $\hat{\phi}_P)&quot;),
+     xlab = TeX(r&quot;($\hat{\phi}_P)&quot;))
+abline(v = phi, lwd=2, col=&quot;red&quot;)
+legend(&quot;topright&quot;, legend = &quot;True value&quot;, lwd=2, col=&quot;red&quot;)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code>hist(results[1,], probability=T, 
+     main = TeX(r&quot;(Distribution of $(D_0 - D_1)/\hat{\phi}_P$)&quot;),
+     xlab = TeX(r&quot;($(D_0 - D_1)/\hat{\phi}_P$)&quot;))
+curve(dchisq(x, ncol(X_full)-ncol(X_null)), 
+      from=0, to=max(test_stats), add=TRUE)
+legend(&quot;top&quot;, legend=&quot;Theoretical\nchi-squared\ndistribution&quot;, lwd=1, bty=&quot;n&quot;)</code></pre>
+<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-22-1.png" width="672" />
+Similar, maybe the estimates of <span class="math inline">\(\phi\)</span> using the Pearson statistic look slightly better.</p>
+<p>Ok, that’s all for now! Next post, I’ll get into model checking with residuals, the quasilikelihood approach, and using the negative binomial distribution for over-dispersed counts (3.1.7-9 in Wood).</p>
+<div id="references" class="section level4 unnumbered">
+<h4>References</h4>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-wood2017generalized" class="csl-entry">
+Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with r</em>. chapman; hall/CRC.
+</div>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Should a specific parametric family of distributions like the normal family or Poisson family be described as an ‘exponential family’ or does ‘exponential family’ refer to the class of all such parametric families? I’ve chosen to go with the former.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  
+
+
+  </body>
+</html>
+

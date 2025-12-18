@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ams on Evan Gorstein</title>
-    <link>//localhost:4321/tags/ams/</link>
+    <link>/tags/ams/</link>
     <description>Recent content in Ams on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 13 Jan 2021 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:4321/tags/ams/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/ams/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Randomization Inference Part 2: Attributable Effects</title>
-      <link>//localhost:4321/2021/01/13/attributable-effects/</link>
+      <link>/2021/01/13/attributable-effects/</link>
       <pubDate>Wed, 13 Jan 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/2021/01/13/attributable-effects/</guid>
+      <guid>/2021/01/13/attributable-effects/</guid>
       <description>Introduction In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-constant causal effects.</description>
     </item>
   </channel>

@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Evan Gorstein</title>
-    <link>//localhost:4321/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:4321/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Causal Inference</title>
-      <link>//localhost:4321/tags/causal-inference/</link>
+      <link>/tags/causal-inference/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/tags/causal-inference/</guid>
+      <guid>/tags/causal-inference/</guid>
       <description></description>
     </item>
     <item>
       <title>External Validity</title>
-      <link>//localhost:4321/tags/external-validity/</link>
+      <link>/tags/external-validity/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/tags/external-validity/</guid>
+      <guid>/tags/external-validity/</guid>
       <description></description>
     </item>
     <item>
       <title>Identification</title>
-      <link>//localhost:4321/tags/identification/</link>
+      <link>/tags/identification/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/tags/identification/</guid>
+      <guid>/tags/identification/</guid>
       <description></description>
     </item>
     <item>
       <title>Ams</title>
-      <link>//localhost:4321/tags/ams/</link>
+      <link>/tags/ams/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/tags/ams/</guid>
+      <guid>/tags/ams/</guid>
       <description></description>
     </item>
   </channel>

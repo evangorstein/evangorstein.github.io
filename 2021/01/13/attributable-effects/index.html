@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.126.1">
@@ -10,7 +10,7 @@
 <meta property="og:title" content="Randomization Inference Part 2: Attributable Effects - Evan Gorstein">
 
 
-  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -70,7 +70,6 @@
       
 
 
-<font size="2">
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-constant causal effects. The quantity that we will define for this task is known as the “attributable effect” of treatment. This discussion is adapted from Chapter 2 of Paul Rosenbaum’s <em>Design of Observational Studies</em> (2010).</p>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Hugo 0.126.1">
@@ -10,7 +10,7 @@
 <meta property="og:title" content="Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic - Evan Gorstein">
 
 
-  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -67,8 +67,7 @@
     
 
     <div class="article-content">
-      <font size="2">  
-<h1 id="introduction">Introduction</h1>
+      <h1 id="introduction">Introduction</h1>
 <p>Last semester, I made my way through the first half of Paul Rosenbaum&rsquo;s textbook <em>Design of Observational Studies</em> (2010). Rosenbaum is a leading expert in causal inference, an area of statistical research concerned with the identification of causal effects through the analysis of observational data.</p>
 <p>One piece of advice I&rsquo;ve heard directed towards researchers in the social sciences who are interested in measuring a  causal effect is to get a clear image in their head of the randomized experiment that, were it feasible, ethical, etc., would be used to test for its presence. In this hypothetical, randomization plays the role of a benchmark which can be approached using the tools of causal inference. In the fortunate circumstances in which a randomized experiment is possible, the task of conducting inference simplifies greatly, although there is still some work to be done. Rosenbaum discusses randomization inference in a matched pair experiment in Chapter 2 of his textbook, alongside an example study that he works through. In the next post or two, I would like to summarize the method he presents to solidify my own understanding.</p>
 <p>In this post, I discuss two non-parametric ways of doing inference in a randomized matched pair study. The first näively uses the mean treated-minus-control

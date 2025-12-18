@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.126.1">
+
+
+<title>Replicating Research with LLMs - Evan Gorstein</title>
+<meta property="og:title" content="Replicating Research with LLMs - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Replicating Research with LLMs</h1>
+
+    
+    <span class="article-date">2025-10-30</span>
+    
+
+    <div class="article-content">
+      
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(haven)</code></pre>
+<pre class="r"><code>fulldata &lt;- read_dta(&quot;data/maindata.dta&quot;)</code></pre>
+<div id="basic-demographics" class="section level2">
+<h2>Basic demographics</h2>
+<pre class="r"><code>demo &lt;- fulldata %&gt;%
+  rename(
+    id = R0000100, hid = R0000149, MONTH79 = R0000300, YR79 = R0000500,
+    sample = R0173600, RACE79 = R0214700, SEX79 = R0214800,	MONTH81 = R0410100,
+    YR81 = R0410300, SEX82 = R0810200
+  ) %&gt;%
+  mutate(
+    year = if_else(YR81 &gt; 0, YR81, YR79),
+    month = if_else(MONTH81 &gt; 0, MONTH81, MONTH79)
+    ) %&gt;%
+  mutate(
+    race = factor(RACE79, levels = c(3, 1, 2), labels = c(&quot;white&quot;, &quot;hisp&quot;, &quot;black&quot;)),
+    sex = factor(case_when(
+      SEX82==2 ~ &quot;female&quot;,
+      SEX82 &lt; 0 &amp; SEX79==2 ~ &quot;female&quot;,
+      .default = &quot;male&quot;
+    ), levels = c(&quot;male&quot;, &quot;female&quot;))
+    ) %&gt;%
+  mutate(
+    sample = case_when(
+      sample &gt;= 1 &amp; sample &lt;= 8 ~ &quot;cross-sec&quot;,
+      sample &gt;= 9 &amp; sample &lt;= 14 ~ &quot;supplemental&quot;,
+      sample &gt;= 15 &amp; sample &lt;= 20 ~ &quot;military&quot;
+    )
+    )
+# check that all sample types are covered
+any(is.na(demo$sample))</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>demo &lt;- demo %&gt;%
+  select(id, hid, year, month, sex, race, sample) %&gt;% 
+  arrange(id)</code></pre>
+</div>
+<div id="highest-grade-completed" class="section level2">
+<h2>Highest grade completed</h2>
+<pre class="r"><code># --- Stata: rename R*... to hgc*... ---
+hgc &lt;- fulldata %&gt;%
+  rename(
+    id = R0000100,
+    hgc79 = R0216701, hgc80 = R0406401, hgc81 = R0618901, hgc82 = R0898201,
+    hgc83 = R1145001, hgc84 = R1520201, hgc85 = R1890901, hgc86 = R2258001,
+    hgc87 = R2445401, hgc88 = R2871101, hgc89 = R3074801, hgc90 = R3401501,
+    hgc91 = R3656901, hgc92 = R4007401, hgc93 = R4418501, hgc94 = R5103900,
+    hgc96 = R5166901, hgc98 = R6479600, hgc100 = R7007300, hgc102 = R7704400,
+    hgc104 = R8496800
+  )
+
+# --- Stata: keep hgc* id; ---
+hgc &lt;- hgc %&gt;%
+  select(id, starts_with(&quot;hgc&quot;))</code></pre>
+<pre class="r"><code>hgc &lt;- hgc %&gt;%
+  pivot_longer(
+    cols = starts_with(&quot;hgc&quot;),
+    names_to = &quot;year&quot;,
+    values_to = &quot;hgc&quot;,
+    names_prefix = &quot;hgc&quot;, # Removes &quot;hgc&quot; from &quot;hgc79&quot; to get &quot;79&quot;
+    names_transform = list(year = as.integer) # Converts &quot;79&quot; to 79
+  ) %&gt;%
+  mutate(
+    # gen below6=0; replace below6=1 if hgc&lt;6 &amp; hgc&gt;=0;
+    # We use if_else(condition, true, false, missing)
+    # Stata&#39;s `gen below6=0` sets NA rows to 0, so we use `missing = 0`.
+    below6 = if_else(hgc &lt; 6 &amp; hgc &gt;= 0, 1, 0, 0),
+    
+    # replace hgc=6 if hgc&lt;6 &amp; hgc&gt;=0;
+    # replace hgc=6 if hgc&gt;90;
+    # case_when() handles this cleanly.
+    hgc = case_when(
+      hgc &lt; 6 &amp; hgc &gt;= 0 ~ 6,
+      hgc &gt; 90 ~ 6,
+      .default = hgc # Keeps all other values (including NA) as they are
+    )
+  ) %&gt;%
+  pivot_wider(
+    id_cols = id,
+    names_from = year,
+    values_from = c(hgc, below6),
+    # This creates &quot;hgc79&quot;, &quot;below679&quot;, etc., to match Stata&#39;s output
+    names_glue = &quot;{.value}{year}&quot; 
+  )
+
+hgc &lt;- hgc %&gt;%
+  mutate(
+    across(
+      starts_with(&quot;hgc&quot;),
+      ~ if_else(.x &lt; 0 , NA_real_, .x)
+    )
+  )</code></pre>
+<pre class="r"><code> final &lt;- demo %&gt;%
+  left_join(
+    hgc, by = &quot;id&quot;
+  ) %&gt;%
+  arrange(id)</code></pre>
+</div>
+<div id="employment-status-class-of-workers-hours-worked" class="section level2">
+<h2>Employment Status, Class of Workers, Hours worked</h2>
+<p>Employment status and class of worker:</p>
+<pre class="r"><code>employ &lt;- fulldata %&gt;%
+  rename(
+    # General ID
+    id = R0000100,
+
+    # 1979
+    cls79 = R0046800, # For those who work outside the house, do you work at a private company (1), for the gov (2), self-employed (3), without pay (4)
+    esr79 = R0214900, # Do you work (1), with job, not at work (2) are you unemployed (3), are you keeping house (4), are you a student (5), are you unable to work (6), Other (7), in military (8)
+    curr1job79 = R0094700, # For those who recorded at least one employer, is job 1 the one that is current?
+    curr2job79 = R0094800, # For those who recorded at least two employers, is job 2 the one that is current?
+    curr3job79 = R0094900, # Etc.
+    curr4job79 = R0095000,
+    curr5job79 = R0095100,
+
+    # 1980
+    cls80 = R0263500,
+    esr80 = R0406300,
+    curr1job80 = R0337700,
+    curr2job80 = R0349200,
+    curr3job80 = R0360700,
+    curr4job80 = R0372200,
+    curr5job80 = R0383700,
+
+    # 1981
+    cls81 = R0446600,
+    esr81 = R0618800,
+    curr1job81 = R0545500,
+    curr2job81 = R0558600,
+    curr3job81 = R0571700,
+    curr4job81 = R0584800,
+    curr5job81 = R0597900,
+
+    # 1982
+    cls82 = R0702300,
+    esr82 = R0898500,
+    curr1job82 = R0840100,
+    curr2job82 = R0853200,
+    curr3job82 = R0866300,
+    curr4job82 = R0879400,
+    curr5job82 = R0892500,
+
+    # 1983
+    cls83 = R0945400,
+    esr83 = R1144700,
+    curr1job83 = R1087200,
+    curr2job83 = R1100400,
+    curr3job83 = R1113600,
+    curr4job83 = R1126800,
+    curr5job83 = R1140000,
+
+    # 1984
+    cls84 = R1255800,
+    esr84 = R1519900,
+    curr1job84 = R1462900,
+    curr2job84 = R1476000,
+    curr3job84 = R1489100,
+    curr4job84 = R1502200,
+    curr5job84 = R1515300,
+
+    # 1985
+    cls85 = R1650600,
+    esr85 = R1890600,
+    curr1job85 = R1809700,
+    curr2job85 = R1822400,
+    curr3job85 = R1835100,
+    curr4job85 = R1847800,
+    curr5job85 = R1860500,
+
+    # 1986
+    cls86 = R1923200,
+    esr86 = R2257700,
+    curr1job86 = R2171400,
+    curr2job86 = R2185000,
+    curr3job86 = R2198600,
+    curr4job86 = R2212200,
+    curr5job86 = R2225800,
+
+    # 1987
+    cls87 = R2318000,
+    esr87 = R2445100,
+    curr1job87 = R2376200,
+    curr2job87 = R2387500,
+    curr3job87 = R2398800,
+    curr4job87 = R2410100,
+    curr5job87 = R2421400,
+
+    # 1988
+    cls88 = R2525800,
+    esr88 = R2870600,
+    curr1job88 = R2770800,
+    curr2job88 = R2783700,
+    curr3job88 = R2796600,
+    curr4job88 = R2809500,
+    curr5job88 = R2822400,
+
+    # 1989
+    cls89 = R2924800,
+    esr89 = R3074300,
+    curr1job89 = R3012600,
+    curr2job89 = R3025700,
+    curr3job89 = R3038800,
+    curr4job89 = R3051900,
+    curr5job89 = R3065000,
+
+    # 1990
+    cls90 = R3127500,
+    esr90 = R3401000,
+    curr1job90 = R3340000,
+    curr2job90 = R3354000,
+    curr3job90 = R3368000,
+    curr4job90 = R3382000,
+    curr5job90 = R3396000,
+
+    # 1991
+    cls91 = R3523200,
+    esr91 = R3656400,
+    curr1job91 = R3604300,
+    curr2job91 = R3616400,
+    curr3job91 = R3628500,
+    curr4job91 = R3640600,
+    curr5job91 = R3652700,
+
+    # 1992
+    cls92 = R3728200,
+    esr92 = R4006900,
+    curr1job92 = R3954500,
+    curr2job92 = R3966700,
+    curr3job92 = R3978900,
+    curr4job92 = R3991100,
+    curr5job92 = R4003300,
+
+    # 1993
+    cls93 = R4182300,
+    esr93 = R4418000,
+
+    # 1994
+    clsa94 = R4586700,
+    clsb94 = R4586800,
+    clsc94 = R4587900,
+    esr94 = R5081000,
+
+    # 1996
+    clsa96 = R5268800,
+    clsb96 = R5268900,
+    clsc96 = R5270400,
+    esr96 = R5166300,
+
+    # 1998
+    clsa98 = R5925000,
+    clsb98 = R5925800,
+    clsc98 = R5936600,
+    esr98 = R6478900,
+
+    # 2000
+    cls100 = R6592300,
+    esr100 = R6555000,
+
+    # 2002
+    cls102 = R7210100,
+    esr102 = R7181300,
+
+    # 2004
+    cls104 = R7898500,
+    esr104 = R7866700
+  )</code></pre>
+<p>Bring in hours worked:</p>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  rename(
+    hrsweekj179 = R0070500,
+    hrsweekj279 = R0070600,
+    hrsweekj379 = R0070700,
+    hrsweekj479 = R0070800,
+    hrsweekj579 = R0070900,
+    hrsweek80 = R0264300,
+    hrsweek81 = R0446900,
+    hrsweek82 = R0702600,
+    hrsweek83 = R0945700,
+    hrsweek84 = R1256100,
+    hrsweek85 = R1650900,
+    hrsweek86 = R1923500,
+    hrsweek87 = R2318300,
+    hrsweek88 = R2526100,
+    hrsweek89 = R2925100,
+    hrsweek90 = R3127900,
+    hrsweek91 = R3523600,
+    hrsweek92 = R3728600,
+    hrsweek93 = R4182600,
+    hrsweek94 = R4540300,
+    hrsweek96 = R5236400,
+    hrsweek98 = R5838200,
+    hrsweek100 = R6578200,
+    hrsweek102 = R7192900,
+    hrsweek104 = R7879600
+  )</code></pre>
+<p>esr for years after 98 is just whether the worker is currently holding job 1 or not (not created by NLSY for these years)</p>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  mutate(
+    esr100 = if_else(esr100 == 0, 3, esr100),
+    esr102 = if_else(esr102 == 0, 3, esr102),
+    esr104 = if_else(esr104 == 0, 3, esr104)
+  )</code></pre>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  select(!starts_with(&quot;R&quot;))
+
+
+employ &lt;- employ %&gt;%
+  pivot_longer(
+    cols = !id,
+    names_to = c(&quot;.value&quot;, &quot;year&quot;),
+    names_pattern = &quot;(.*?)(100|102|104|\\d{2})$&quot;
+  )
+
+# coding change between 1994 and 1998
+employ &lt;- employ %&gt;%
+  mutate(
+    cls = case_when(
+    year &lt; 94 | year &gt; 98 ~ cls,
+    clsa &gt; -3 ~ clsa,
+    clsb &gt; -3 ~ clsb,
+    clsc &gt; - 3 ~ clsc
+      )
+  ) %&gt;%
+  mutate(
+    cls = case_when(
+      year &lt; 94 | year &gt; 98 ~ cls,
+      cls==2 | cls==3 ~ 1,
+      cls==1 ~ 2,
+      cls==4 ~ 3,
+      cls==5 ~ 4,
+      .default = cls
+    )
+  )</code></pre>
+<p>Now we combine <code>cls</code> and <code>esr</code> to create a variable <code>code</code>:</p>
+<p>-9 = coding error but working
+0 = interviewed, non-milt, not working, 1 = working for pay, 2 = non-interview,
+3 = military &amp; no civilian job, 4= self-employed, 5 - working w/o pay</p>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  mutate(
+    code = case_when(
+      cls == 4 ~ 5, # working without pay
+      cls == 3 ~ 4, # self-employed
+      cls == 1 | cls == 2 ~ 1, # working for pay 
+      esr == 8 ~ 3, # military
+      (cls&gt;-4 &amp; cls&lt;0) &amp; (esr==1 | esr==2) ~ -9, # cls is missing, but is working according to esr
+      (cls == -4) | ((cls&gt;-4 &amp; cls&lt;0) &amp; (esr&gt;2 &amp; esr!=8)) ~ 0, # neither working nor in the military
+      esr == -5 ~ 2, # not interviewed
+      .default = -99
+    )
+  )</code></pre>
+<p>Determine CPS job. For years after 1992, it’s job 1. For years before 1993, it’s based on currxjob variables</p>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  mutate(
+    CPSJOB = case_when(
+      year &gt; 92 ~ 1, 
+      curr1job == 1 ~ 1,
+      curr2job == 1 ~ 2,
+      curr3job == 1 ~ 3,
+      curr4job == 1 ~ 4,
+      curr5job == 1 ~ 5,
+      .default = 0 
+    )
+  ) %&gt;%
+  select(!starts_with(&quot;curr&quot;))</code></pre>
+<p>Determine how many hours per week are worked for 1979</p>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  mutate(
+    hrsweek = case_when(
+      year != 79 ~ hrsweek,
+      CPSJOB == 5 ~ hrsweekj5,
+      CPSJOB == 4 ~ hrsweekj4,
+      CPSJOB == 3 ~ hrsweekj3,
+      CPSJOB == 2 ~ hrsweekj2,
+      CPSJOB == 1 ~ hrsweekj1,
+      .default = hrsweek
+    )
+  )</code></pre>
+<p>Reshape back to wide and merge with fulldata</p>
+<pre class="r"><code>employ &lt;- employ %&gt;%
+  select(id, code, cls, esr, year, hrsweek) %&gt;%
+  pivot_wider(
+    names_from = year,
+    values_from = -c(id, year)
+  ) 
+
+
+final &lt;- final %&gt;%
+  left_join(employ, by=&quot;id&quot;) %&gt;%
+  arrange(id)</code></pre>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  
+
+
+  </body>
+</html>
+
