@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.126.1">
+
+
+<title>Notes on GLMs: Part 2 - Evan Gorstein</title>
+<meta property="og:title" content="Notes on GLMs: Part 2 - Evan Gorstein">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">9 min read</span>
+    
+
+    <h1 class="article-title">Notes on GLMs: Part 2</h1>
+
+    
+    <span class="article-date">2025-12-20</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>Continuing where we left off in Chapter 3 of <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>, we begin with a discussion of residuals in GLMs.</p>
+<div id="residuals" class="section level2">
+<h2>Residuals</h2>
+<p>At the beginning of Section 3.1.7, we get the following statement:</p>
+<blockquote>
+<p><em>Model checking is perhaps the most important part of applied statistical modelling. In the case of ordinary linear models it is based on examination of the model residuals, which contain all the information in the data not explained by the systematic part of the model. Examination of residuals is also the chief means for model checking in the case of GLMs, but in this case the standardization of residuals is both necessary and a little more difficult.</em></p>
+</blockquote>
+<p>Wood goes on to explain why. When you plot the residuals from an ordinary linear model, you are usually hoping to find that their spread is roughly constant with respect to whatever you happen to be plotting on the x-axis–some covariate in the model, the fitted values, the index in which the data appears, etc. This is the so called assumption of “homoscedasticity”–a Greek word meaning constant spread–made by the model. In contrast, because non-normal GLMs imply a non-constant mean-variance relationship, the appearance of constant spread in the raw residuals <span class="math inline">\(Y_i - \hat{\mu}_i\)</span> from a non-normal GLM would in fact be a bad sign, indicating a violation of your model’s assumptions. As Wood explains (and as we discussed in the last post), each distribution that is used for GLMs–Poisson, binomial, Gamma, etc.–has a different function <span class="math inline">\(V\)</span> that captures the mean-variance relationship via the equation <span class="math inline">\(\mathop{\mathrm{Var}}(Y) = \phi V(\mathbb{E}(Y))\)</span>. Thus, when performing model checking for a GLM, you hope to find that the variance of your raw residuals varies with respect to the fitted values according to the function <span class="math inline">\(V\)</span> specific to the distribution assumed by your GLM. As it turns out, this is a difficult thing to eyeball. However, if you standardize these raw residuals in such a way so that the standardized residuals would have constant spread if and only if the assumed mean-variance relationship held, then you can plot these standardized residuals and check for constant spread, which is the assessment one has to make in the ordinary case and is much easier.</p>
+<p>There are two types of standardized residuals discussed by Wood: the Pearson residuals and the deviance residuals. Here are their definitions:</p>
+<p><span class="math display" id="eq:resid">\[\begin{align}
+\tag{1}
+\hat{\epsilon}_i^p &amp;= \frac{y_i - \hat{\mu}_i}{\sqrt{V(\hat{\mu}_i)}} \\
+\hat{\epsilon}_i^d = \text{sign}(y_i - \hat{\mu_i})\sqrt{d_i} &amp;=
+\text{sign}(y_i - \hat{\mu_i})\sqrt{2\phi\{l_i^{\text{max}} - l_i(\hat{\beta})\}}
+\end{align}\]</span></p>
+<p>These two types of residuals form the basis for the the two estimates of <span class="math inline">\(\phi\)</span> discussed in Part 1: the sum of squared Pearson residuals gives the Pearson statistic, and the sum of squared deviance residuals gives the deviance.</p>
+<p>Let’s see what they look like for the Poisson regression from the first post.</p>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<img src="/2025/12/20/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-2-1.png" alt="Residuals from a Poisson GLM with log-link" width="672" />
+<p class="caption">
+Figure 1: Residuals from a Poisson GLM with log-link
+</p>
+</div>
+<p>What’s the deal with the streaks?</p>
+<p>They are an artifact of the fact that the response <span class="math inline">\(Y\)</span> is discrete! Each streak corresponds to the data points with a given value of <span class="math inline">\(Y\)</span>, e.g. <span class="math inline">\(Y=0, 1, etc.\)</span>. Modulo the streaks, however, we see no trend in the spread of either the Pearson and deviance residuals with respect to the linear prediction, validating the mean-variance relationship assumed by the fitted Poisson GLM. In addition, we observe that the Pearson residuals are distributed somewhat more asymmetrically about <span class="math inline">\(0\)</span> with some positive skew, whereas the deviance residuals are more symmetric.</p>
+<p>In addition to these two types of residuals described by Wood, there are also the working residuals, defined by</p>
+<p><span class="math display" id="eq:working">\[
+\tag{2}
+r_W = g&#39;(\hat{\mu})(y-\hat{\mu})
+\]</span></p>
+<p>From equations <a href="#eq:resid">(1)</a> and <a href="#eq:working">(2)</a>, we can see that the working residuals coincide with the Pearson residual whenever</p>
+<p><span class="math display">\[
+g&#39;(\mu) = \frac{1}{\sqrt{V(\mu)}}
+\]</span></p>
+<p>If this property holds, we say that the link function <span class="math inline">\(g\)</span> is <em>variance stabilizing</em> for the distribution of <span class="math inline">\(Y\)</span>. Where this comes from is that if we were to directly apply the transformation <span class="math inline">\(g\)</span> to the responses <span class="math inline">\(Y\)</span>, assumed to follow a distribution such that <span class="math inline">\(\mathop{\mathrm{Var}}(Y) \propto V(\mathbb{E}(Y))\)</span>, then it can be shown using the Delta method that the transformed responses <span class="math inline">\(g(Y)\)</span> would have constant variance, i.e. <span class="math inline">\(\mathop{\mathrm{Var}}(g(Y)) \propto 1\)</span>. Of course, when using a GLM, we do not directly transform the responses, but instead model the transformed means, so this property is not something we really care about.</p>
+<p>The Gamma distribution with log-link that we used in the previous post is one example where the property holds:</p>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<img src="/2025/12/20/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-4-1.png" alt="Residuals from a Gamma GLM with log-link" width="672" />
+<p class="caption">
+Figure 2: Residuals from a Gamma GLM with log-link
+</p>
+</div>
+<p>Our plots include horizontal lines at <span class="math inline">\(\pm \sqrt{\phi}\)</span>, which should be the approximate standard deviation of these standardized residuals. We see that the working and Pearson residuals are identical. As with the previous example, the Pearson residuals have positive skew, whereas the deviance residuals are more symmetric.</p>
+</div>
+<div id="quasi-likelihood" class="section level2">
+<h2>Quasi-likelihood</h2>
+<p>Consider an observation <span class="math inline">\(y_i\)</span> of a random variable with mean <span class="math inline">\(\mu_i\)</span> and variance <span class="math inline">\(\phi V(\mu_i)\)</span>. The log quasi-likelihood for <span class="math inline">\(\mu_i\)</span> given this observations is defined to be
+<span class="math display">\[
+q_i\left(\mu_i\right)=\int_{y_i}^{\mu_i} \frac{y_i-z}{\phi V(z)} d z
+\]</span></p>
+<p>This is quite an interesting function. Its derivative is in fact the score function for the exponential family whose mean-variance relationship is characterized by <span class="math inline">\(V\)</span>. For example, for <span class="math inline">\(V(z)=1\)</span>, we have that</p>
+<p><span class="math display">\[
+\int_{y_i}^{\mu_i} \frac{y_i-z}{\phi} dz = -\frac{(y_i - \mu_i)^2}{2\phi}
+\]</span>
+is, up to an additive constant not depending on <span class="math inline">\(\mu_i\)</span>, the log-likelihood for <span class="math inline">\(\mu_i\)</span> from an observation of <span class="math inline">\(y_i \sim N(\mu_i, \phi)\)</span>, the exponential family whose mean-variance relationship is constant. Similarly, for <span class="math inline">\(V(z)=z\)</span>, we have</p>
+<p><span class="math display">\[\begin{align}
+\int_{y_i}^{\mu_i} \frac{y_i-z}{\phi z} dz &amp;= \frac{1}{\phi}\left[y_i\log(z) - z\right]_{z=y_i}^{z=\mu_i} \\ &amp;= \frac{y_i\log(\mu_i) - \mu_i}{\phi} + C
+\end{align}\]</span>
+is, up to an additive constant not depending on <span class="math inline">\(\mu_i\)</span>, the log-likelihood for <span class="math inline">\(\mu_i\)</span> from an observation of <span class="math inline">\(y_i \sim \text{Pois}(\mu_i)\)</span> if we set <span class="math inline">\(\phi\)</span> to 1.</p>
+<p>It turns out that an estimator formed by maximizing with respect to <span class="math inline">\(\boldsymbol{\beta}\)</span> the sum of these <span class="math inline">\(q_i\)</span> over the observations <span class="math inline">\(i\)</span>, which we will term the maximum quasi-likelihood estimator, has good properties even when the response is not distributed according to the corresponding exponential family, but has some other distribution instead, as long as its mean <span class="math inline">\(\mu\)</span> is correctly specified in the quasi-likelihood function.</p>
+<p>First, if the variance function <span class="math inline">\(V\)</span> specified in the quasi-likelihood function <span class="math inline">\(q\)</span> happens to be correct (i.e. we indeed have <span class="math inline">\(\mathop{\mathrm{Var}}(Y) = \phi V(\mu)\)</span>, where <span class="math inline">\(\phi\)</span> can be unknown), then not only will the maximum quasi-likelihood estimates be consistent, they will also be relatively efficient (despite the fact that no distribution for <span class="math inline">\(Y\)</span> is assumed). Furthermore, in terms of uncertainty and hypothesis testing, a lot of the asymptotic machinery from the likelihood-theory will carry over and apply directly to <span class="math inline">\(q\)</span>, such that standard errors of maximum quasi-likelihood estimates are available and hypothesis tests can be performed.</p>
+<p>Second, something not mentioned by Wood, but is super cool in my opinion: the maximum quasi-likelihood estimator is consistent if the expected value <span class="math inline">\(\mu\)</span> is right even if the variance function is wrong, i.e. <span class="math inline">\(\mathop{\mathrm{Var}}(Y) \neq \phi V(\mu)\)</span>. This is quite a strong result, and a corollary is that, because, as previously noted, the log-likelihood of exponential families coincides (up to an additive constant) with a log quasi-likelihood for some <span class="math inline">\(V\)</span>, estimates from GLMs are consistent even if you choose a distribution for your response with the wrong mean-variance relationship. Of course, it’s not too difficult to use the standardized-residual checking from the last section to choose the distribution with the correct mean-variance relationship. Still, it’s interesting that we still get consistency if we choose incorrectly.</p>
+<p>To illustrate, this means that in our working examples where we used the log-link to generate both Poisson distributed responses and Gamma distributed response, we could fit the Poisson GLM to the Gamma distributed responses or the Gamma GLM to the Poisson distributed responses, and despite this mistake, (so long as we specify log-links) get estimates <span class="math inline">\(\hat{\beta}\)</span> which in the large sample limit converge to the true <span class="math inline">\(\beta\)</span>.</p>
+<p>To recap, it makes sense to view this maximum quasi-likelihood theory as a justification for fitting GLMs. Namely, this theory suggests that the estimates from a GLM are robust in a strong sense to the assumed distribution being incorrect but having the right mean-variance relationship–in this case, the estimates will not only be consistent but be relatively efficient–and in a weak sense to the assumed distribution being one with an incorrect mean-variance relationship–in this case, the estimates will be consistent although not efficient. Quasi-likelihood theory generalizes likelihood theory in a way that is analogous to how ordinary least squares theory generalizes normal distribution theory in ordinary linear models: it provides a justification for an existing, commonly used estimator even when the assumptions that motivated the existing estimator are unlikely to hold.</p>
+<p>This theory is in particular useful for count data. Oftentimes count data is over-dispersed with the form <span class="math inline">\(\mathop{\mathrm{Var}}(Y) = \phi \mathbb{E}(Y)\)</span>. Based on the above theory, we can see that despite the non-equality of mean and variance, fitting a Poisson model will yield efficient estimates of <span class="math inline">\(\boldsymbol{\beta}\)</span> as long as you get the link function right (usually the link in this case is assumed to be log) because these estimates are quasi-maximum likelihood estimates for <span class="math inline">\(V(z) = z\)</span>. Of course, in this case, one can and should estimate <span class="math inline">\(\phi\)</span> for hypothesis testing and inference and not assume that it’s equal to 1. If the variance is not proportional to the mean, but has some other relationship, then fitting a Poisson model will still produce consistent estimates if you get the link function right, although so will fitting any other GLM with the right link function.</p>
+</div>
+<div id="negative-binomial-models" class="section level2">
+<h2>Negative binomial models</h2>
+<p>Another possibility for this last scenario discussed is to fit a negative binomial model for which the mean-variance relationship is given by <span class="math inline">\(\mathop{\mathrm{Var}}(Y) = \mathbb{E}(Y) + \mathbb{E}(Y)^2/\theta\)</span> for some unknown <span class="math inline">\(\theta\)</span>.</p>
+<p>Unfortunately, as opposed to the Poisson GLM, whose score function coincides with the derivative of the log quasi-likelihood <span class="math inline">\(q\)</span> with <span class="math inline">\(V(z) = z\)</span>, the score function for the negative binomial distribution with this parameterization does not coincide with the derivative of a log quasi-likelihood for any <span class="math inline">\(V(z)\)</span>. For this reason, estimates from negative binomial models are not robust when the mean-variance relationship is not given by <span class="math inline">\(\mathop{\mathrm{Var}}(Y) = \mathbb{E}(Y) + \mathbb{E}(Y)^2/\theta\)</span>.</p>
+<p>On the other hand, the negative binomial distribution for a count outcome can be useful if you are doing a Bayesian analysis because in this case you are forced to use a likelihood (I don’t believe quasi-likelihood can be incorporated into the Bayesian set-up). In the case of over-dispersed count data, the negative binomial distribution is a pretty good choice.</p>
+<div id="references" class="section level4 unnumbered">
+<h4>References</h4>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-wood2017generalized" class="csl-entry">
+Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with r</em>. chapman; hall/CRC.
+</div>
+</div>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  
+
+
+  </body>
+</html>
+

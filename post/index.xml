@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 20 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Notes on GLMs: Part 2</title>
+      <link>/2025/12/20/notes-on-glms-part-2/</link>
+      <pubDate>Sat, 20 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>/2025/12/20/notes-on-glms-part-2/</guid>
+      <description>Continuing where we left off in Chapter 3 of Wood (2017), we begin with a discussion of residuals in GLMs.&#xA;Residuals At the beginning of Section 3.1.7, we get the following statement:&#xA;Model checking is perhaps the most important part of applied statistical modelling. In the case of ordinary linear models it is based on examination of the model residuals, which contain all the information in the data not explained by the systematic part of the model.</description>
+    </item>
     <item>
       <title>Notes on Generalized Linear Models</title>
       <link>/2025/09/03/notes-on-generalized-linear-models/</link>
