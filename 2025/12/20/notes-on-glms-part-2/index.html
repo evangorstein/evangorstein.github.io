@@ -10,7 +10,7 @@
 <meta property="og:title" content="Notes on GLMs: Part 2 - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://evangorstein.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -24,6 +24,8 @@
 
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
+
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -88,7 +90,7 @@
 <p>These two types of residuals form the basis for the the two estimates of <span class="math inline">\(\phi\)</span> discussed in Part 1: the sum of squared Pearson residuals gives the Pearson statistic, and the sum of squared deviance residuals gives the deviance.</p>
 <p>Let’s see what they look like for the Poisson regression from the first post.</p>
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
-<img src="/2025/12/20/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-2-1.png" alt="Residuals from a Poisson GLM with log-link" width="672" />
+<img src="https://evangorstein.github.io/2025/12/20/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-2-1.png" alt="Residuals from a Poisson GLM with log-link" width="672" />
 <p class="caption">
 Figure 1: Residuals from a Poisson GLM with log-link
 </p>
@@ -107,7 +109,7 @@ g&#39;(\mu) = \frac{1}{\sqrt{V(\mu)}}
 <p>If this property holds, we say that the link function <span class="math inline">\(g\)</span> is <em>variance stabilizing</em> for the distribution of <span class="math inline">\(Y\)</span>. Where this comes from is that if we were to directly apply the transformation <span class="math inline">\(g\)</span> to the responses <span class="math inline">\(Y\)</span>, assumed to follow a distribution such that <span class="math inline">\(\mathop{\mathrm{Var}}(Y) \propto V(\mathbb{E}(Y))\)</span>, then it can be shown using the Delta method that the transformed responses <span class="math inline">\(g(Y)\)</span> would have constant variance, i.e. <span class="math inline">\(\mathop{\mathrm{Var}}(g(Y)) \propto 1\)</span>. Of course, when using a GLM, we do not directly transform the responses, but instead model the transformed means, so this property is not something we really care about.</p>
 <p>The Gamma distribution with log-link that we used in the previous post is one example where the property holds:</p>
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
-<img src="/2025/12/20/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-4-1.png" alt="Residuals from a Gamma GLM with log-link" width="672" />
+<img src="https://evangorstein.github.io/2025/12/20/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-4-1.png" alt="Residuals from a Gamma GLM with log-link" width="672" />
 <p class="caption">
 Figure 2: Residuals from a Gamma GLM with log-link
 </p>

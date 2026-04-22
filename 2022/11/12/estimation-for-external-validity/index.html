@@ -10,7 +10,7 @@
 <meta property="og:title" content="Estimation for External Validity - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://evangorstein.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -29,6 +29,8 @@
 
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
+
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -144,7 +146,7 @@ samp</code></pre>
 <p>So in our data generating process, randomness enters in exactly three places: first, in the collection of the simple random sample of the northern villages, second, in the randomized treatment assignment, and third, in the generation of the response given trust and treatment in the experiment. It is because of this randomness that we cannot precisely recover the true population average treatment effect, but only approximate it. Naturally, we will want to understand what kind of impact the randomness has on the quality of our estimation. This is the statistical part of causal inference. Note that in the case of a simulation, we know exactly what kind of randomness we’re dealing with since we generated it. In the real world, we would not know how exactly the data was generated, and so we would use the data itself to estimate the uncertainty in our estimators, which is simultaneously quite meta <em>as well as</em> a fundamental and ubiquitous technique that statisticians take for granted.</p>
 <div id="the-estimand" class="section level3">
 <h3>The estimand</h3>
-<p>The most natural estimand in this example is the country-wide average treatment effect. In other words, the target population in the example is the entire country. I note that we are diverging slightly from our set-up in the first blog post, where I wrote that the target population and the experiment sample would be viewed as two separate data sets <span class="math inline">\(\Omega_t\)</span> and <span class="math inline">\(\Omega_s\)</span> and defined the PATE as <span class="math inline">\(E_{\Omega_t}[Y(1)-Y(0)] = E_{\Omega_t\cup\Omega_s}[Y(1)-Y(0) \mid S = 0]\)</span>. In our current example, the target population includes the villages in the experiment so that <span class="math inline">\(\Omega_s \subset \Omega_t\)</span>. We then have</p>
+<p>The most natural estimand in this example is the country-wide average treatment effect. In other words, the target population in the example is the entire country. I note that we are diverging slightly from our set-up in the <a href="/2023/10/28/lord-s-paradox/">previous post</a> <a href="/2022/10/05/samplingbiasandcausalinference/">first blog post</a>, where I wrote that the target population and the experiment sample would be viewed as two separate data sets <span class="math inline">\(\Omega_t\)</span> and <span class="math inline">\(\Omega_s\)</span> and defined the PATE as <span class="math inline">\(E_{\Omega_t}[Y(1)-Y(0)] = E_{\Omega_t\cup\Omega_s}[Y(1)-Y(0) \mid S = 0]\)</span>. In our current example, the target population includes the villages in the experiment so that <span class="math inline">\(\Omega_s \subset \Omega_t\)</span>. We then have</p>
 <p><span class="math display">\[PATE = E_{\Omega_t}[Y(1)-Y(0)] = E_{Ωt\cupΩs}[Y(1)−Y(0)]\]</span> without the conditioning event <span class="math inline">\(S=0\)</span>.</p>
 <p>This essentially comes down to the difference between “transporting” the causal effect versus “generalizing” it, but these are fundamentally the same problem with the same solution. In both cases, we are required to adjust the sample average treatment effect to the distribution of effect modifiers in a target population–in the case of generalization, this target population includes the experimental sample, whereas in transportation, it does not.</p>
 <p>Since we generated the data, we can calculate the <em>PATE</em>:</p>

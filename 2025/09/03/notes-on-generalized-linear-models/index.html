@@ -10,7 +10,7 @@
 <meta property="og:title" content="Notes on Generalized Linear Models - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://evangorstein.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -29,6 +29,8 @@
 
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
+
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -385,13 +387,13 @@ B = 5000
 # Recall that mu was previously generated with only x1, x2, and x3 (i.e. from the null model)
 test_stats = replicate(B, simul_pois_glm(X_null, X_full, mu))</code></pre>
 <p>We get the following distribution with the theoretical chi-squared density with one degree of freedom overlaid:</p>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>On the other hand, if we consider testing the significance of <span class="math inline">\(\beta_2\)</span>, which we know is non-zero, we get the following distribution of test statistics:</p>
 <pre class="r"><code>X_full = X_null
 X_null = model.matrix(~ x1 + x3, data = df)
 test_stats = replicate(B, simul_pois_glm(X_null, X_full, mu))
 hist(test_stats, probability=T)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>While the null distribution for the test statistic has been verified in this particular example, in general, the usual caveats about hypothesis tests apply. Specifically relevant to the case of generalized linear models is the distributional assumption about the response, e.g. that it is Poisson in our working example.</p>
 <p>Let’s explore how robust the test is if the response does not actually follow the assumed distribution. Suppose, for example, that instead of having a Poisson distribution, the response has a negative binomial distribution.</p>
 <pre class="r"><code># Function to simulate data and compute the likelihood ratio test statistic
@@ -415,13 +417,13 @@ test_stats = replicate(B, simul_misspec_pois_glm(X_null, X_full, mu))</code></pr
 <p>We get the following distribution with the theoretical chi-squared density with one degree of freedom overlaid:</p>
 <pre class="r"><code>hist(test_stats, probability=T)
 curve(dchisq(x, ncol(X_full)-ncol(X_null)), from=0, to=max(test_stats), add=TRUE)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-14-1.png" width="672" />
 The assumed null distribution is closer to 0 than the empirical null distribution of the test statistics, meaning that we’d have an inflated false positive rate if we were to use this assumed null to perform the hypothesis test.</p>
 <p>If we crank up <span class="math inline">\(\theta\)</span>, we end up approaching the Poisson distribution, so the test becomes valid:</p>
 <pre class="r"><code>test_stats = replicate(B, simul_misspec_pois_glm(X_null, X_full, mu, theta=1000))
 hist(test_stats, probability=T)
 curve(dchisq(x, ncol(X_full)-ncol(X_null)), from=0, to=max(test_stats), add=TRUE)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 <div id="deviance-and-scaled-deviance" class="section level1">
 <h1>Deviance and scaled deviance</h1>
@@ -478,14 +480,14 @@ hist(results[2,], probability=T,
      xlab = TeX(r&quot;($\hat{\phi}_D)&quot;))
 abline(v = phi, lwd=2, col=&quot;red&quot;)
 legend(&quot;topright&quot;, legend = &quot;True value&quot;, lwd=2, col=&quot;red&quot;)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <pre class="r"><code>hist(results[1,], probability=T, 
      main = TeX(r&quot;(Distribution of $(D_0 - D_1)/\hat{\phi}_D$)&quot;),
      xlab = TeX(r&quot;($(D_0 - D_1)/\hat{\phi}_D$)&quot;))
 curve(dchisq(x, ncol(X_full)-ncol(X_null)), 
       from=0, to=max(test_stats), add=TRUE)
 legend(&quot;top&quot;, legend=&quot;Theoretical\nchi-squared\ndistribution&quot;, lwd=1, bty=&quot;n&quot;)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>Not bad. Again, this estimator is based on the approximation <span class="math inline">\(D/\phi \sim \chi^2_{n-p}\)</span>. Another approximation available to us is <span class="math inline">\(X^2/\phi \sim  \chi^2_{n-p}\)</span>, where <span class="math inline">\(X^2\)</span> is the so-called <em>Pearson statistic</em> defined by</p>
 <p><span class="math display">\[
 X^2 = \sum_{i=1}^n\frac{(y_i-\hat{\mu}_i)^2}{V(\hat{\mu_i})}.
@@ -525,14 +527,14 @@ hist(results[2,], probability=T,
      xlab = TeX(r&quot;($\hat{\phi}_P)&quot;))
 abline(v = phi, lwd=2, col=&quot;red&quot;)
 legend(&quot;topright&quot;, legend = &quot;True value&quot;, lwd=2, col=&quot;red&quot;)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <pre class="r"><code>hist(results[1,], probability=T, 
      main = TeX(r&quot;(Distribution of $(D_0 - D_1)/\hat{\phi}_P$)&quot;),
      xlab = TeX(r&quot;($(D_0 - D_1)/\hat{\phi}_P$)&quot;))
 curve(dchisq(x, ncol(X_full)-ncol(X_null)), 
       from=0, to=max(test_stats), add=TRUE)
 legend(&quot;top&quot;, legend=&quot;Theoretical\nchi-squared\ndistribution&quot;, lwd=1, bty=&quot;n&quot;)</code></pre>
-<p><img src="/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-22-1.png" width="672" />
+<p><img src="https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-22-1.png" width="672" />
 Similar, maybe the estimates of <span class="math inline">\(\phi\)</span> using the Pearson statistic look slightly better.</p>
 <p>Ok, that’s all for now! Next post, I’ll get into model checking with residuals, the quasilikelihood approach, and using the negative binomial distribution for over-dispersed counts (3.1.7-9 in Wood).</p>
 <div id="references" class="section level4 unnumbered">

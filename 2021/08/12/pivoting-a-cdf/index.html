@@ -10,7 +10,7 @@
 <meta property="og:title" content="Pivoting a cdf - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://evangorstein.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -29,6 +29,8 @@
 
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
+
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -170,7 +172,7 @@ z &lt;- apply(ci,1,mycolor,theta)
 plotCI(x=est, y=1:simul, ui=ub, li=lb, 
        err=&quot;x&quot;, gap=T, col=z, xlab=&quot;CDF Pivot Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;)
 abline(v=theta)</code></pre>
-<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-1-1.png" width="100%" /></p>
+<p><img src="https://evangorstein.github.io/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-1-1.png" width="100%" /></p>
 </div>
 <div id="pareto-family" class="section level3">
 <h3>Pareto family</h3>
@@ -213,7 +215,7 @@ z &lt;- apply(ci,1,mycolor,theta)
 plotCI(x=est, y=1:simul, ui=ub, li=lb, 
        err=&quot;x&quot;, gap=T, col=z, xlab=&quot;CDF Pivot Confidence Interval for Theta&quot;, ylab=&quot;Sample Number&quot;, xlim=c(0,10))
 abline(v=theta)</code></pre>
-<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-2-1.png" width="100%" />
+<p><img src="https://evangorstein.github.io/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-2-1.png" width="100%" />
 Uh-oh! These intervals achieve their nominal coverage, but are so long that they are virtually useless.</p>
 <p>For comparison, here are confidence intervals for <span class="math inline">\(\theta\)</span> of a much shorter length built off of the pivot <span class="math inline">\(2\theta\sum_{i=1}^n{\log(X_i)} \sim \chi^2_{2n}\)</span>.</p>
 <pre class="r"><code>lb2 &lt;- numeric(simul)
@@ -235,7 +237,7 @@ z2 &lt;- apply(ci2,1,mycolor,theta)
 plotCI(x=est2, y=1:simul, ui=ub2, li=lb2, 
        err=&quot;x&quot;, gap=T, col=z2, xlab=&quot;Non-CDF Pivot Confidence Interval for Theta &quot;, ylab=&quot;Sample Number&quot;)
 abline(v=theta)</code></pre>
-<p><img src="/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
+<p><img src="https://evangorstein.github.io/2021/08/12/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
 <p>What went wrong when we used the method of pivoting a cdf in this example? We used the same statistic, <span class="math inline">\(X_{(1)}\)</span>, as in the first example, but the confidence intervals that resulted from pivoting the cdf of this statistic were horribly inprecise!</p>
 <p>The key, I believe, is the different role played by the statistic <span class="math inline">\(X_{(1)}\)</span> in these two examples. In the expoential location family, <span class="math inline">\(X_{(1)}\)</span> is a sufficient and complete statistic for <span class="math inline">\(\theta\)</span>. As mentioned, a sufficient statistic is one that contains all the information in the sample, and completeness means that the statistic packages this information efficiently. In the Pareto family, <span class="math inline">\(X_{(1)}\)</span> is neither sufficient nor complete. Instead, the statistic <span class="math inline">\(S(X)=\sum_{i=1}^n{\log(X_i)}\)</span> (or equivalently, <span class="math inline">\(\prod_{i=1}^n{X_i}\)</span>) is sufficient and complete, and lo and behold, when we built our pivot on this statistic, we obtained much more efficient confidence intervals.</p>
 <p>Note that we did not pivot the CDF of the statistic <span class="math inline">\(S(X)\)</span> in this case. Instead we took a different route, multiplying the statistic by <span class="math inline">\(\theta\)</span> to get a pivot (it can be shown that this random variable follows a <span class="math inline">\(\text{Gamma}(n,1)=\chi^2_{2n}/2\)</span>). The reason we did not pivot the CDF of S(X) to obtain a confidence interval has more to do with the first criteria by which to judge the method: ease of implementation. The CDF of S(X) involves the incomplete gamma function, which is an integral that cannot be expressed in terms of elementary functions. It turns out that the cdf of <span class="math inline">\(S(X)\)</span> is an increasing function of <span class="math inline">\(\theta\)</span> and so the method does apply, but who wants to work with an incomplete gamma function?</p>

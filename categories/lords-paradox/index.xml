@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lord&#39;s Paradox on Evan Gorstein</title>
+    <link>https://evangorstein.github.io/categories/lords-paradox/</link>
+    <description>Recent content in Lord&#39;s Paradox on Evan Gorstein</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 29 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://evangorstein.github.io/categories/lords-paradox/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Addendum on Lord&#39;s Paradox</title>
+      <link>https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/</link>
+      <pubDate>Sun, 29 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/</guid>
+      <description>A couple of years ago, I wrote a post on Lord’s paradox in which I argued that introducing a causal model, as Judea Pearl does in his article on the subject (Pearl 2016), was not such an effective way to understand or demystify the paradox. I’m writing the current post because I realized after reading Shiffrin (2020) that a causal model can in fact explain the paradox, but that Pearl got his DAG wrong.</description>
+    </item>
+    <item>
+      <title>Lord&#39;s paradox is explained by regression to the mean, not a causal model</title>
+      <link>https://evangorstein.github.io/2023/10/28/lord-s-paradox/</link>
+      <pubDate>Sat, 28 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>https://evangorstein.github.io/2023/10/28/lord-s-paradox/</guid>
+      <description>The paradox Here’s the original formulation, appearing in a 1967 article published in Psychological Bulletins entitled “A Paradox in the Interpretation of Group Comparisons” (Lord 1967):&#xA;A large university is interested in investigating the effects on the students of the diet provided in the university dining halls and any sex difference in these effects. Various types of data are gathered. In particular, the weight of each student at the time of his arrival in September and his weight the following June are recorded.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.126.1">
+
+
+<title>Addendum on Lord&#39;s Paradox - Evan Gorstein</title>
+<meta property="og:title" content="Addendum on Lord&#39;s Paradox - Evan Gorstein">
+
+
+  <link href='https://evangorstein.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/uwlogo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/">Blog</a></li>
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/evangorstein">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">10 min read</span>
+    
+
+    <h1 class="article-title">Addendum on Lord&#39;s Paradox</h1>
+
+    
+    <span class="article-date">2026-03-29</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>A couple of years ago, I wrote <a href="/2023/10/28/lord-s-paradox/">a post on Lord’s paradox</a> in which I argued that introducing a causal model, as Judea Pearl does in his article on the subject <span class="citation">(<a href="#ref-pearl2016">Pearl 2016</a>)</span>, was not such an effective way to understand or demystify the paradox. I’m writing the current post because I realized after reading <span class="citation">Shiffrin (<a href="#ref-shiffrin2020lord">2020</a>)</span> that a causal model can in fact explain the paradox, but that Pearl got his DAG wrong.</p>
+<div id="recap" class="section level2">
+<h2>Recap</h2>
+<p>Recall Lord’s story:</p>
+<blockquote>
+<p>A large university is interested in investigating the effects on the students of the diet provided in the university dining halls and any sex difference in these effects. Various types of data are gathered. In particular, the weight of each student at the time of his arrival in September and his weight the following June are recorded.</p>
+</blockquote>
+<p>Although fictional, Lord’s story is not so contrived or exotic. At a high level of abstraction, we simply have two groups defined by some attribute, and the individuals in each group have had some trait observed at multiple time points.</p>
+<p>You might think that it’s difficult to get the DAG wrong for such a simple scenario. After all, there are only three measured variables here: sex, initial weight, and final weight–four if you include the change score, which is given deterministically by final weight minus initial weight.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Here is the DAG Pearl provides for these variables:</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:og"></span>
+<img src="https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/index_files/figure-html/og-1.png" alt="Pearl's DAG with change score $Y$ included." width="70%" />
+<p class="caption">
+Figure 1: Pearl’s DAG with change score <span class="math inline">\(Y\)</span> included.
+</p>
+</div>
+<p>Recall, <span class="math inline">\(S\)</span> stands for sex, <span class="math inline">\(W_I\)</span> for initial weight of a student, <span class="math inline">\(W_F\)</span> for final weight, and <span class="math inline">\(Y\)</span> for the difference between the two weights, <span class="math inline">\(Y = W_F - W_I\)</span>.</p>
+<p>Dropping the change score for the moment, we get the following:</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:no-change"></span>
+<img src="https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/index_files/figure-html/no-change-1.png" alt="Pearl's DAG without change score included." width="70%" />
+<p class="caption">
+Figure 2: Pearl’s DAG without change score included.
+</p>
+</div>
+<p>This is the complete DAG on three variables–it includes every possible arrow–so it’s hard to see how it can be wrong. And according to this DAG, the second statistician in the story, who fits the ANCOVA regression <span class="math inline">\(W_F \sim S + W_I\)</span>, estimates a direct effect (that is, unmediated by initial weight) of sex on final weight.</p>
+</div>
+<div id="a-lurking-variable" class="section level2">
+<h2>A Lurking Variable</h2>
+<p>To illustrate what’s going wrong, consider all the intermediate variables, which mediate the “direct effect” of sex on either of the weight variables, <span class="math inline">\(W_I\)</span> or <span class="math inline">\(W_F\)</span> in the DAG in Figure <a href="#fig:no-change">2</a>. I put “direct effect” in quotes because although the effect is direct in the DAG as drawn (there is an arrow from <span class="math inline">\(S\)</span> to <span class="math inline">\(W_I\)</span> and to <span class="math inline">\(W_F\)</span>), the actual mechanism by which sex affects weight is extraordinarily complicated, hence the many intermediate variables. Now suppose that among all the unobserved intermediates between <span class="math inline">\(S\)</span> to <span class="math inline">\(W_I\)</span>, there is at least one that also mediates a path to <span class="math inline">\(W_F\)</span>. Let’s call this shared mediator <span class="math inline">\(L\)</span> for latent or lurker.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lurk"></span>
+<img src="https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/index_files/figure-html/lurk-1.png" alt="Pearl's DAG with lurker." width="70%" />
+<p class="caption">
+Figure 3: Pearl’s DAG with lurker.
+</p>
+</div>
+<p>Before elaborating on what <span class="math inline">\(L\)</span> might be and why I think this DAG is plausible, let’s first just draw out its implications for the theoretical estimands of the two statisticians in the story. Whereas according to the DAG in Figure <a href="#fig:no-change">2</a>, Statistician 2’s regression estimates a direct effect of sex on final weight (unmediated by initial weight), by the lights of the DAG in Figure <a href="#fig:lurk">3</a>, this is no longer the case. This is because in this DAG, <span class="math inline">\(W_I\)</span> is a descendant of <span class="math inline">\(L\)</span>, and thus, by conditioning on <span class="math inline">\(W_I\)</span>, statistician 2 is blocking not only the path <span class="math inline">\(S \to W_I \to W_F\)</span>, but also, partially, the path <span class="math inline">\(S \to L \to W_F\)</span>. So according to this DAG which includes <span class="math inline">\(L\)</span>, statistician 2 cannnot be said to be estimating any causal parameter. Meanwhile, statistician 1 is still, according to this new DAG, estimating the total effect of sex on change score.</p>
+</div>
+<div id="what-is-l" class="section level2">
+<h2>What is L?</h2>
+<p>It took me a while before I arrived at the DAG in Figure <a href="#fig:lurk">3</a>. I spent a long time struggling with Pearl’s DAG, which seems completely adequate because it includes all the observed variables in the scenario. The way that I finally arrived at <span class="math inline">\(L\)</span>, this unobserved intermediate variable that mediates both the path from <span class="math inline">\(S\)</span> to <span class="math inline">\(W_I\)</span> and the path from <span class="math inline">\(S\)</span> to <span class="math inline">\(W_F\)</span>, was by reading the short article <span class="citation">Shiffrin (<a href="#ref-shiffrin2020lord">2020</a>)</span>, which proposes this model:</p>
+<blockquote>
+<p>…assume the two samples of weight for each individual are far enough apart in time that each is an independent sample from a Gaussian distribution with a mean at that individual’s stable long run weight, but with a considerable variance. According to this model the gains and losses for every individual fluctuate around a fixed value for each, so no gain or loss is seen on average.</p>
+</blockquote>
+<p>This long run latent weight is <span class="math inline">\(L\)</span>, and the model described here is the one depicted in Figure <a href="#fig:lurk-simple">4</a>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lurk-simple"></span>
+<img src="https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/index_files/figure-html/lurk-simple-1.png" alt="Simplified DAG with lurker." width="70%" />
+<p class="caption">
+Figure 4: Simplified DAG with lurker.
+</p>
+</div>
+<p>After realizing this, I re-read <span class="citation">Tennant et al. (<a href="#ref-tennant2022">2022</a>)</span>, which I had not previously understood, and realized they have the same idea as <span class="citation">Shiffrin (<a href="#ref-shiffrin2020lord">2020</a>)</span> of a latent outcome variable.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+</div>
+<div id="generating-lords-data-according-to-this-dag" class="section level2">
+<h2>Generating Lord’s data according to this DAG</h2>
+<p>As a sanity check, let’s generate from this causal model with the lurking, latent weight the same fake data from my previous post. Recall that previously, we had directly specified the correlation of initial and final weight as 0.7 and their standard deviation as 5 kg within each gender by simulating these variables simultaneously as a bivariate normal (with the help of <code>MASS::mvrnorm</code>). Now, we will generate the same exact data by simulating variables one at a time according to the DAG in Figure <a href="#fig:lurk-simple">4</a>. First some algebra.</p>
+<p>We will assume an additive noise model for the generation of <span class="math inline">\(W_I\)</span> and <span class="math inline">\(W_F\)</span> from <span class="math inline">\(L\)</span> in Figure <a href="#fig:lurk-simple">4</a>, i.e.</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+W_I = L + \epsilon_I \\
+W_F = L + \epsilon_F,
+\end{aligned}
+\end{equation}\]</span></p>
+<p>with <span class="math inline">\(L\)</span>, <span class="math inline">\(\epsilon_I\)</span>, and <span class="math inline">\(\epsilon_F\)</span> all independent of each other. The covariance of <span class="math inline">\(W_I\)</span> and <span class="math inline">\(W_F\)</span> conditional on sex is thus <span class="math inline">\(\operatorname{Cov}(W_I, W_F \mid S) = \operatorname{Cov}(L + \epsilon_I, L+ \epsilon_F \mid S) = \operatorname{Var}(L \mid S)\)</span>.</p>
+<p>We want to match the correlations and standard deviations in our previously generated data, that is:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+\operatorname{SD}(W_I \mid S) = \operatorname{SD}(W_F \mid S) = 5 \\
+\operatorname{Cor}(W_I, W_F \mid S) = 0.7,
+\end{aligned}
+\end{equation}\]</span></p>
+<p>which forces upon us
+<span class="math display">\[\begin{equation}
+\begin{aligned}
+\operatorname{Var}(L \mid S) &amp;= \operatorname{Cov}(W_I, W_F \mid S) \\
+&amp;= \operatorname{Cor}(W_I, W_F \mid S) \operatorname{SD}(W_I \mid S)\operatorname{SD}(W_F \mid S)  \\
+&amp;= 0.7 \times 5 \times 5 = 17.5
+\end{aligned}
+\end{equation}\]</span></p>
+<p>We can then compute the necessary variances for the error terms <span class="math inline">\(\epsilon_I\)</span> and <span class="math inline">\(\epsilon_F\)</span>, assumed to be equal, using the law of total variance:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+\operatorname{Var}(\epsilon_F) = \operatorname{Var}(\epsilon_I) = \operatorname{Var}(W_I \mid L, S) = \operatorname{E}\left[\operatorname{Var}(W_I \mid L, S) \mid S \right] &amp;= \operatorname{Var}(W_I \mid S) - \operatorname{Var}\left[\operatorname{E}(W_I \mid S, L) \mid S \right] \\
+&amp;= \operatorname{Var}(W_I \mid S) - \operatorname{Var}(L \mid S ) \\
+&amp;= 5^2 -  17.5 = 7.5
+\end{aligned}
+\end{equation}\]</span></p>
+<p>Now let’s simulate!</p>
+<pre class="r"><code>set.seed(770)
+n = 300 # number of students of each sex
+mu_girls = 75 # Average equilibrium weight for girls (kg)
+mu_boys = 85 # Average equilibrium weight for boys (kg)
+sd_L = sqrt(17.5) # standard deviation of latent weight
+sd_eps = sqrt(7.5) # standard deviation of measured weight given latent
+
+L_girls = rnorm(n, mu_girls, sd_L)
+L_boys = rnorm(n, mu_boys, sd_L)
+L = c(L_girls, L_boys)
+WI = L + rnorm(2*n, 0, sd_eps)
+WF = L + rnorm(2*n, 0, sd_eps)
+
+lord = tibble(WI, WF, S = rep(c(&quot;girl&quot;, &quot;boy&quot;), each = n))</code></pre>
+<p>Now we plot:</p>
+<pre class="r"><code>#Run the regression that Statistician 2 did and extract the coefficients
+ancov &lt;- lm(WF ~ WI + S, data = lord)
+coef = coef(ancov)
+coef_boys = coef[c(1,2)]
+coef_girls = c(coef[1] + coef[3], coef[2])
+#And now let’s plot:
+par(pty = &quot;s&quot;)
+plot(lord$WI, 
+     lord$WF,  
+     col = if_else(lord$S == &quot;girl&quot;, &quot;orange&quot;, &quot;blue&quot;), 
+     xlab = &quot;Pre-semester weight&quot;,  
+     ylab = &quot;Post-semester weight&quot;, 
+     asp = 1)
+abline(coef = coef_girls, col = &quot;orange&quot;, lwd = 2, lty = &quot;dashed&quot;)
+abline(coef = coef_boys, col = &quot;blue&quot;, lwd = 2, lty = &quot;dashed&quot;)
+abline(0,1, col = &quot;black&quot;, lwd = 2)
+legend(&quot;topleft&quot;, legend = c(&quot;girls&quot;, &quot;boys&quot;), 
+       col = c(&quot;orange&quot;, &quot;blue&quot;), pch = 1)</code></pre>
+<p><img src="https://evangorstein.github.io/2026/03/29/lord-s-paradox-addendum/index_files/figure-html/unnamed-chunk-2-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p>Assuming we did the algebra correctly, this should look roughly the same as my plot in <a href="/2023/10/28/lord-s-paradox/">the previous post</a>.</p>
+</div>
+<div id="lessons" class="section level2">
+<h2>Lessons</h2>
+<p>In my original post, I argued that Pearl’s causal model was not a helpful way to shed light on the paradox. Now I can see that it is not causal modelling writ large that is to blame for failing to adequately explain the paradox–it is just Pearl’s incorrect model that is not helpful. Meanwhile, the correct causal model, i.e. the DAG in Figure <a href="#fig:lurk-simple">4</a>, is a great way to make sense of the paradox. Of course, common sense alone was always enough to see that Statistician 2 was barking up the wrong tree, but I think this is just because what this common sense amounts to is the understanding that <span class="math inline">\(W_I\)</span> and <span class="math inline">\(W_F\)</span> are two measurements of some latent equilibrium weight <span class="math inline">\(L\)</span>–in other words, an intuitive understanding of the correct causal model.</p>
+<p>The final thing I want to say about Lord’s paradox before I never write about it again is that I think it is a prototypical example of a phenomenon in statistics that I’ve observed (often in myself) wherein a paranoia about methodological rigor will get in the way of reaching some straightforward conclusion from a simple analysis of data. Maybe I’m just projecting, but I think this paranoia, which leads people to question whether the most obvious way to analyze some collected data might be horribly mistake, might be the results of how we teach statistics, wherein we focus on all the ways things can go wrong. Exposure to this sort of statistical education might derail one’s analysis by making it more complicated than it needs to be. This would be quite unfortunate, since the goal of statistics is to facilitate the analysis of data, not to unnecessarilly complicate it!</p>
+<p>What exactly am I saying here? It is not that the simplest method is always the best, nor do I want to claim that data can never be counter-intuitive or that complicated statistical techniques are never required. In particular, the analysis of covariance (ANCOVA) undertaken by statistician 2 is extraordinarily useful when you are controlling for a pre-treatment variable, as opposed to the situation in Lord’s paradox, where initial weight is downstream (an effect) of sex. One might simply summarize the situation as: use the appropriate tool for the problem, but while this is undoubtedly true, I think (and I’m sure most statisticians agree) that simple, straight-forward analyses are to be much preferred to complex ones when the former are suitable, and I don’t think that people who take statistics course often receive this message. The result can be people abandoning their own common sense when they analyze data, and I think this is basically what we see happening to Statistician 2 in Lord’s paradox.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-pearl2016" class="csl-entry">
+Pearl, Judea. 2016. <span>“Lord<span>’</span>s Paradox Revisited <span></span> (Oh Lord! Kumbaya!).”</span> <em>Journal of Causal Inference</em> 4 (2). <a href="https://doi.org/10.1515/jci-2016-0021">https://doi.org/10.1515/jci-2016-0021</a>.
+</div>
+<div id="ref-shiffrin2020lord" class="csl-entry">
+Shiffrin, RM. 2020. <span>“Lord’s Paradox: A Commentary on Causal Inference.”</span> <em>Ann. Biom. Biostat</em> 5: 1034–36.
+</div>
+<div id="ref-tennant2022" class="csl-entry">
+Tennant, Peter WG, Georgia D Tomova, Kellyn F Arnold, and Mark S Gilthorpe. 2022. <span>“OP09<span></span>lord<span>’</span>s <span>‘</span>Paradox<span>’</span> Explained: The 50-Year Warning on the Analyses of <span>‘</span>Change Scores<span>’</span>*.”</span> <em>SSM Annual Scientific Meeting</em>, August. <a href="https://doi.org/10.1136/jech-2022-ssmabstracts.9">https://doi.org/10.1136/jech-2022-ssmabstracts.9</a>.
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>The diet served is not actually a variable in this original version of Lord’s story: every student receives the same diet.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Their causal model of Lord’s paradox allows for more bells and whistles in order to provide a comprehensive picture (see their Figure 3B). In addition, their causal model has separate latent variables for the initial and final weight, but because the latent variable for the initial weight affects the latent variable for final weight in their model, the same lack of identifiability of the direct effect of sex on final weight arises.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  
+
+
+  </body>
+</html>
+

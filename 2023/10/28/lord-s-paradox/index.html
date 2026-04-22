@@ -10,7 +10,7 @@
 <meta property="og:title" content="Lord&#39;s paradox is explained by regression to the mean, not a causal model - Evan Gorstein">
 
 
-  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <link href='https://evangorstein.github.io/favicon.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -29,6 +29,8 @@
 
 <link rel="stylesheet" href="/css/fonts.css" media="all">
 <link rel="stylesheet" href="/css/main.css" media="all">
+
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -115,9 +117,7 @@ Figure 1: Weight at end of year (Y) versus weight at beginning of year (X)
 <h3>Regression to the mean in the NBA</h3>
 <p>The Denver Nuggets had a great season last year, winning the number 1 seed in the Western Conference and eventually the NBA championship. They brought back most of their guys this year (and didn’t make any big acquisitions). Should they expect to have a better or worse record this year than they did last year?</p>
 <p>We can attempt to answer this question with data. In particular, we can look at all the previous times<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> the Nuggets had a good season (defined as an above .500 winning percentage) and see how their record compared the following season.</p>
-<pre class="r"><code>library(tidyverse)
-
-# read and wrangle data
+<pre class="r"><code># read and wrangle data
 records &lt;- read_csv(&quot;data/Team_Records.csv&quot;) %&gt;%
   select(Season, Team, `W/L%`) %&gt;%
   rename(win_perc = `W/L%`) %&gt;%
@@ -178,9 +178,9 @@ denver %&gt;%
 ## 1              725                 269                 539</code></pre>
 <p>In only <span class="math inline">\(269/725 &lt; 40\%\)</span> of the times that a team had an above <span class="math inline">\(500\)</span> this season were they able to match their record the following season.</p>
 <p>We can also look at a particular pair of consecutive seasons and see which teams are regressing towards the mean of 500 and which are diverging away it. For the latest pair of seasons in our dataset, 2015-16 to 2016-17, there are more teams regressing towards the mean than diverging away.</p>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p><img src="https://evangorstein.github.io/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" /></p>
 <p>What’s important to note about regression to the mean is that it is a statistical phenomenon, not a physical force<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. In particular, while all our examples so far have demonstrated regression to the mean over time, regression to the mean works just as well moving backwards in time. Let’s show the same plot, but color the teams based on whether they regress to the mean backwards in time:</p>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p><img src="https://evangorstein.github.io/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" /></p>
 <p>In this particular case, there was actually one more team that was diverging away from a 50% record (backwards in time) than regressing towards it. But this is not what you should expect (and you can check other pairs of years if you don’t believe me). In general, whether you are moving backwards or forwards in time makes no difference–either way, the conditional expectation gets pulled toward the mean of 500.</p>
 </div>
 <div id="regression-to-the-mean-is-baked-into-the-bivariate-normal" class="section level3">
@@ -238,7 +238,7 @@ abline(coef = coef_boys, col = &quot;blue&quot;, lwd = 2, lty = &quot;dashed&quo
 abline(0,1, col = &quot;black&quot;, lwd = 2)
 legend(&quot;topleft&quot;, legend = c(&quot;girls&quot;, &quot;boys&quot;), 
        col = c(&quot;orange&quot;, &quot;blue&quot;), pch = 1)</code></pre>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p><img src="https://evangorstein.github.io/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" /></p>
 <p>There is on average no increase or decrease in weight during the year among the boys, nor is there among the girls. And yet, for each fixed weight, the average boy who starts at that weight at the beginning of the year weighs at the end of the year <span class="math inline">\((1-\rho(X,Y))(\mu_{boys} - \mu_{girls}) = (1-0.7)\times10 = 3\)</span> kg more than the average girl who starts at that weight. One way of understanding this is to say that both the boy and the girl are expected to regress to their own gender’s mean weight. Because the mean for girls is lower than the mean for boys, this means that if the boy and girl start at the same weight in between, regression means different things for the two of them. For the girl, regression means losing weight while for the boy it means, gaining.</p>
 <p>To recap, what we’ve shown is that whenever you have bivariate normal data and the components have identical marginal distributions, you get regression to the mean. When you have two different bivariate distributions, and within each group, there’s regression to the mean, you get Lord’s paradox.</p>
 </div>
@@ -247,7 +247,7 @@ legend(&quot;topleft&quot;, legend = c(&quot;girls&quot;, &quot;boys&quot;),
 <h2>Causal inference</h2>
 <p>Are we done? Have we solved the paradox and understood it completely? From a causal perspective, our understanding so far is insufficient. This perspective is not satisfied with mere joint distributions, but rather seeks to identify and estimate the causal relationships between the variables in the problem.</p>
 <p>In a 2016 paper, Judea Pearl proposes a causal model for Lord’s hypothetical study <span class="citation">(<a href="#ref-pearl2016">Pearl 2016</a>)</span>. In particular, he suggests that the DAG for Lord’s study must be given by:</p>
-<p><img src="/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" /></p>
+<p><img src="https://evangorstein.github.io/2023/10/28/lord-s-paradox/index_files/figure-html/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" /></p>
 <p>Here, S stands for sex, <span class="math inline">\(W_I\)</span> for initial weight of a student, <span class="math inline">\(W_F\)</span> for final weight, and <span class="math inline">\(Y\)</span> for the difference between the two weights, <span class="math inline">\(Y = W_F - W_I\)</span>.</p>
 <p>Given this DAG, we can attribute causal estimands to each of the statisticians in the paradox. The first statistician, who looks at the average change score within each gender and compares them, can be seen as estimating the total effect of sex on the change score. Meanwhile, by conditioning on initial weight, the second statistician estimates the direct effect of sex on the final weight, i.e. the effect of sex on final weight that is not mediated by initial weight, at least according to this DAG.</p>
 </div>

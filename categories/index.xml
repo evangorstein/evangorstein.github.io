@@ -2,31 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Evan Gorstein</title>
-    <link>/categories/</link>
+    <link>https://evangorstein.github.io/categories/</link>
     <description>Recent content in Categories on Evan Gorstein</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 07 Dec 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 29 Mar 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://evangorstein.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lord&#39;s Paradox</title>
+      <link>https://evangorstein.github.io/categories/lords-paradox/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://evangorstein.github.io/categories/lords-paradox/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Causal Inference</title>
-      <link>/categories/causal-inference/</link>
+      <link>https://evangorstein.github.io/categories/causal-inference/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/categories/causal-inference/</guid>
+      <guid>https://evangorstein.github.io/categories/causal-inference/</guid>
       <description></description>
     </item>
     <item>
       <title>External Validity</title>
-      <link>/categories/external-validity/</link>
+      <link>https://evangorstein.github.io/categories/external-validity/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/categories/external-validity/</guid>
+      <guid>https://evangorstein.github.io/categories/external-validity/</guid>
       <description></description>
     </item>
     <item>
       <title>Identification</title>
-      <link>/categories/identification/</link>
+      <link>https://evangorstein.github.io/categories/identification/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/categories/identification/</guid>
+      <guid>https://evangorstein.github.io/categories/identification/</guid>
       <description></description>
     </item>
   </channel>
