@@ -23,11 +23,11 @@
       <description>Continuing where we left off in Chapter 3 of Wood (2017), we begin with a discussion of residuals in GLMs.&#xA;Residuals At the beginning of Section 3.1.7, we get the following statement:&#xA;Model checking is perhaps the most important part of applied statistical modelling. In the case of ordinary linear models it is based on examination of the model residuals, which contain all the information in the data not explained by the systematic part of the model.</description>
     </item>
     <item>
-      <title>Notes on Generalized Linear Models</title>
+      <title>Notes on GLMs</title>
       <link>https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/</link>
       <pubDate>Wed, 03 Sep 2025 00:00:00 +0000</pubDate>
       <guid>https://evangorstein.github.io/2025/09/03/notes-on-generalized-linear-models/</guid>
-      <description>In this and the following few posts, I will be going through Chapter 3 of Simon Wood’s textbook Generalized Additive Models (2017), which covers GLMs (as a prerequisite for understanding GAMs). I supplement my paraphrasing of the textbook with implementations in R that demonstrate the theory.&#xA;Theory A generalized linear model (GLM) does two things:&#xA;It equates a smooth, monotonic transformation of the expectation of some target variable to a learned linear function of a set of predictor variables.</description>
+      <description>In this post and the following, I go through Chapter 3 of Simon Wood’s textbook Generalized Additive Models (2017), which covers GLMs (as a prerequisite for understanding GAMs). I supplement my paraphrasing of the textbook with implementations in R that demonstrate the theory.&#xA;Theory A generalized linear model (GLM) does two things:&#xA;It equates a smooth, monotonic transformation of the expectation of some target variable to a learned linear function of a set of predictor variables.</description>
     </item>
     <item>
       <title>Linear Regression</title>
@@ -44,35 +44,35 @@
       <description>The paradox Here’s the original formulation, appearing in a 1967 article published in Psychological Bulletins entitled “A Paradox in the Interpretation of Group Comparisons” (Lord 1967):&#xA;A large university is interested in investigating the effects on the students of the diet provided in the university dining halls and any sex difference in these effects. Various types of data are gathered. In particular, the weight of each student at the time of his arrival in September and his weight the following June are recorded.</description>
     </item>
     <item>
-      <title>External Validity: Conclusion</title>
+      <title>External Validity Part 5: Conclusion</title>
       <link>https://evangorstein.github.io/2022/12/14/external-validity-conclusion/</link>
       <pubDate>Wed, 14 Dec 2022 00:00:00 +0000</pubDate>
       <guid>https://evangorstein.github.io/2022/12/14/external-validity-conclusion/</guid>
       <description>Conclusion In these blog posts, following Erin Hartman’s chapter in Advances in Experimental Political Science titled “Generalizing Experimental Results,” I have investigated how one might go about generalizing an experimentally identified causal effect to a target population. Throughout my investigation, I have adopted Hartman’s case study of a field study in Liberia, in which researchers conduct an RCT in villages in the north, but are interested in estimating an effect for the entire country.</description>
     </item>
     <item>
-      <title>Sensitivity Analysis for Generalization</title>
+      <title>External Validity Part 4: Sensitivity Analysis</title>
       <link>https://evangorstein.github.io/2022/12/07/sensitivity-analysis-for-generalization/</link>
       <pubDate>Wed, 07 Dec 2022 00:00:00 +0000</pubDate>
       <guid>https://evangorstein.github.io/2022/12/07/sensitivity-analysis-for-generalization/</guid>
       <description>Intro Recall the following figure:&#xA;If \(U\) acts as an effect modifier and is unobserved, then we no longer have the identification of our population average treatment effect. Neither Community Trust nor Internal Displacement are valid adjustment sets any longer. Are we out of luck? Not completely. While we won’t be able to pin down our PATE entirely, we can do the following: First, we suspend our belief momentarily, pretend that \(U\) doesn’t exist, and estimate the PATE as we did before when \(U\) wasn’t around.</description>
     </item>
     <item>
-      <title>Estimation for External Validity</title>
+      <title>External Validity Part 3: Estimation</title>
       <link>https://evangorstein.github.io/2022/11/12/estimation-for-external-validity/</link>
       <pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate>
       <guid>https://evangorstein.github.io/2022/11/12/estimation-for-external-validity/</guid>
       <description>Background This is the third in a series of blog posts for a causal inference project on external validity. To summarize the previous posts if you are just joining us, we are interested in assessing the validity of results obtained from an experiment or RCT in a population distinct from the one in which the experiment was run. If we conclude that the results are not in fact valid in this new population, we would like to somehow adjust the experimental results to the new population.</description>
     </item>
     <item>
-      <title>Identifitication for External Validity</title>
+      <title>External Validity Part 2: Identification</title>
       <link>https://evangorstein.github.io/2022/10/20/identifitication-for-external-validity/</link>
       <pubDate>Thu, 20 Oct 2022 00:00:00 +0000</pubDate>
       <guid>https://evangorstein.github.io/2022/10/20/identifitication-for-external-validity/</guid>
       <description>In my previous blog post, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment effect (PATE), which is often the thing we’re interested in estimating when we do science. In this post, we’ll try to understand the conditions that are necessary for us to have some hope of learning about this quantity from data, or using the terminology of causal inference, we’ll understand how and when the PATE is identified.</description>
     </item>
     <item>
-      <title>Sampling bias and causal inference</title>
+      <title>Intro to External Validity: Sampling bias and causal inference</title>
       <link>https://evangorstein.github.io/2022/10/05/samplingbiasandcausalinference/</link>
       <pubDate>Wed, 05 Oct 2022 00:00:00 +0000</pubDate>
       <guid>https://evangorstein.github.io/2022/10/05/samplingbiasandcausalinference/</guid>
