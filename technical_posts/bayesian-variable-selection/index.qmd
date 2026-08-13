@@ -1,0 +1,9 @@
+---
+title: "Bayesian variable selection"
+author: "Evan Gorstein"
+date: "2025-12-18"
+categories: [bayesian, variable selection]
+draft: true
+---
+
+Comparing horseshoe prior (scale mixture of Gaussians with mixture distribution given by the Cauchy) to Cauchy prior for Bayesian sparse estimation.

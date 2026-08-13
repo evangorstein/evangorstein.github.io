@@ -1,0 +1,7 @@
+/* css styles */
+
+/* Fix profile image cropping */
+img.about-image {
+  object-position: center 1%;
+}
+

@@ -1,0 +1,9 @@
+---
+title: "Blog"
+editor: source
+listing: 
+  contents: technical_posts
+  type: default
+  sort: "date desc"
+  categories: true
+---

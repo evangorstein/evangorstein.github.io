@@ -1,0 +1,80 @@
+---
+title: "Linear Regression"
+author: "Evan Gorstein"
+date: "2024-07-04"
+categories: [linear regression, statistical inference]
+bibliography: references.bib
+---
+
+I'm going back to the basics to discuss something that has confused me for a while about the "error term" in linear regression in the hopes that it might be helpful to someone out there who finds this confusing as well.
+
+Let's consider the simple case with just a single predictor and suppose we have observed pairs $\{(x_i, y_i), i=1,\ldots,n\}$. When we do linear regression, we view each data pair $(x_i, y_i)$ as the partially observed realization of a triplet of random variables $(X_i, Y_i, \varepsilon_i)$ satisfying the equation
+$$
+Y_i = \beta_0 + \beta_1X_i + \varepsilon_i
+$$ {#eq-reg-eq}
+
+for some fixed but unknown constants $\beta_0$ and $\beta_1$.
+
+Although this may seem like a model, these equations on their own do not impose any restrictions on our data. After all, algebra allows us to rearrange the terms appearing in an equation, so that @eq-reg-eq is equivalent to
+
+$$
+\varepsilon_i = Y_i - (\beta_0 + \beta_1X_i).
+$$ {#eq-reg-eq2}
+
+Now what's stopping us from choosing any arbitrary $\beta_0$ and $\beta_1$ and taking @eq-reg-eq2 to be a definition of $\varepsilon_i$? From this, we see that @eq-reg-eq is trivially satisfied unless we say something additional about $\varepsilon_i$.
+
+## Uncorrelated with predictor
+
+One thing we could say about $\varepsilon_i$ to give @eq-reg-eq some teeth is that $\operatorname{Cor}(X_i, \varepsilon_i) = 0.$ Let's take a closer look at what this condition implies in tandem with @eq-reg-eq.
+
+If we were to proceed as before and select arbitrary $\beta_0$ and $\beta_1$, then taking @eq-reg-eq as a definition of $\varepsilon_i$ will almost certainly result in an $\varepsilon_i$ that is correlated with $X_i$. However, there will always be a particular choice of $\beta_1$ such that the satisfaction of @eq-reg-eq actually guarantees that $\operatorname{Cor}(X_i, \varepsilon_i) = 0$, irrespective of the distribution of $(X_i, Y_i)$.
+
+To see this, note that for any $\beta_0$ and $\beta_1$, the satisfaction of @eq-reg-eq implies that
+
+$$
+\begin{split}
+\operatorname{Cov}(X_i, \varepsilon_i) &= \operatorname{Cov}(X_i, Y_i - (\beta_0 + \beta_1X_i)) \\
+&= \operatorname{Cov}(X_i, Y_i) - \beta_1\operatorname{Var}(X_i),
+\end{split}
+$$ {#eq-uncorr}
+
+from which its clear that the choice $\beta_1 = \operatorname{Cov}(X_i, Y_i)/\operatorname{Var}(X_i)$ (and only this choice) will lead to $\operatorname{Cov}(X_i, \varepsilon_i) = 0$. Of course, for this to work, we'll need $\operatorname{Cov}(X_i, Y_i)/\operatorname{Var}(X_i)$ to not depend on $i$, that is, to be the same for each data pair. If we assume that the $(X_i, Y_i)$ pairs are independently and identically distributed, then this follows.
+
+So we can think of the equation $\operatorname{Cor}(X, \varepsilon) = 0$ as an *identifying condition.*[^1] Without this condition, $\beta_1$ could be anything; by imposing $\operatorname{Cor}(X, \varepsilon) = 0$, we *identify* $\beta_1$ with $\operatorname{Cov}(X, Y)/\operatorname{Var}(X)$. Moreover, the condition $\operatorname{Cor}(X, \varepsilon) = 0$ imposes no restrictions on the distribution of our data, as long as we accept this identification of $\beta_1$ with $\operatorname{Cov}(X, Y)/\operatorname{Var}(X)$.
+
+[^1]: I've dropped subscripts because we're now assuming the $(X_i, Y_i)$'s are iid from a single distribution $P_{(X, Y)}$
+
+## What is $\operatorname{Cov}(X,Y)/\operatorname{Var}(X)$?
+
+Continuing without making any assumptions about our data, let's say we want to predict $Y$ with a linear function of $X$: 
+$$
+Y \approx b_0 + b_1X
+$$
+
+A criterion for evaluating our approximating function might be the mean squared error, $\operatorname{MSE}(b_0, b_1) = \operatorname{E}[(Y-b_0 - b_1X))^2]$. By setting the derivatives of the MSE with respect to $b_0$ and $b_1$ equal to $0$, you can show that $\operatorname{Cov}(X,Y)/\operatorname{Var}(X)$ is the value of the $b_1$ in the tuple $(b_0, b_1)$ that minimizes this criterion.[^2] For this reason, $\operatorname{Cov}(X,Y)/\operatorname{Var}(X)$ might be a quantity we're interested in.
+
+[^2]: The derivative passes through the expectation operator
+
+In terms of estimation, the ordinary least squares (OLS) estimator takes a plug-in form as the ratio of the *sample* covariance and *sample* variance, i.e. $\hat{\beta_1} = \widehat{\operatorname{Cov}(X, Y)}/\widehat{\operatorname{Var}(X)}$. This statistic will converge in large samples to $\beta_1 = \operatorname{Cov}(X,Y)/\operatorname{Var}(X)$ in this assumption-less setting.[^3] We can also apply the Central Limit Theorem with no further assumptions to show that $\hat{\beta_1}$ is asymptotically normal. By estimating its variance, we can then obtain approximate confidence intervals for and conduct hypothesis tests about $\beta_1 = \operatorname{Cov}(X,Y)/\operatorname{Var}(X)$, so long as we have a sufficiently large sample. If you're curious about the details, I recommend taking a look at Sections 5.2 and 7.1-2 of the online textbook [A User’s Guide to Statistical Inference and Regression](https://mattblackwell.github.io/gov2002-book/).
+
+[^3]: Admittedly, we have assumed that $(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)$ are independent and identically distributed, i.e. that they are a random sample from a population, which might be seen as a strong assumption in its own right.
+
+## Mean independent of predictor
+
+Another possible thing we could say about $\varepsilon$ to give @eq-reg-eq teeth is that it's mean independent of $X$, i.e. $\operatorname{E}[\varepsilon \mid X] = \operatorname{E}[\varepsilon] = 0$.[^4] First note that this assumption actually implies the first one since $\operatorname{Cov}(\varepsilon, X) = \operatorname{E}[X\varepsilon] = \operatorname{E}[X\operatorname{E}[\varepsilon \mid X]] = \operatorname{E}[X*0] = 0$. Therefore, this assumption also identifies $\beta_1$ with $\operatorname{Cov}(X, Y)/\operatorname{Var}(X)$. However, this assumption is not *only* an identifying condition, since it also imposes real restrictions on the distribution of our data. Specifically, it implies that the conditional mean of $Y$ given $X$ is actually linear in $X$. I would venture to say that most conditional mean functions aren't actually linear in the collected predictors, so mean independence should be viewed as a somewhat näive assumption.
+
+[^4]: Setting the intercept to be $\beta_0 = \operatorname{E}[Y] - \beta_1\operatorname{E}[X]$ ensures that $\operatorname{E}[\varepsilon] = 0$
+
+If mean independence does hold, our estimand $\beta_1 = \operatorname{Cov}(X,Y)/\operatorname{Var}(X)$ now equals the slope of the linear function that exactly represents the conditional mean of $Y$ given $X$, not just the linear function that best approximates the conditional mean function, as it was before. In terms of estimation, under the mean independence assumption, the OLS estimator is no longer just consistent, but is in fact unbiased in finite samples for $\beta_1 = \operatorname{Cov}(X,Y)/\operatorname{Var}(X)$. But again, we can't typically expect our conditional mean function to be linear, so we can't typically expect this guarantee.
+
+## Fixed predictor
+
+In discussions of regression in my statistics classes, the values of the predictors were always viewed as fixed or conditioned upon for the purpose of defining the model, so that the only randomness in the model came from the $\varepsilon_i$'s. The trouble with this perspective is that you lose the ability to have the discussion we just had about what OLS estimates when you don't make any assumptions other than the fact that you've collected a random sample. The MSE criterion depends on the distribution of $X_i$, so without the distribution of $X_i$ in the model, the fact that the OLS estimator converges to the slope of the linear predictor that minimizes the MSE is meaningless. Thus, from a fixed design perspective, the only way to make statistical sense of what OLS gives you is to make the mean independence assumption, or equivalently, to assume that the conditional mean of $Y$ is actually linear in $X$.
+
+
+
+## Takeaways
+
+So linear regression can be a useful tool even when the linear model doesn't actually hold, the reason being that $\operatorname{Cov}(X, Y)/\operatorname{Var}(X)$ is the minimizer among all linear predictors of the MSE, and OLS will automatically converge to $\operatorname{Cov}(X, Y)/\operatorname{Var}(X)$ in large samples. This is a fact that has implications beyond those discussed here. One example relates to the usage of linear regression models to estimate the average treatment effect from a randomized experiment. In this context, you don't necessarily need to worry about violations of linearity when you add baseline covariates to this model. To see why this is, notice that even if your model is wrong, OLS always automatically (asymptotically) targets $\operatorname{Var}(X)^{-1}\operatorname{Cov}(X, Y)$, where $X$ is now a vector, one of whose components is the treatment variable $A$, and $\operatorname{Var}(X)$ is its variance-covariance matrix. Since the treatment is randomized, it's uncorrelated with the rest of the components of $X$; $\operatorname{Var}(X)^{-1}$ will therefore have a block diagonal structure, and the component of $\operatorname{Var}(X)^{-1}\operatorname{Cov}(X, Y)$ that corresponds to the coefficient on $A$ will just be $\operatorname{Cov}(A, Y)/\operatorname{Var}(A)$, the coefficient from the simple linear regression model that includes only $A$. Because $A$ is binary, this latter model is saturated, hence correctly specified, and therefore $\operatorname{Cov}(A, Y)/\operatorname{Var}(A)$ is the average treatment effect. So even though the model that includes the baseline covariates is wrong, the coefficient on $A$ in the OLS estimate from this model is not asymptotically biased for the treatment effect. Given the gains in precision that come from including these baseline covariates in the model, one should therefore default to including these baseline covariates in linear regression models for RCT data. For more on this, check out @wang2019.
+
+#### References

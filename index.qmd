@@ -1,0 +1,22 @@
+---
+title: "Evan Gorstein"
+image: piedmont_park.jpg
+about:
+  template: trestles
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/evan-gorstein
+    - icon: github
+      text: Github
+      href: https://github.com/evangorstein
+---
+## Bio
+
+I am a PhD candidate in the Department of Statistics at the University of Wisconsin-Madison, advised by [Claudia Solis-Lemus](https://solislemuslab.github.io/). During my PhD, I've worked on computational and statistical phylogenetics, and my research has focused on the development of methods that leverage deep learning for phylogenetic inference.  
+
+**I will be defending my dissertation in the fall of 2026 and am looking for opportunities in data science following my graduation.** My main interests are in Bayesian statistics, data visualization, and deep learning; hopefully, I can find a job where I can do at least 2 out of the 3 :) Outside of work, I enjoy reading, biking, playing basketball, and watching the NBA.
+
+On this site, you can find my [resume](resume.pdf), my [publications](papers.qmd), and my [blog](blog.html).
+
+

@@ -1,0 +1,480 @@
+---
+title: "Replicating Research with LLMs"
+author: "Evan Gorstein"
+date: "2025-10-30"
+categories: [llms, replication]
+draft: true
+---
+
+
+```{r}
+library(tidyverse)
+library(haven)
+```
+
+```{r}
+fulldata <- read_dta("data/maindata.dta")
+```
+
+## Basic demographics
+```{r}
+demo <- fulldata %>%
+  rename(
+    id = R0000100, hid = R0000149, MONTH79 = R0000300, YR79 = R0000500,
+    sample = R0173600, RACE79 = R0214700, SEX79 = R0214800,	MONTH81 = R0410100,
+    YR81 = R0410300, SEX82 = R0810200
+  ) %>%
+  mutate(
+    year = if_else(YR81 > 0, YR81, YR79),
+    month = if_else(MONTH81 > 0, MONTH81, MONTH79)
+    ) %>%
+  mutate(
+    race = factor(RACE79, levels = c(3, 1, 2), labels = c("white", "hisp", "black")),
+    sex = factor(case_when(
+      SEX82==2 ~ "female",
+      SEX82 < 0 & SEX79==2 ~ "female",
+      .default = "male"
+    ), levels = c("male", "female"))
+    ) %>%
+  mutate(
+    sample = case_when(
+      sample >= 1 & sample <= 8 ~ "cross-sec",
+      sample >= 9 & sample <= 14 ~ "supplemental",
+      sample >= 15 & sample <= 20 ~ "military"
+    )
+    )
+# check that all sample types are covered
+any(is.na(demo$sample))
+```
+
+```{r}
+demo <- demo %>%
+  select(id, hid, year, month, sex, race, sample) %>% 
+  arrange(id)
+```
+
+
+## Highest grade completed
+```{r}
+# --- Stata: rename R*... to hgc*... ---
+hgc <- fulldata %>%
+  rename(
+    id = R0000100,
+    hgc79 = R0216701, hgc80 = R0406401, hgc81 = R0618901, hgc82 = R0898201,
+    hgc83 = R1145001, hgc84 = R1520201, hgc85 = R1890901, hgc86 = R2258001,
+    hgc87 = R2445401, hgc88 = R2871101, hgc89 = R3074801, hgc90 = R3401501,
+    hgc91 = R3656901, hgc92 = R4007401, hgc93 = R4418501, hgc94 = R5103900,
+    hgc96 = R5166901, hgc98 = R6479600, hgc100 = R7007300, hgc102 = R7704400,
+    hgc104 = R8496800
+  )
+
+# --- Stata: keep hgc* id; ---
+hgc <- hgc %>%
+  select(id, starts_with("hgc"))
+```
+
+
+```{r}
+hgc <- hgc %>%
+  pivot_longer(
+    cols = starts_with("hgc"),
+    names_to = "year",
+    values_to = "hgc",
+    names_prefix = "hgc", # Removes "hgc" from "hgc79" to get "79"
+    names_transform = list(year = as.integer) # Converts "79" to 79
+  ) %>%
+  mutate(
+    # gen below6=0; replace below6=1 if hgc<6 & hgc>=0;
+    # We use if_else(condition, true, false, missing)
+    # Stata's `gen below6=0` sets NA rows to 0, so we use `missing = 0`.
+    below6 = if_else(hgc < 6 & hgc >= 0, 1, 0, 0),
+    
+    # replace hgc=6 if hgc<6 & hgc>=0;
+    # replace hgc=6 if hgc>90;
+    # case_when() handles this cleanly.
+    hgc = case_when(
+      hgc < 6 & hgc >= 0 ~ 6,
+      hgc > 90 ~ 6,
+      .default = hgc # Keeps all other values (including NA) as they are
+    )
+  ) %>%
+  pivot_wider(
+    id_cols = id,
+    names_from = year,
+    values_from = c(hgc, below6),
+    # This creates "hgc79", "below679", etc., to match Stata's output
+    names_glue = "{.value}{year}" 
+  )
+
+hgc <- hgc %>%
+  mutate(
+    across(
+      starts_with("hgc"),
+      ~ if_else(.x < 0 , NA_real_, .x)
+    )
+  )
+```
+
+```{r}
+ final <- demo %>%
+  left_join(
+    hgc, by = "id"
+  ) %>%
+  arrange(id)
+```
+
+
+## Employment Status, Class of Workers, Hours worked
+
+Employment status and class of worker: 
+```{r}
+employ <- fulldata %>%
+  rename(
+    # General ID
+    id = R0000100,
+
+    # 1979
+    cls79 = R0046800, # For those who work outside the house, do you work at a private company (1), for the gov (2), self-employed (3), without pay (4)
+    esr79 = R0214900, # Do you work (1), with job, not at work (2) are you unemployed (3), are you keeping house (4), are you a student (5), are you unable to work (6), Other (7), in military (8)
+    curr1job79 = R0094700, # For those who recorded at least one employer, is job 1 the one that is current?
+    curr2job79 = R0094800, # For those who recorded at least two employers, is job 2 the one that is current?
+    curr3job79 = R0094900, # Etc.
+    curr4job79 = R0095000,
+    curr5job79 = R0095100,
+
+    # 1980
+    cls80 = R0263500,
+    esr80 = R0406300,
+    curr1job80 = R0337700,
+    curr2job80 = R0349200,
+    curr3job80 = R0360700,
+    curr4job80 = R0372200,
+    curr5job80 = R0383700,
+
+    # 1981
+    cls81 = R0446600,
+    esr81 = R0618800,
+    curr1job81 = R0545500,
+    curr2job81 = R0558600,
+    curr3job81 = R0571700,
+    curr4job81 = R0584800,
+    curr5job81 = R0597900,
+
+    # 1982
+    cls82 = R0702300,
+    esr82 = R0898500,
+    curr1job82 = R0840100,
+    curr2job82 = R0853200,
+    curr3job82 = R0866300,
+    curr4job82 = R0879400,
+    curr5job82 = R0892500,
+
+    # 1983
+    cls83 = R0945400,
+    esr83 = R1144700,
+    curr1job83 = R1087200,
+    curr2job83 = R1100400,
+    curr3job83 = R1113600,
+    curr4job83 = R1126800,
+    curr5job83 = R1140000,
+
+    # 1984
+    cls84 = R1255800,
+    esr84 = R1519900,
+    curr1job84 = R1462900,
+    curr2job84 = R1476000,
+    curr3job84 = R1489100,
+    curr4job84 = R1502200,
+    curr5job84 = R1515300,
+
+    # 1985
+    cls85 = R1650600,
+    esr85 = R1890600,
+    curr1job85 = R1809700,
+    curr2job85 = R1822400,
+    curr3job85 = R1835100,
+    curr4job85 = R1847800,
+    curr5job85 = R1860500,
+
+    # 1986
+    cls86 = R1923200,
+    esr86 = R2257700,
+    curr1job86 = R2171400,
+    curr2job86 = R2185000,
+    curr3job86 = R2198600,
+    curr4job86 = R2212200,
+    curr5job86 = R2225800,
+
+    # 1987
+    cls87 = R2318000,
+    esr87 = R2445100,
+    curr1job87 = R2376200,
+    curr2job87 = R2387500,
+    curr3job87 = R2398800,
+    curr4job87 = R2410100,
+    curr5job87 = R2421400,
+
+    # 1988
+    cls88 = R2525800,
+    esr88 = R2870600,
+    curr1job88 = R2770800,
+    curr2job88 = R2783700,
+    curr3job88 = R2796600,
+    curr4job88 = R2809500,
+    curr5job88 = R2822400,
+
+    # 1989
+    cls89 = R2924800,
+    esr89 = R3074300,
+    curr1job89 = R3012600,
+    curr2job89 = R3025700,
+    curr3job89 = R3038800,
+    curr4job89 = R3051900,
+    curr5job89 = R3065000,
+
+    # 1990
+    cls90 = R3127500,
+    esr90 = R3401000,
+    curr1job90 = R3340000,
+    curr2job90 = R3354000,
+    curr3job90 = R3368000,
+    curr4job90 = R3382000,
+    curr5job90 = R3396000,
+
+    # 1991
+    cls91 = R3523200,
+    esr91 = R3656400,
+    curr1job91 = R3604300,
+    curr2job91 = R3616400,
+    curr3job91 = R3628500,
+    curr4job91 = R3640600,
+    curr5job91 = R3652700,
+
+    # 1992
+    cls92 = R3728200,
+    esr92 = R4006900,
+    curr1job92 = R3954500,
+    curr2job92 = R3966700,
+    curr3job92 = R3978900,
+    curr4job92 = R3991100,
+    curr5job92 = R4003300,
+
+    # 1993
+    cls93 = R4182300,
+    esr93 = R4418000,
+
+    # 1994
+    clsa94 = R4586700,
+    clsb94 = R4586800,
+    clsc94 = R4587900,
+    esr94 = R5081000,
+
+    # 1996
+    clsa96 = R5268800,
+    clsb96 = R5268900,
+    clsc96 = R5270400,
+    esr96 = R5166300,
+
+    # 1998
+    clsa98 = R5925000,
+    clsb98 = R5925800,
+    clsc98 = R5936600,
+    esr98 = R6478900,
+
+    # 2000
+    cls100 = R6592300,
+    esr100 = R6555000,
+
+    # 2002
+    cls102 = R7210100,
+    esr102 = R7181300,
+
+    # 2004
+    cls104 = R7898500,
+    esr104 = R7866700
+  )
+```
+
+Bring in hours worked:
+```{r}
+employ <- employ %>%
+  rename(
+    hrsweekj179 = R0070500,
+    hrsweekj279 = R0070600,
+    hrsweekj379 = R0070700,
+    hrsweekj479 = R0070800,
+    hrsweekj579 = R0070900,
+    hrsweek80 = R0264300,
+    hrsweek81 = R0446900,
+    hrsweek82 = R0702600,
+    hrsweek83 = R0945700,
+    hrsweek84 = R1256100,
+    hrsweek85 = R1650900,
+    hrsweek86 = R1923500,
+    hrsweek87 = R2318300,
+    hrsweek88 = R2526100,
+    hrsweek89 = R2925100,
+    hrsweek90 = R3127900,
+    hrsweek91 = R3523600,
+    hrsweek92 = R3728600,
+    hrsweek93 = R4182600,
+    hrsweek94 = R4540300,
+    hrsweek96 = R5236400,
+    hrsweek98 = R5838200,
+    hrsweek100 = R6578200,
+    hrsweek102 = R7192900,
+    hrsweek104 = R7879600
+  )
+
+```
+
+esr for years after 98 is just whether the worker is currently holding job 1 or not (not created by NLSY for these years)
+
+```{r}
+employ <- employ %>%
+  mutate(
+    esr100 = if_else(esr100 == 0, 3, esr100),
+    esr102 = if_else(esr102 == 0, 3, esr102),
+    esr104 = if_else(esr104 == 0, 3, esr104)
+  )
+```
+
+
+```{r}
+employ <- employ %>%
+  select(!starts_with("R"))
+
+
+employ <- employ %>%
+  pivot_longer(
+    cols = !id,
+    names_to = c(".value", "year"),
+    names_pattern = "(.*?)(100|102|104|\\d{2})$"
+  )
+
+# coding change between 1994 and 1998
+employ <- employ %>%
+  mutate(
+    cls = case_when(
+    year < 94 | year > 98 ~ cls,
+    clsa > -3 ~ clsa,
+    clsb > -3 ~ clsb,
+    clsc > - 3 ~ clsc
+      )
+  ) %>%
+  mutate(
+    cls = case_when(
+      year < 94 | year > 98 ~ cls,
+      cls==2 | cls==3 ~ 1,
+      cls==1 ~ 2,
+      cls==4 ~ 3,
+      cls==5 ~ 4,
+      .default = cls
+    )
+  )
+```
+
+Now we combine `cls` and `esr` to create a variable `code`:
+
+-9 = coding error but working 
+0 = interviewed, non-milt, not working, 1 = working for pay, 2 = non-interview,
+3 = military & no civilian job, 4= self-employed, 5 - working w/o pay
+
+```{r}
+employ <- employ %>%
+  mutate(
+    code = case_when(
+      cls == 4 ~ 5, # working without pay
+      cls == 3 ~ 4, # self-employed
+      cls == 1 | cls == 2 ~ 1, # working for pay 
+      esr == 8 ~ 3, # military
+      (cls>-4 & cls<0) & (esr==1 | esr==2) ~ -9, # cls is missing, but is working according to esr
+      (cls == -4) | ((cls>-4 & cls<0) & (esr>2 & esr!=8)) ~ 0, # neither working nor in the military
+      esr == -5 ~ 2, # not interviewed
+      .default = -99
+    )
+  )
+```
+
+Determine CPS job. For years after 1992, it's job 1. For years before 1993, it's based on currxjob variables
+
+```{r}
+employ <- employ %>%
+  mutate(
+    CPSJOB = case_when(
+      year > 92 ~ 1, 
+      curr1job == 1 ~ 1,
+      curr2job == 1 ~ 2,
+      curr3job == 1 ~ 3,
+      curr4job == 1 ~ 4,
+      curr5job == 1 ~ 5,
+      .default = 0 
+    )
+  ) %>%
+  select(!starts_with("curr"))
+```
+
+Determine how many hours per week are worked for 1979
+
+```{r}
+employ <- employ %>%
+  mutate(
+    hrsweek = case_when(
+      year != 79 ~ hrsweek,
+      CPSJOB == 5 ~ hrsweekj5,
+      CPSJOB == 4 ~ hrsweekj4,
+      CPSJOB == 3 ~ hrsweekj3,
+      CPSJOB == 2 ~ hrsweekj2,
+      CPSJOB == 1 ~ hrsweekj1,
+      .default = hrsweek
+    )
+  )
+```
+
+
+Reshape back to wide and merge with fulldata
+```{r}
+employ <- employ %>%
+  select(id, code, cls, esr, year, hrsweek) %>%
+  pivot_wider(
+    names_from = year,
+    values_from = -c(id, year)
+  ) 
+
+
+final <- final %>%
+  left_join(employ, by="id") %>%
+  arrange(id)
+```
+
+## More stuff
+
+Start with hourly rate of pay
+```{r}
+# more_stuff <- fulldata %>%
+#   rename(
+#     id = R0000100, 
+#     hrp79 = R0047010, 
+#     hrp80 = R0263710, 
+#     hrp81 = ,
+#     hrp82 = ,
+#     hrp83 = ,
+#     hrp84 = ,
+#     hrp85 = ,
+#     hrp86 = ,
+#     hrp87 = ,
+#     hrp88 = 
+#   )
+  
+  
+```
+
+
+
+
+
+
+
+
+
+

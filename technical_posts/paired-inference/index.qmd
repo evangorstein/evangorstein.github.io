@@ -1,0 +1,133 @@
+---
+title: "Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic"
+author: "Evan Gorstein"
+date: "2021-01-08"
+categories: [causal inference, randomization inference]
+---
+
+
+## Introduction
+
+
+Last semester, I made my way through the first half of Paul Rosenbaum's textbook *Design of Observational Studies* (2010). Rosenbaum is a leading expert in causal inference, an area of statistical research concerned with the identification of causal effects through the analysis of observational data. 
+
+One piece of advice I've heard directed towards researchers in the social sciences who are interested in measuring a  causal effect is to get a clear image in their head of the randomized experiment that, were it feasible, ethical, etc., would be used to test for its presence. In this hypothetical, randomization plays the role of a benchmark which can be approached using the tools of causal inference. In the fortunate circumstances in which a randomized experiment is possible, the task of conducting inference simplifies greatly, although there is still some work to be done. Rosenbaum discusses randomization inference in a matched pair experiment in Chapter 2 of his textbook, alongside an example study that he works through. In the next post or two, I would like to summarize the method he presents to solidify my own understanding. 
+
+In this post, I discuss two non-parametric ways of doing inference in a randomized matched pair study. The first näively uses the mean treated-minus-control
+difference among the pairs as its test statistic, whereas the second uses the more efficient Wilcoxon signed rank statistic, which has the 
+added benefit of opening up other inferential possibilities. In a follow-up post, I hope to talk about a method for quantifying the effect of the treatment without making any simplifying 
+assumptions about the form the effect takes. This quantity is known as the "attributable effect" of a treatment. 
+
+ 
+## Hypothesis Testing with the Mean Treated-Minus-Control Difference
+
+
+Let's establish some notation to describe the set-up of our hypothetical experiment.
+Suppose we have $I$ pairs of individuals matched on the basis of some observed covariates. We will use $i=1,2,...,I$, to index the pairs
+and $j=1, 2$, to index the individual within each pair. Let
+$Z_{ij}$ be an indicator for whether individual $i,j$ is treated. Since
+we treat exactly one individual in each pair, we have $Z_{i1}+Z_{i2}=1$
+for $i=1,2,...I$. Finally, let $R$ represent the response we are
+interested in.
+
+With this notation, the treated-minus-control difference for matched
+pair $i$ is given by $Y_i=(Z_{i1}-Z_{i2})(R_{i1}-R_{i2})$. One inference
+goal for this study might be to test the sharp hypothesis that treatment has
+no effect on response in any individual. In order to formalize this
+hypothesis, we must imagine that each individual has two potential
+responses: the response they would exhibit if assigned the treatment,
+$r_{Tij}$, and the response they would exhibit if assigned the control,
+$r_{Cij}$. Then the hypothesis we are testing states precisely that
+$r_{Cij}=r_{Tij}$ for all $i, j$. Packaging the potential responses for
+all individuals into vectors, we write the null hypothesis as
+$\boldsymbol{r_T}=\boldsymbol{r_I}$.
+
+If treatment assignment is random within each pair, we will be able to
+perform this test. In the words of Ronald Fisher, randomization provides us with a "reasoned basis for inference." In order to see
+this, let's draw out the implications of the null hypothesis. If
+treatment does not have any effect, then an individual's observed
+response is equal to their potential response under control (this of
+course holds true if the individual is given the control--the point
+here is that because of the null hypothesis, it is also true if
+she is treated). That is $R_{i,j}=r_{Cij}$ for each
+individual $i,j$. The treated-minus-control difference for pair $i$ is thus $$Y_i=(Z_{i1}-Z_{12})(R_{i1}-R_{i2})=(Z_{i1}-Z_{12})(r_{Ci1}-r_{Ci2})$$
+
+Now we can see from this equation that the randomness in $Y_i$ comes
+only from the treatment assignment $Z$. In particular, if a fair coin is
+used to decide assignment, we will observe $Y_i=(r_{Ci1}-r_{Ci2})$ and
+$Y_i=(r_{Ci2}-r_{Ci1})=-(r_{Ci1}-r_{Ci2})$ with equal probability
+$\frac{1}{2}$. This fact allows us to determine the exact null
+distribution of the mean treated-minus-control difference
+$\bar{Y}=\frac{1}{n}\sum_{i=1}^{n}{Y_i}$ after observing our data. For
+each pair $i$, if we observe $Y_i=y_i$, the null hypothesis assures us
+that if we happened to swap treatment with control, we would have observed a
+treated-minus-control difference of $-y_i$. It follows that after
+we observe the $Y_i$'s, we can calculate the value $\bar{Y}$ takes for
+each of the equally likely $2^I$ possible treatment assignment
+$(Z_{11}, Z_{12}, ... , Z_{I1}, Z_{I2})$. We can then compare our
+observed $\bar{Y}$ to this null distribution of $\bar{Y}$'s in order to
+asses the evidence for treatment effect, find one or two-sided p-values,
+and make the corresponding conclusion.
+
+## Hypothesis Testing with the Wilcoxon Signed Rank Statistic
+
+
+If we followed the method outlined above, there is no reason to doubt
+the validity of our inferences. However, in performing inference, we
+would also like to be efficient at detecting effects when the responses
+$R_{ij}$ are not well-behaved, and in this respect, there are better
+test statistics than the mean treated-minus-control difference. One of
+the most popular such test statistics is due to Frank Wilcoxon, and it's
+known as the signed rank statistic.
+
+Like $\bar{Y}$, the Wilcoxon signed rank statistic $T$ also uses
+treated-minus-control differences $Y_i$, but it focuses more on their
+sign. To construct $T$, we rank the absolute differences $|Y_i|$ from
+smallest to largest. We then sum the ranks for all pairs $i$ whose
+treated-minus-control difference is positive. That is, let $q_i$ be the
+rank of $|Y_i|$. Then
+$T\equiv\sum_{i=1}^n{\mathop{\mathrm{sgn}}(Y_i)q_i}$, where
+$\mathop{\mathrm{sgn}}(x)=1$ if $x>0$ and $\mathop{\mathrm{sgn}}(x)=0$
+if $x\leq0$. As we've seen, with no treatment effects,
+$Y_i=(r_{Ci1}-r_{Ci2})$ and $Y_i=(r_{Ci2}-r_{Ci1})=-(r_{Ci1}-r_{Ci2})$
+with equal probability $\frac{1}{2}$. Thus, under the null and assuming
+non-zero treated-minus-control differences, each rank $q_i$ has a 50-50
+shot of being included in the sum $T$. This makes the null distribution
+of $T$ particularly easy to calculate. In fact, assuming there are no
+ties in the absolute treated-minus-control differences, we can write the
+null distribution of $T$ before we even look at our data, since it is
+simply the result of adding up the numbers $1$ through $I$, including
+each number with probability $.5$. Thus, under the null hypothesis, the
+expected value of $T$ is given by
+$$\mathop{\mathrm{\mathrm{E}}}(T)=\frac{1}{2}\sum_{i=1}^I{i}=\frac{I(I+1)}{4}$$
+and the variance by
+$$\mathop{\mathrm{\mathrm{Var}}}(T)=\sum_{i=1}^I{i^2\mathop{\mathrm{\mathrm{Var}}}[\mathop{\mathrm{sgn}}(Y_i)]}=\frac{1}{4}\sum_{i=1}^I{i^2}=\frac{I(I+1)(2I+1)}{24}$$
+
+Just as with the $\bar{Y}$, the null distribution of $T$ is symmetric
+about its mean, and we can compare it to our observed $T$ to derive
+one-sided and two-sided p-values for the null hypothesis of no treatment
+effect. Furthermore, with only a slight modification, we can test the
+null hypothesis of a non-zero additive effect, i.e. we can test
+$H_0: r_{Tij} = r_{Cij} + \tau_{ij}$ for all $i,j$. In order to do this, we
+simply define  $Y'_i=Y_i-(\tau_{i1}Z_{i1}+\tau_{i2}Z_{i2})$ and use these adjusted responses to calculate the signed-rank statistic, ranking the $|Y'_i|$s and summing up the ranks for which $Y'_i$ is positive.  
+
+## Conclusion
+
+The Wilcoxon signed rank test statistic thus opens up a world of
+opportunity for robust inference in matched pair studies. As
+opposed to the paired t-test, a staple of introductory statistics
+courses, the Wilcoxon signed rank test is non-parametric, meaning that
+it does not involve making any assumptions about the distribution of the
+data. The t-test depends on the assumption that the data (the
+response-minus-controldifference $Y_i$'s) is normally distributed or that the
+number of pairs is large enough such that the Central Limit Theorem
+guarantees that the distribution of $\bar{Y}$ is approximately normal. Often, these two conditions are both unrealistic--that is, the underlying distribution for our experimental data is non-normal, and our sample size is small. 
+Personally, this is my experience of *most* science. We're in luck because in just such a case, the Wilcoxon signed rank test allows us to perform
+valid inferences.
+
+What's more, by assuming that the additive effect $\tau_{ij}=\tau$ is constant across all individuals, we can invert hypothesis tests and form point estimates of a constant treatment effect (choose the $\tau$ that yields the ranked sum test statistic closest to its expected value if there were actually a $\tau$ constant effect, i.e. $I(I+1)/4$), as well as construct $1-\alpha$ confidence intervals for a constant treatment effect (include in the interval all $\tau$s which are not rejected by a $\alpha$ level test). 
+The Wilcoxon ranked-sum statistic can even be used to
+detect and estimate a constant multiplicative treatment effects, i.e.
+$H_0: \mathbf{r_T}=\beta_0\mathbf{r_C}$ with $\beta_0\geq0$.
+
+Unfortunately, in forming these (point and interval) estimates of the (additive or multiplicative) treatment effect, we are forced to make the possibly unrealistic assumption that the effect is constant for all individuals. In my next post, I will discuss how we can make a summary statement about the magnitude of the effect without this assumption.

@@ -1,0 +1,23 @@
+project:
+  type: website
+
+website:
+  title: "Evan Gorstein"
+  navbar:
+    background: lightgrey
+    search: true
+    right:
+      - text: "About"
+        href: index.qmd
+      - text: "Papers"
+        href: papers.qmd
+      - blog.qmd
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+
+
+

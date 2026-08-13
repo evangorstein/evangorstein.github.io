@@ -1,0 +1,6 @@
+/.quarto/
+/_site/
+.Rproj.user/
+.DS_Store
+_MIGRATION_REPORT.md
+NewWebsite.Rproj

@@ -1,0 +1,65 @@
+---
+title: "Randomization Inference Part 2: Attributable Effects"
+author: "Evan Gorstein"
+date: '2021-01-13'
+categories: [causal inference, randomization inference]
+---
+
+## Introduction
+
+In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-constant causal effects. The quantity that we will define for this task is known as the "attributable effect" of treatment. This discussion is adapted from Chapter 2 of Paul Rosenbaum's *Design of Observational Studies* (2010).
+
+## Exceptional Pairs
+
+We adopt the same experimental set-up as in the previous post with $I$ pairs matched for pre-treatment covariates and treatment assignment randomized within each pair. Let's consider for the moment a subset $\mathscr{I} \subseteq \{1,2,3,...I\}$ of $m$ of these $I$ pairs. In order to allow the heterogeneity of the effect to play a role in our calculations, let's try to identify the pair $i_\mathscr{I}$ in $\mathscr{I}$ whose two individuals exhibit the largest difference in outcomes. Surely, this is a noteworthy pair, one that might provide evidence about the direction of the effect of treatment. For example, we might consider it evidence for a positive treatment effect if within this exceptional pair, the treated unit's observed response is the larger of the two. Let $H_\mathscr{I}$ be an indicator for just this. In other words, $H_\mathscr{I} = 1$ if in the pair in $\mathscr{I}$ with the largest disparity in observed responses, the treated-minus-control difference is positive and $H_\mathscr{I} = 0$ otherwise. Of course, we may have just gotten lucky in the sense that even without a positive effect, we still might find that the treated unit in $i_\mathscr{I}$ has the larger observed response. Indeed, we saw in the previous post that under the sharp null hypothesis of no treatment effect in any unit, we have 
+$$
+Y_{i} := (Z_{i1}-Z_{i2})(R_{i1}-R_{i2})=(Z_{i1}-Z_{i2})(r_{Ci1}-r_{Ci2})
+$${#eq-null-diff} 
+for all $i$, where $r_{Cij}$ is the potential outcome under control of unit $j$ in pair $i$. Since these potential outcomes are fixed constants, we can see that a flip of the randomization coin determines the sign of the treated-minus-control difference $Y_{i}$ for all $i$ and, in particular, for that most exceptional $Y_{i_\mathscr{I}}$, under the sharp null hypothesis. Thus, when there is no effect for anyone, we will still have a 50-50 shot that $H_\mathscr{I}=1$.
+
+In order to account for luck, we now define a different indicator $H_{C\mathscr{I}}$. This indicator ranks the pairs in $\mathscr{I}$ according to their differences in *potential outcomes under control*, $|r_{Ci1}-r_{Ci2}|$, instead of the difference in observed responses $|R_{i1}-R_{i2}|$. It equals 1 if in the pair with the largest such difference, the treated unit is the one with the larger potential outcome under control. This is a weird thing to consider, but if the sharp null hypothesis of no effect in any unit is true, then $|r_{Ci1}-r_{Ci2}| = |R_{i1}-R_{i2}|$ for all $i$, so $H_{C\mathscr{I}} = H_{\mathscr{I}}$. So one might imagine that deviation of $H_{\mathscr{I}}$ from $H_{C\mathscr{I}}$ measures deviation from the sharp null hypothesis.
+
+
+## Attributable Effect
+
+Let's now recall that $\mathscr{I}$ was just one arbitrary subset of pairs, so we actually want to go through this for every single subset of pairs of size $m$ and sum the results. Let $\mathscr{K}$ be the collection of all subsets of $m$ distinct pairs. We define the statistic $\tilde{T}$ to be the tally of all the "successes" as we loop through these subsets, i.e. $\tilde{T}= \sum_{\mathscr{I}\in\mathscr{K}}{H_\mathscr{I}}$. Similarly, the count of "successes" if we went according to the potential responses under control is given by $\tilde{T_C}= \sum_{\mathscr{I}\in\mathscr{K}}{H_{C\mathscr{I}}}$, a quantity which in general is unobserved. A quantity that measures evidence for a treatment effect while accounting for luck is the difference between these two tallies, $A=\tilde{T} - \tilde{T}_{C} = \sum_{\mathscr{I}\in\mathscr{K}}{H_\mathscr{I} - H_{C\mathscr{I}}}$. In general, $A$ is an integer between $-|\mathscr{K}|$ and $|\mathscr{K}|$ representing the change in the number of successes which can be attributed to treatment, i.e. the "attributable effect". It is common and more informative to discuss attributable effects in terms of proportions, i.e. $A/|\mathscr{K}|$.
+
+## Calculations
+
+Now that we know what we're interested in, let's see if we can calculate it. There seem to be a couple of significant obstacles to calculating $A$:
+
+1.  We do not observe $\tilde{T}_C$.
+2.  Although we observe $\tilde{T}$, it seems pretty awful to calculate, involving the separate consideration of every subset of pairs of size $m$.
+
+Upon further reflection, however, both of these obstacles can be overcome. First, although we don't know the exact value of $\tilde{T}_C$, we know its distribution; second, $\tilde{T}$ ends up being easy to calculate.
+
+Starting with the latter, $\tilde{T}$ can actually be expressed in the form of a signed rank statistic very similar to Wilcoxon's, allowing us to calculate it with ease. In particular, we have $T=\sum_{i=1}^I{\mathop{\mathrm{sgn}}(Y_i)\tilde{q_i}}$, where $\tilde{q_i}$ is a quantity that we will now define. Recall that $q_i$, without the tilde, is just the rank of $|Y_i|$, defined for the calculation of Wilcoxon's statistic. Now for a fixed pair $i$, if $q_i < m$, then in any subset of $m$ pairs, there will be at least one pair "more exceptional" than pair $i$, and so pair $i$ contributes nothing to our tally of "successes". On the other hand, if $m \le q_i$, then the number of subsets of size $m$ in which $i$ appears as most exceptional is just the number of ways to choose $m-1$ pairs from the $q_{i}-1$ pairs less exceptional that pair $i$. This analysis motivates our definition of $\tilde{q_i}$as
+
+$$\tilde{q_i} = {q_i-1 \choose m-1} \text{ for } q_i \ge m \text{, } \tilde{q_i}=0 \text{ for }  q_i < m$$
+With $\tilde{q_i}$ thus defined, $\sum_{i=1}^I{\mathop{\mathrm{sgn}}(Y_i)\tilde{q_i}}$ describes an alternative approach to tallying "successes," looping through pairs instead of looping through subsets of pairs. The result, of course, will be the same, although written in this form, it's much easier to calculate. Notice also that if $m=2$, $\tilde{q_i} = q_i-1$, so we recover the Wilcoxon statistic with ranks starting at $0$ and going to $I-1$ instead of starting at $1$ and going to $I$.
+
+What about the distribution of $\tilde{T}_C$? Well, $\tilde{T}_C$ can also be written as the sum of the signed ranks of each of the treated-minus-control differences, where we now use the potential responses under control for each unit to calculate these differences. As we saw in @eq-null-diff, when we use potential responses, the sign of each pair's treated-minus-control difference is determined by a fair coin flip, so $\tilde{T}_C$ is just the sum of $I$independent random variables, each equal to $\tilde{q_i}$ or $0$ with equal probability $\frac{1}{2}$. Consequently, if we assume that there are no ties among the treated-minus-control differences, then we know its distribution before we even observe our data. In particular, its expected value and variance are given by
+
+$$\mathrm{E}(\tilde{T}_C)=\frac{1}{2}\sum_{i=1}^I{\tilde{q_i}}=\frac{1}{2}|\mathscr{K}|$$
+and $$\mathrm{Var}(\tilde{T}_C)=\frac{1}{4}\sum_{i=1}^I{\tilde{q_i}^2}=\frac{1}{4}\sum_{i=m}^I{ {i-1 \choose m-1}^2 }$$
+
+A point estimate for the attributable effect is thus $$\hat{A}=\tilde{T}-\mathrm{E}(\tilde{T}_C)=\tilde{T} - \frac{1}{2}|\mathscr{K}|$$or in proportional terms, $$\frac{\tilde{T} - |\mathscr{K}|/2} {|\mathscr{K}|}= \frac{\tilde{T}}{|\mathscr{K}|} - .5$$
+
+## Confidence Intervals
+
+The Lyapunov version of the central limit theorem tells us that the assymptotic distribution of the sum of independent, not necessarilly identical random variables follows a normal distribution. $\tilde{T}_C$ is a finite sum of independent random variables, but for large enough $I$, the assymptotic distribution provides a solid approximation. Using this approximation, we can calculate the smallest value $t_\alpha$ such that $P(\tilde{T}_C\leq t_\alpha) \geq 1 - \alpha$ with
+
+$$t_\alpha = \mathrm{E}(\tilde{T}_C) + \Phi^{-1}(1-\alpha)\sqrt{\mathrm{Var}(\tilde{T}_C)} $$
+
+where $\Phi^{-1}$ is the quantile function for the standard normal distribution. The confidence statement we can then make about $A=T_\mathscr{I} - T_{C\mathscr{I}}$ is $$P(A \geq \tilde{T} - t_\alpha) \geq 1-\alpha $$ 
+In terms of proportions, we state with $1-\alpha$ confidence that $$\frac{A}{|\mathscr{K}|} \geq \frac{\tilde{T} - t_\alpha}{|\mathscr{K}|}$$
+
+## Detecting Heterogenous Effects
+
+Returning to our original motivation for introducing attributable effects, let's conclude by analyzing the role that $m$, the size of our subsets, plays in our calculations. In Part 1, we saw that the Wilxon signed rank statistic does a great job of efficiently estimating a constant treatment effect in a randomized, matched pair experiment. We also mentioned that Wilcoxon's statistic could be used to test a null hypothesis of a particular non-constant effect, and in theory, this test could be inverted to produce a confidence set in a $\mathbb{R}^{2I}$ parameter space. However, this would not be a pretty set and therefore of little use to us. To address this gap, we introduced in this post the attributable effect, an interpretable quantity which summarizes the effect of a treatment that is not the same for all individuals.
+
+Let us now update this description slightly by looking at the role of $m$. If $m=2$, then the attributable effect is obtained from making comparisons between just two pairs at a time. What kind of effect will this do a good job of detecting and which kind of effect will it discount? I claim that a constant tretment effect, even one which is modest in size, should be detected using this method, whereas a heterogenous effect, which is large for a small number of individuals, but $0$ for the majority, will probably be underestimated. This is because most of the comparisons will not include any of the small number of highly affected individuals, and in those which do, there is no extra credit given for the size of the effect--the tally of successes goes up by at most one no matter what. This result is also reflected by the observation we made earlier in our calculations: When $m=2$, $\tilde{T}$ is virtually identical to the Wilcoxon statistic, which only does a good job of detecting homogenous effects.
+
+By increasing $m$, we consider larger collections of pairs one at a time. By virtue of their size, these collections are more likely to include one of the highly affected individuals and, as a result, our tally of successes will more appropriately account for the treatment effect. In other words, the measure of attributable effects as we defined it is more sensitive to large but uncommon effects the larger $m$ is.
+
+In Rosenbaum's textbook, he illustrates this using a study of the impact of a employment and training program on the earnings of economically disadvantaged workers upon leaving the program. He computes the estimate of the attributable effect with $m$=2 as 10.8% with a 95% confidence level for an effect of at least 3.8%. He also computes estimates for $m=20$: a point estimate of a 35.7% increase in successes and a 95% confidence interval of at least a 15.8% increase. The conclusion he draws from these diverging estimates is that the training program had a a large but uncommon effect, dramatically increasing the earnings of a few select workers, but leaving the majority of wages unchanged.

@@ -1,0 +1,13 @@
+---
+title: "Selected papers"
+---
+<hr>
+
+**Gorstein, E.**, Tang M., Bruzzone H., and Solis-Lemus C. (2026). Ancestral Sequences Cannot be Accurately Reconstructed via Interpolation in a Variational Autoencoder's Latent Space. Accepted in *Bulletin of Mathematical Biology*. <https://www.biorxiv.org/content/10.1101/2025.11.19.689264v1>   
+
+**Gorstein, E.**, Aghdam R., and Solis-Lemus C. (2025). HighDimMixedModels.jl: Robust high-dimensional mixed-effects models across omics data. *PLOS Computational Biology* 21(1): e1012143. <https://doi.org/10.1371/journal.pcbi.1012143>
+
+
+
+
+
