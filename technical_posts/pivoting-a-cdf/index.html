@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Evan Gorstein">
+<meta name="dcterms.date" content="2021-08-12">
+
+<title>Pivoting a cdf – Evan Gorstein</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-0be52d9f5fc056d18866a360b4e683b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Evan Gorstein</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../papers.html"> 
+<span class="menu-text">Papers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Pivoting a cdf</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">statistical inference</div>
+                <div class="quarto-category">confidence intervals</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Evan Gorstein </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 12, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as quite the surprise to me when I first learned about it this past year in my first year Math Stat class. My surprise was that a single method could be employed to construct confidence sets in every setting (i.e.&nbsp;every parameterized family of distributions in which a real-valued parameter is to be targeted with a confidence set). Who knew?!</p>
+<p>These were my thoughts upon first learning the theory behind the method. However, I realized soon thereafter that things were not so rosey, that pivoting a cdf is not some magic bullet of parametric set estimation. After all, there are two different dimensions on which we can judge a method: ease of implementation and performance of the result. To begin with the first, just because we <em>can</em> pivot a cdf, does not mean we will necessarilly <em>want</em> to. In particular, there’s a good chance we’ll have to rely on inexact computations to perform the pivot. Second, even if the method can be executed to arrive at some confidence set of a desired level, perhaps relying on a computational approximation in the process, there is no guarantee that this confidence set will be a particularly good one! We will see that the performance of the resulting confidence set depends on the statistic that we start with.</p>
+<p>To draw a connection to my previous posts, I am here discussing parametric inference from a random sample. In this setting, we assume a specific functional form for the distribution of our data and we proceed to make inferences (perform hypothesis tests and develop estimates) about an unknown parameter in this function. In contrast, in my first two blog posts, I discuss methods of inference which rely only on an assumption of randomization, an example of non-parametric statistics.</p>
+<p>Without further adieu, here’s the method:</p>
+<section id="pivoting-a-cdf" class="level2">
+<h2 class="anchored" data-anchor-id="pivoting-a-cdf">Pivoting a CDF</h2>
+<p><strong>Let <span class="math inline">\(T\)</span> be a real-valued statistic with a continuous cdf <span class="math inline">\(F_\theta(t)\)</span>, where <span class="math inline">\(\theta\in\Theta\subset\mathbb{R}\)</span>. Let <span class="math inline">\(\alpha_1 + \alpha_2 = \alpha\)</span> where <span class="math inline">\(\alpha_1\)</span> and <span class="math inline">\(\alpha_2\)</span> are non-negative and their sum <span class="math inline">\(\alpha\)</span> is strictly between <span class="math inline">\(0\)</span> and <span class="math inline">\(1.\)</span> If <span class="math inline">\(F_\theta(t)\)</span> is non-increasing in <span class="math inline">\(\theta\)</span> for each <span class="math inline">\(t\)</span>, define</strong></p>
+<p><span class="math display">\[\begin{align}
+U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \}
+\end{align}\]</span></p>
+<p><strong>If <span class="math inline">\(F_\theta(t)\)</span> is non-decreasing in <span class="math inline">\(\theta\)</span> for each <span class="math inline">\(t\)</span>, define</strong></p>
+<p><span class="math display">\[\begin{align}
+L(t)= \inf \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;U(t)= \sup \{\theta : F_\theta(t) \leq 1-\alpha_2 \}
+\end{align}\]</span></p>
+<p><strong>Then <span class="math inline">\([L(T), U(T)]\)</span> is a <span class="math inline">\(1-\alpha\)</span> confidence interval for <span class="math inline">\(\theta\)</span>.</strong></p>
+<p>In the case of a discrete statistic with a discontinuous CDF, the statement changes only slightly with <span class="math inline">\(\lim_{s\to t^-} F_\theta(s)\)</span> replacing <span class="math inline">\(F_\theta(t)\)</span> in the inequality <span class="math inline">\(F_\theta(t) \leq 1-\alpha_2\)</span>.</p>
+</section>
+<section id="whats-going-on-here-pre-proof-explanation" class="level2">
+<h2 class="anchored" data-anchor-id="whats-going-on-here-pre-proof-explanation">What’s going on here? (Pre-proof explanation)</h2>
+<p>The method can actually be viewed as a specific example of a more general strategy for constructing confidence interval, known as “pivoting”. A pivot is defined as a function of both the data and of the unknown parameters which has a distribution that does not depend on any unknown parameters. The cool thing about pivots is that they yield confidence intervals of any level through inversion! Here is some notation to go along with the idea:</p>
+<p>Suppose <span class="math inline">\(q(X, \theta)\)</span> is a pivot. By definition, this means that the distribution of <span class="math inline">\(q(X, \theta)\)</span> is known to us and so in particular, for any desired <span class="math inline">\(\alpha\)</span>, we can find a set <span class="math inline">\(A\)</span> such that <span class="math inline">\(P(q(X, \theta) \in A) \geq 1-\alpha\)</span>. Then the set <span class="math inline">\(C(X)=\{\theta : q(X, \theta) \in A\}\)</span> is a level <span class="math inline">\(1-\alpha\)</span> confidence set.</p>
+<p>Now while the theory is nice, let me reitterate that theory <span class="math inline">\(\neq\)</span> practice, and one can encounter all sorts of difficulties in both finding the set <span class="math inline">\(A\)</span> and inverting <span class="math inline">\(q(x, \theta) \in A\)</span> into a statement about <span class="math inline">\(\theta\)</span>. In particular, we may have to rely on computation instead of an exact solution for either step (or both), and the confidence set that we eventually obtain is by no means guaranteed to be of a simple form. In one special case, it will be: when both <span class="math inline">\(\theta\)</span> and <span class="math inline">\(q(X, \theta)\)</span> are real-valued and <span class="math inline">\(q(X, \theta)\)</span> is monotone in <span class="math inline">\(\theta\)</span> for every fixed X, then choosing <span class="math inline">\(A\)</span> to be an interval will lead to <span class="math inline">\(C(X)\)</span> being an interval. Meanwhile, when <span class="math inline">\(\theta\)</span> is multivariate, then the process of inverting <span class="math inline">\(q(X, \theta) \in A\)</span> to obtain a confidence set in <span class="math inline">\(\mathbb{R}^n\)</span> can be quite complicated.</p>
+<p>Still, what we’ve discovered is that <em>in theory</em> pivots immediately gives us confidence sets. Thus, the task of developing a good set estimator boils down to finding a good pivot. Now usually, when we are working on developing a set estimator, we have already done some thinking about our parametric setting and have identified a “sufficient statistic”. A statistic is any feature of the data, such as the sample mean, sample variance or the minimum or maximum observation. A sufficient statistic is a feature of the data which contains as much information about the parameter as the entire sample. But how does this help us? We are looking for pivot, and statistics are decidedly not pivots, since their distributions depend on the parameter! The key insight that now comes into play is that statistics can be turned into pivots by plugging them into their own cdf! The reason for this is that in general when you plug a random variable into its own cdf, you get a standard uniform random variable (when the original random variable is continuous; when it’s discrete, you get something stochastically greater than a standard uniform). Signficant for our purposes is that the distribution of a standard uniform does not depend on any unknown parameter, and so we have a pivot!</p>
+<p>To recap, what we’ve found is that any time we have a statistic, we have a pivot and any time we have a pivot, we get a confidence set. This is formalized in the following proof.</p>
+</section>
+<section id="proof-of-pivoting-cdf-for-a-continuous-random-variable" class="level2">
+<h2 class="anchored" data-anchor-id="proof-of-pivoting-cdf-for-a-continuous-random-variable">Proof of pivoting cdf for a continuous random variable</h2>
+<p>As discussed, we rely on the following fact: <span class="math inline">\(F_\theta(T) \sim \text{Uniform}(0,1)\)</span>, and we use it as a pivot. We have</p>
+<p><span class="math display">\[ P(\alpha_1 \leq F_\theta(T) \leq 1-\alpha_2)= 1-\alpha_2-\alpha_1=1-\alpha,
+\]</span> and by inverting we get a confidence set with confidence coefficient <span class="math inline">\(1-\alpha\)</span>:</p>
+<p><span class="math display">\[C(T)=\{\theta : \alpha_1 \leq F_\theta(T) \leq 1-\alpha_2\}
+\]</span></p>
+<p>We will prove the case where <span class="math inline">\(F_\theta(t)\)</span> is non-increasing in <span class="math inline">\(\theta\)</span>, so we define</p>
+<p><span class="math display">\[\begin{align}
+U(t)= \sup \{\theta : F_\theta(t) \geq \alpha_1 \},       &amp;&amp;L(t)= \inf \{\theta : F_\theta(t) \leq 1-\alpha_2 \}
+\end{align}\]</span><br>
+and hope to prove <span class="math inline">\(C(T)=[L(T), U(T)]\)</span>.</p>
+<p>This can be checked: For a fixed <span class="math inline">\(t\)</span>, <span class="math inline">\(F_\theta(t) \geq \alpha_1\)</span> is equivalent to <span class="math inline">\(\theta \leq U(t)\)</span> and <span class="math inline">\(F_\theta(t) \leq 1- \alpha_2\)</span> is equivalent to <span class="math inline">\(L(t) \leq \theta\)</span> by the definitions of supremum and infimum and the non-increasingness of <span class="math inline">\(F_\theta(t)\)</span> in <span class="math inline">\(\theta\)</span>.</p>
+<p>Thus, <span class="math inline">\(C(T)=[L(T), U(T)]\)</span>.</p>
+<p>Note that in case the equation <span class="math inline">\(F_\theta(t)=\alpha_1\)</span> or <span class="math inline">\(F_\theta(t)=1-\alpha_2\)</span> has a unique solution for <span class="math inline">\(\theta\)</span>, those solutions are exactly <span class="math inline">\(U(T)\)</span> for the first and <span class="math inline">\(L(T)\)</span> for the second.</p>
+</section>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<section id="exponential-location-family" class="level3">
+<h3 class="anchored" data-anchor-id="exponential-location-family">Exponential location family</h3>
+<p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= e^{-(x-\theta)}\)</span> for <span class="math inline">\(x &gt; \theta\)</span> with <span class="math inline">\(\theta \in \mathbb{R}\)</span>. We identify the minimum observation <span class="math inline">\(X_{(1)}\)</span> as the sufficient and complete statistic–it efficiently packages all of the information about <span class="math inline">\(\theta\)</span> that can be gleaned from our sample. Coincidentally, this statistic is the maximum likelihood estimator (MLE) for <span class="math inline">\(\theta\)</span>, and it also follows an exponential distribution with the same location parameter, but with rate parameter <span class="math inline">\(n\)</span>. Its cdf is therefore <span class="math inline">\((1-\exp(-n(t-\theta)))I(t&gt;\theta),\)</span> which is decreasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>. In this case, the equations</p>
+<p><span class="math display">\[\begin{align}
+\frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)} \\       
+1-\frac{\alpha}{2} &amp;= 1-e^{-n(t-\theta)}
+\end{align}\]</span> each have unique solutions for <span class="math inline">\(\theta\)</span>. We solve the first to get</p>
+<p><span class="math display">\[ U(T)= T + \frac{1}{n}\log \left( 1-\frac{\alpha}{2} \right)
+\]</span> and the second to get <span class="math display">\[ L(T)= T + \frac{1}{n}\log \left(\frac{\alpha}{2} \right)
+\]</span></p>
+<p>Here is some code which plots the above confidence interval for each of 100 samples of size 100. The true value of <span class="math inline">\(\theta\)</span> in these simulations is 7, as indicated by the vertical line. The circles are plots of <span class="math inline">\(X_{(1)}-1/n\)</span>, which is the best unbiased point estimator for <span class="math inline">\(\theta\)</span>. We see that 97 of the 100 confidence intervals cover the true <span class="math inline">\(\theta\)</span>, within sampling error of the true coverage of 95%.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>theta<span class="ot">=</span><span class="dv">7</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>alpha1<span class="ot">=</span>.<span class="dv">025</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>alpha2<span class="ot">=</span>.<span class="dv">025</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="dv">100</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>simul<span class="ot">=</span><span class="dv">100</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>lb <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ub <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42070</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>simul) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n) <span class="sc">+</span> theta</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">min</span>(data)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  est[i] <span class="ot">&lt;-</span> t <span class="sc">-</span> <span class="dv">1</span><span class="sc">/</span>n</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  lb[i] <span class="ot">&lt;-</span> t <span class="sc">+</span> <span class="fu">log</span>(alpha2)<span class="sc">/</span>n</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  ub[i] <span class="ot">&lt;-</span> t <span class="sc">+</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">-</span>alpha1)<span class="sc">/</span>n</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotrix)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>mycolor <span class="ot">&lt;-</span> <span class="cf">function</span>(endpoints, mn) {</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (mn <span class="sc">&lt;</span> endpoints[<span class="dv">1</span>] <span class="sc">|</span> mn <span class="sc">&gt;</span> endpoints[<span class="dv">2</span>]) </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Red"</span> <span class="co"># if confidence interval doesn't cover true theta</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Black"</span> </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ci<span class="ot">&lt;-</span> <span class="fu">cbind</span>(lb, ub)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci,<span class="dv">1</span>,mycolor,theta)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCI</span>(<span class="at">x=</span>est, <span class="at">y=</span><span class="dv">1</span><span class="sc">:</span>simul, <span class="at">ui=</span>ub, <span class="at">li=</span>lb, </span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">err=</span><span class="st">"x"</span>, <span class="at">gap=</span>T, <span class="at">col=</span>z, <span class="at">xlab=</span><span class="st">"CDF Pivot Confidence Interval for Theta"</span>, <span class="at">ylab=</span><span class="st">"Sample Number"</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>theta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="pareto-family" class="level3">
+<h3 class="anchored" data-anchor-id="pareto-family">Pareto family</h3>
+<p>Let <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> be a random sample from the pdf <span class="math inline">\(f_\theta(x)= \frac{\theta}{x^{\theta+1}}\)</span> for <span class="math inline">\(x &gt; 1\)</span>. This is the Pareto family with unit scale and unknown shape parameter <span class="math inline">\(\theta &gt; 0\)</span>. It’s not too difficult to work out that, just as in the exponential case, the minimum draw <span class="math inline">\(T=X_{(1)}\)</span> follows a distribution in the same family: Pareto with the same unit scale but shape parameter <span class="math inline">\(n\theta\)</span> instead of <span class="math inline">\(\theta\)</span>. Its cdf is <span class="math inline">\(F_{\theta}(t)= (1 - t^{-n\theta})I(t&gt;1)\)</span>, increasing in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(t\)</span>.</p>
+<p>We again have unique solutions for <span class="math inline">\(\theta\)</span> to the following equations, so we can avoid dealing with the sups and infs from the theorem.</p>
+<p><span class="math display">\[\begin{align}
+\frac{\alpha}{2} &amp;= 1-x^{-n(\theta)} \\       
+1-\frac{\alpha}{2} &amp;= 1-x^{-n(\theta)}
+\end{align}\]</span></p>
+<p>We solve the first to get</p>
+<p><span class="math display">\[ L(T)= \frac{-\log \left( 1-\frac{\alpha}{2} \right)}{n\log(T)}
+\]</span> and the second to get <span class="math display">\[ U(T)= \frac{-\log \left(\frac{\alpha}{2} \right)}{n\log(T)}
+\]</span></p>
+<p>Let’s see what these confident intervals look like. The circles in the plot will denote the MLE, <span class="math inline">\(\hat{\theta}=\frac{n}{\sum_{i=1}^n{\log(X_i)}}\)</span>, which is a good point estimate for <span class="math inline">\(\theta\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(VGAM))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>theta<span class="ot">=</span><span class="dv">3</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>alpha1<span class="ot">=</span>.<span class="dv">025</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>alpha2<span class="ot">=</span>.<span class="dv">025</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="dv">100</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>simul<span class="ot">=</span><span class="dv">100</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>lb <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ub <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42070</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>simul) {</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">rpareto</span>(n, <span class="at">shape=</span>theta)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  est[i] <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">mean</span>(<span class="fu">log</span>(data)) <span class="co">#mle</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">min</span>(data)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  lb[i] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span><span class="sc">-</span>alpha2)<span class="sc">/</span>(n<span class="sc">*</span><span class="fu">log</span>(t))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  ub[i] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(alpha1)<span class="sc">/</span>(n<span class="sc">*</span><span class="fu">log</span>(t))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>ci<span class="ot">&lt;-</span> <span class="fu">cbind</span>(lb, ub)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci,<span class="dv">1</span>,mycolor,theta)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCI</span>(<span class="at">x=</span>est, <span class="at">y=</span><span class="dv">1</span><span class="sc">:</span>simul, <span class="at">ui=</span>ub, <span class="at">li=</span>lb, </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">err=</span><span class="st">"x"</span>, <span class="at">gap=</span>T, <span class="at">col=</span>z, <span class="at">xlab=</span><span class="st">"CDF Pivot Confidence Interval for Theta"</span>, <span class="at">ylab=</span><span class="st">"Sample Number"</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">10</span>))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>theta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Uh-oh! These intervals achieve their nominal coverage, but are so long that they are virtually useless.</p>
+<p>For comparison, here are confidence intervals for <span class="math inline">\(\theta\)</span> of a much shorter length built off of the pivot <span class="math inline">\(2\theta\sum_{i=1}^n{\log(X_i)} \sim \chi^2_{2n}\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lb2 <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ub2 <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>est2 <span class="ot">&lt;-</span> <span class="fu">numeric</span>(simul)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42070</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>simul) {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">rpareto</span>(n, <span class="at">shape=</span>theta)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  mle <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">mean</span>(<span class="fu">log</span>(data)) </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  est2[i] <span class="ot">&lt;-</span> mle</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  lb2[i] <span class="ot">&lt;-</span> mle<span class="sc">*</span><span class="fu">qchisq</span>(alpha1, <span class="dv">2</span><span class="sc">*</span>n)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>n)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  ub2[i] <span class="ot">&lt;-</span> mle<span class="sc">*</span><span class="fu">qchisq</span>(<span class="dv">1</span><span class="sc">-</span>alpha2, <span class="dv">2</span><span class="sc">*</span>n)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>n)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>ci2<span class="ot">&lt;-</span> <span class="fu">cbind</span>(lb2, ub2)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>z2 <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci2,<span class="dv">1</span>,mycolor,theta)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCI</span>(<span class="at">x=</span>est2, <span class="at">y=</span><span class="dv">1</span><span class="sc">:</span>simul, <span class="at">ui=</span>ub2, <span class="at">li=</span>lb2, </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">err=</span><span class="st">"x"</span>, <span class="at">gap=</span>T, <span class="at">col=</span>z2, <span class="at">xlab=</span><span class="st">"Non-CDF Pivot Confidence Interval for Theta "</span>, <span class="at">ylab=</span><span class="st">"Sample Number"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>theta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What went wrong when we used the method of pivoting a cdf in this example? We used the same statistic, <span class="math inline">\(X_{(1)}\)</span>, as in the first example, but the confidence intervals that resulted from pivoting the cdf of this statistic were horribly inprecise!</p>
+<p>The key, I believe, is the different role played by the statistic <span class="math inline">\(X_{(1)}\)</span> in these two examples. In the expoential location family, <span class="math inline">\(X_{(1)}\)</span> is a sufficient and complete statistic for <span class="math inline">\(\theta\)</span>. As mentioned, a sufficient statistic is one that contains all the information in the sample, and completeness means that the statistic packages this information efficiently. In the Pareto family, <span class="math inline">\(X_{(1)}\)</span> is neither sufficient nor complete. Instead, the statistic <span class="math inline">\(S(X)=\sum_{i=1}^n{\log(X_i)}\)</span> (or equivalently, <span class="math inline">\(\prod_{i=1}^n{X_i}\)</span>) is sufficient and complete, and lo and behold, when we built our pivot on this statistic, we obtained much more efficient confidence intervals.</p>
+<p>Note that we did not pivot the CDF of the statistic <span class="math inline">\(S(X)\)</span> in this case. Instead we took a different route, multiplying the statistic by <span class="math inline">\(\theta\)</span> to get a pivot (it can be shown that this random variable follows a <span class="math inline">\(\text{Gamma}(n,1)=\chi^2_{2n}/2\)</span>). The reason we did not pivot the CDF of S(X) to obtain a confidence interval has more to do with the first criteria by which to judge the method: ease of implementation. The CDF of S(X) involves the incomplete gamma function, which is an integral that cannot be expressed in terms of elementary functions. It turns out that the cdf of <span class="math inline">\(S(X)\)</span> is an increasing function of <span class="math inline">\(\theta\)</span> and so the method does apply, but who wants to work with an incomplete gamma function?</p>
+<p>So the lesson here is twofold:</p>
+<ol type="1">
+<li><p>The “better” the statistic we start with, the “better” the set estimator we get from pivoting its cdf. In the extreme case, if we start with an ancillary statistic, a statistic whose distribution is independent of the parameter, our confidence interval will be the entire parameter space.</p></li>
+<li><p>Unless you’re good at doing computing (beep bop boop), the method is really only worthwhile when the cdf of the statistic has a “nice” form.</p></li>
+</ol>
+</section>
+<section id="final-note" class="level3">
+<h3 class="anchored" data-anchor-id="final-note">Final Note</h3>
+<p>Although I promised a method that works in all cases, there is a condition in the theorem as presented, which is that <span class="math inline">\(F_\theta(t)\)</span> is monotone in <span class="math inline">\(\theta\)</span> for all <span class="math inline">\(t\)</span>, i.e.&nbsp;stochastic monotonicity of <span class="math inline">\(T\)</span> with respect to <span class="math inline">\(\theta\)</span>. I would like to make clear that this condition is not actually needed: we can pivot a cdf to get a confidence set even when the condition fails! What the condition guarantees is that the resulting confidence set is an interval. As mentioned, we get an interval when <span class="math inline">\(q(\theta, X)\)</span> is monotone in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(X\)</span>. Here, our pivot <span class="math inline">\(q(\theta, X)\)</span> is simply <span class="math inline">\(F_\theta(T(X))\)</span>, and so we require it to be monotone in <span class="math inline">\(\theta\)</span> for every <span class="math inline">\(T(X)\)</span>. I suppose that this consideration relates to both the “ease of implementation” criteria, as well as the “results” criteria: in the case where the pivot isn’t monotone, inverting <span class="math inline">\(\alpha_1 \leq F_\theta(T(X)) \leq 1-\alpha_2\)</span> into a statement about <span class="math inline">\(\theta\)</span> may involve difficult calculations, and the result can be an ugly, uninterpretable set.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

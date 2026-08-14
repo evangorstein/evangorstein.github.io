@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Blog – Evan Gorstein</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-0be52d9f5fc056d18866a360b4e683b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Evan Gorstein</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./papers.html"> 
+<span class="menu-text">Papers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./blog.html" aria-current="page"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(13)</span></div><div class="category" data-category="Y2F1c2FsJTIwaW5mZXJlbmNl">causal inference <span class="quarto-category-count">(9)</span></div><div class="category" data-category="Y29uZmlkZW5jZSUyMGludGVydmFscw==">confidence intervals <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZXh0ZXJuYWwlMjB2YWxpZGl0eQ==">external validity <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Z2VuZXJhbGl6ZWQlMjBsaW5lYXIlMjBtb2RlbHM=">generalized linear models <span class="quarto-category-count">(2)</span></div><div class="category" data-category="aWRlbnRpZmljYXRpb24=">identification <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGluZWFyJTIwcmVncmVzc2lvbg==">linear regression <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bG9yZCdzJTIwcGFyYWRveA==">lord's paradox <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cmFuZG9taXphdGlvbiUyMGluZmVyZW5jZQ==">randomization inference <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cmVncmVzc2lvbiUyMHRvJTIwdGhlJTIwbWVhbg==">regression to the mean <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3RhdGlzdGljYWwlMjBpbmZlcmVuY2U=">statistical inference <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c3RhdGlzdGljcw==">statistics <span class="quarto-category-count">(2)</span></div></div></div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Blog</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+
+
+
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="bG9yZCdzJTIwcGFyYWRveCUyQ2NhdXNhbCUyMGluZmVyZW5jZQ==" data-listing-date-sort="1774756800000" data-listing-file-modified-sort="1786667735365" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2448">
+<div class="thumbnail"><a href="./technical_posts/lord-s-paradox-addendum/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/lord-s-paradox-addendum/index_files/figure-html/fig-og-1.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/lord-s-paradox-addendum/index.html" class="no-external">Addendum on Lord’s Paradox</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('bG9yZCdzJTIwcGFyYWRveA=='); return false;">lord's paradox</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/lord-s-paradox-addendum/index.html" class="no-external">
+A couple of years ago, I wrote a post on Lord’s paradox in which I argued that introducing a causal model, as Judea Pearl does in his article on the subject <span class="citation" data-cites="pearl2016">(Pearl 2016)</span>…<span class="citation" data-cites="shiffrin2020lord"></span>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/lord-s-paradox-addendum/index.html" class="no-external">
+<div class="listing-date">
+Mar 29, 2026
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Z2VuZXJhbGl6ZWQlMjBsaW5lYXIlMjBtb2RlbHMlMkNzdGF0aXN0aWNz" data-listing-date-sort="1766206800000" data-listing-file-modified-sort="1786667735384" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1913">
+<div class="thumbnail"><a href="./technical_posts/notes-on-glms-part-2/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/notes-on-glms-part-2/index_files/figure-html/unnamed-chunk-2-1.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/notes-on-glms-part-2/index.html" class="no-external">Notes on GLMs: Part 2</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Z2VuZXJhbGl6ZWQlMjBsaW5lYXIlMjBtb2RlbHM='); return false;">generalized linear models</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljcw=='); return false;">statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/notes-on-glms-part-2/index.html" class="no-external">
+Continuing where we left off in Chapter 3 of <span class="citation" data-cites="wood2017generalized">Wood (2017)</span>, we begin with a discussion of residuals in GLMs.
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/notes-on-glms-part-2/index.html" class="no-external">
+<div class="listing-date">
+Dec 20, 2025
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="Z2VuZXJhbGl6ZWQlMjBsaW5lYXIlMjBtb2RlbHMlMkNzdGF0aXN0aWNz" data-listing-date-sort="1756872000000" data-listing-file-modified-sort="1786667735377" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3664">
+<div class="thumbnail"><a href="./technical_posts/notes-on-generalized-linear-models/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/notes-on-generalized-linear-models/index_files/figure-html/unnamed-chunk-11-1.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/notes-on-generalized-linear-models/index.html" class="no-external">Notes on GLMs</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Z2VuZXJhbGl6ZWQlMjBsaW5lYXIlMjBtb2RlbHM='); return false;">generalized linear models</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljcw=='); return false;">statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/notes-on-generalized-linear-models/index.html" class="no-external">
+In this post and the following, I go through Chapter 3 of Simon Wood’s textbook <em>Generalized Additive Models</em> <span class="citation" data-cites="wood2017generalized">(2017)</span>, which covers GLMs (as a prerequisite for understanding…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/notes-on-generalized-linear-models/index.html" class="no-external">
+<div class="listing-date">
+Sep 3, 2025
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="bGluZWFyJTIwcmVncmVzc2lvbiUyQ3N0YXRpc3RpY2FsJTIwaW5mZXJlbmNl" data-listing-date-sort="1720065600000" data-listing-file-modified-sort="1786667735363" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1375">
+<div class="thumbnail"><a href="./technical_posts/linear-regression/index.html" class="no-external">
+
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/linear-regression/index.html" class="no-external">Linear Regression</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('bGluZWFyJTIwcmVncmVzc2lvbg=='); return false;">linear regression</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljYWwlMjBpbmZlcmVuY2U='); return false;">statistical inference</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/linear-regression/index.html" class="no-external">
+I’m going back to the basics to discuss something that has confused me for a while about the “error term” in linear regression in the hopes that it might be helpful to…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/linear-regression/index.html" class="no-external">
+<div class="listing-date">
+Jul 4, 2024
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="bG9yZCdzJTIwcGFyYWRveCUyQ2NhdXNhbCUyMGluZmVyZW5jZSUyQ3JlZ3Jlc3Npb24lMjB0byUyMHRoZSUyMG1lYW4=" data-listing-date-sort="1698465600000" data-listing-file-modified-sort="1786667735375" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3905">
+<div class="thumbnail"><a href="./technical_posts/lord-s-paradox/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/lord-s-paradox/images/lord_figure.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/lord-s-paradox/index.html" class="no-external">Lord’s paradox is explained by regression to the mean, not a causal model</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('bG9yZCdzJTIwcGFyYWRveA=='); return false;">lord's paradox</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('cmVncmVzc2lvbiUyMHRvJTIwdGhlJTIwbWVhbg=='); return false;">regression to the mean</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/lord-s-paradox/index.html" class="no-external">
+Here’s the original formulation, appearing in a 1967 article published in <em>Psychological Bulletins</em> entitled “A Paradox in the Interpretation of Group Comparisons” <span class="citation" data-cites="lord1967paradox">(Lord 1967)</span>:
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/lord-s-paradox/index.html" class="no-external">
+<div class="listing-date">
+Oct 28, 2023
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="Y2F1c2FsJTIwaW5mZXJlbmNlJTJDZXh0ZXJuYWwlMjB2YWxpZGl0eQ==" data-listing-date-sort="1670994000000" data-listing-file-modified-sort="1786667735358" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="326">
+<div class="thumbnail"><a href="./technical_posts/external-validity-conclusion/index.html" class="no-external">
+
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/external-validity-conclusion/index.html" class="no-external">External Validity Part 5: Conclusion</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('ZXh0ZXJuYWwlMjB2YWxpZGl0eQ=='); return false;">external validity</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/external-validity-conclusion/index.html" class="no-external">
+In these blog posts, following Erin Hartman’s chapter in <em>Advances in Experimental Political Science</em> titled “Generalizing Experimental Results,” I have investigated how one…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/external-validity-conclusion/index.html" class="no-external">
+<div class="listing-date">
+Dec 14, 2022
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="Y2F1c2FsJTIwaW5mZXJlbmNlJTJDZXh0ZXJuYWwlMjB2YWxpZGl0eQ==" data-listing-date-sort="1670389200000" data-listing-file-modified-sort="1786667735462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="800">
+<div class="thumbnail"><a href="./technical_posts/sensitivity-analysis-for-generalization/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/sensitivity-analysis-for-generalization/images/Dags For Ext Validity-4.jpg"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/sensitivity-analysis-for-generalization/index.html" class="no-external">External Validity Part 4: Sensitivity Analysis</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('ZXh0ZXJuYWwlMjB2YWxpZGl0eQ=='); return false;">external validity</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/sensitivity-analysis-for-generalization/index.html" class="no-external">
+Recall the following figure:
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/sensitivity-analysis-for-generalization/index.html" class="no-external">
+<div class="listing-date">
+Dec 7, 2022
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="ZXh0ZXJuYWwlMjB2YWxpZGl0eSUyQ2NhdXNhbCUyMGluZmVyZW5jZQ==" data-listing-date-sort="1668229200000" data-listing-file-modified-sort="1786667735353" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2529">
+<div class="thumbnail"><a href="./technical_posts/estimation-for-external-validity/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/estimation-for-external-validity/images/paste-68D004B9.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/estimation-for-external-validity/index.html" class="no-external">External Validity Part 3: Estimation</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('ZXh0ZXJuYWwlMjB2YWxpZGl0eQ=='); return false;">external validity</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/estimation-for-external-validity/index.html" class="no-external">
+This is the third in a series of blog posts for a causal inference project on external validity. To summarize the previous posts if you are just joining us, we are…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/estimation-for-external-validity/index.html" class="no-external">
+<div class="listing-date">
+Nov 12, 2022
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="8" data-categories="Y2F1c2FsJTIwaW5mZXJlbmNlJTJDZXh0ZXJuYWwlMjB2YWxpZGl0eSUyQ2lkZW50aWZpY2F0aW9u" data-listing-date-sort="1666238400000" data-listing-file-modified-sort="1786667735363" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2492">
+<div class="thumbnail"><a href="./technical_posts/identification-for-external-validity/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/identification-for-external-validity/images/fig1_erased.jpeg"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/identification-for-external-validity/index.html" class="no-external">External Validity Part 2: Identification</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('ZXh0ZXJuYWwlMjB2YWxpZGl0eQ=='); return false;">external validity</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('aWRlbnRpZmljYXRpb24='); return false;">identification</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/identification-for-external-validity/index.html" class="no-external">
+In my previous blog post, I motivated the issue of external validity (or lack thereof) and introduced a formal framework for defining the target population average treatment…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/identification-for-external-validity/index.html" class="no-external">
+<div class="listing-date">
+Oct 20, 2022
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="9" data-categories="ZXh0ZXJuYWwlMjB2YWxpZGl0eSUyQ2NhdXNhbCUyMGluZmVyZW5jZQ==" data-listing-date-sort="1664942400000" data-listing-file-modified-sort="1786667735458" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1539">
+<div class="thumbnail"><a href="./technical_posts/sampling-bias-and-causal-inference/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/sampling-bias-and-causal-inference/images/paste-07C621B5.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/sampling-bias-and-causal-inference/index.html" class="no-external">Intro to External Validity: Sampling bias and causal inference</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('ZXh0ZXJuYWwlMjB2YWxpZGl0eQ=='); return false;">external validity</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/sampling-bias-and-causal-inference/index.html" class="no-external">
+What can you do when the sample you’ve collected doesn’t represent the population you’re interested in studying? When such a disconnect between sample and population of…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/sampling-bias-and-causal-inference/index.html" class="no-external">
+<div class="listing-date">
+Oct 5, 2022
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="10" data-categories="c3RhdGlzdGljYWwlMjBpbmZlcmVuY2UlMkNjb25maWRlbmNlJTIwaW50ZXJ2YWxz" data-listing-date-sort="1628740800000" data-listing-file-modified-sort="1786667735395" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2310">
+<div class="thumbnail"><a href="./technical_posts/pivoting-a-cdf/index.html" class="no-external">
+
+<p class="card-img-top"><img src="technical_posts/pivoting-a-cdf/index_files/figure-html/unnamed-chunk-1-1.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/pivoting-a-cdf/index.html" class="no-external">Pivoting a cdf</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('c3RhdGlzdGljYWwlMjBpbmZlcmVuY2U='); return false;">statistical inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29uZmlkZW5jZSUyMGludGVydmFscw=='); return false;">confidence intervals</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/pivoting-a-cdf/index.html" class="no-external">
+The title of this post refers to a technique for constructing confidence sets for real-valued parameters that is extremely general. The generality of the techinque came as…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/pivoting-a-cdf/index.html" class="no-external">
+<div class="listing-date">
+Aug 12, 2021
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="11" data-categories="Y2F1c2FsJTIwaW5mZXJlbmNlJTJDcmFuZG9taXphdGlvbiUyMGluZmVyZW5jZQ==" data-listing-date-sort="1610514000000" data-listing-file-modified-sort="1786667735285" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1763">
+<div class="thumbnail"><a href="./technical_posts/attributable-effects/index.html" class="no-external">
+
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/attributable-effects/index.html" class="no-external">Randomization Inference Part 2: Attributable Effects</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('cmFuZG9taXphdGlvbiUyMGluZmVyZW5jZQ=='); return false;">randomization inference</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/attributable-effects/index.html" class="no-external">
+In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we…<em></em>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/attributable-effects/index.html" class="no-external">
+<div class="listing-date">
+Jan 13, 2021
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="12" data-categories="Y2F1c2FsJTIwaW5mZXJlbmNlJTJDcmFuZG9taXphdGlvbiUyMGluZmVyZW5jZQ==" data-listing-date-sort="1610082000000" data-listing-file-modified-sort="1786667735394" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1308">
+<div class="thumbnail"><a href="./technical_posts/paired-inference/index.html" class="no-external">
+
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./technical_posts/paired-inference/index.html" class="no-external">Randomization Inference Part 1: The Wilcoxon Signed Rank Statistic</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('cmFuZG9taXphdGlvbiUyMGluZmVyZW5jZQ=='); return false;">randomization inference</div>
+
+</div>
+<div class="delink listing-description"><a href="./technical_posts/paired-inference/index.html" class="no-external">
+Last semester, I made my way through the first half of Paul Rosenbaum’s textbook <em>Design of Observational Studies</em> (2010). Rosenbaum is a leading expert in causal inference…
+</a></div>
+</div>
+<div class="metadata">
+<a href="./technical_posts/paired-inference/index.html" class="no-external">
+<div class="listing-date">
+Jan 8, 2021
+</div>
+<div class="listing-author">
+Evan Gorstein
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">No matching items</div>
+</div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

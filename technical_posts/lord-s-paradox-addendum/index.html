@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Evan Gorstein">
+<meta name="dcterms.date" content="2026-03-29">
+
+<title>Addendum on Lord’s Paradox – Evan Gorstein</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-0be52d9f5fc056d18866a360b4e683b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Evan Gorstein</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../papers.html"> 
+<span class="menu-text">Papers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Addendum on Lord’s Paradox</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">lord's paradox</div>
+                <div class="quarto-category">causal inference</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Evan Gorstein </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 29, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+<div style="display:none">
+\(
+\newcommand{\indep}{\perp \!\!\! \perp}
+\newcommand{\Cor}{\operatorname{Cor}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\SD}{\operatorname{SD}}
+\newcommand{\E}{\operatorname{E}}
+\)
+</div>
+
+
+
+
+
+<p>A couple of years ago, I wrote <a href="../../technical_posts/lord-s-paradox/index.html">a post on Lord’s paradox</a> in which I argued that introducing a causal model, as Judea Pearl does in his article on the subject <span class="citation" data-cites="pearl2016">(<a href="#ref-pearl2016" role="doc-biblioref">Pearl 2016</a>)</span>, was not such an effective way to understand or demystify the paradox. I’m writing the current post because I realized after reading <span class="citation" data-cites="shiffrin2020lord">Shiffrin (<a href="#ref-shiffrin2020lord" role="doc-biblioref">2020</a>)</span> that a causal model can in fact explain the paradox, but that Pearl got his DAG wrong.</p>
+<section id="recap" class="level2">
+<h2 class="anchored" data-anchor-id="recap">Recap</h2>
+<p>Recall Lord’s story:</p>
+<blockquote class="blockquote">
+<p>A large university is interested in investigating the effects on the students of the diet provided in the university dining halls and any sex difference in these effects. Various types of data are gathered. In particular, the weight of each student at the time of his arrival in September and his weight the following June are recorded.</p>
+</blockquote>
+<p>Although fictional, Lord’s story is not so contrived or exotic. At a high level of abstraction, we simply have two groups defined by some attribute, and the individuals in each group have had some trait observed at multiple time points.</p>
+<p>You might think that it’s difficult to get the DAG wrong for such a simple scenario. After all, there are only three measured variables here: sex, initial weight, and final weight–four if you include the change score, which is given deterministically by final weight minus initial weight.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Here is the DAG Pearl provides for these variables:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-og" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-og-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-og-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-og-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Pearl’s DAG with change score <span class="math inline">\(Y\)</span> included.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Recall, <span class="math inline">\(S\)</span> stands for sex, <span class="math inline">\(W_I\)</span> for initial weight of a student, <span class="math inline">\(W_F\)</span> for final weight, and <span class="math inline">\(Y\)</span> for the difference between the two weights, <span class="math inline">\(Y = W_F - W_I\)</span>.</p>
+<p>Dropping the change score for the moment, we get the following:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-no-change" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-no-change-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-no-change-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-no-change-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Pearl’s DAG without change score included.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This is the complete DAG on three variables–it includes every possible arrow–so it’s hard to see how it can be wrong. And according to this DAG, the second statistician in the story, who fits the ANCOVA regression <span class="math inline">\(W_F \sim S + W_I\)</span>, estimates a direct effect (that is, unmediated by initial weight) of sex on final weight.</p>
+</section>
+<section id="a-lurking-variable" class="level2">
+<h2 class="anchored" data-anchor-id="a-lurking-variable">A Lurking Variable</h2>
+<p>To illustrate what’s going wrong, consider all the intermediate variables, which mediate the “direct effect” of sex on either of the weight variables, <span class="math inline">\(W_I\)</span> or <span class="math inline">\(W_F\)</span> in the DAG in <a href="#fig-no-change" class="quarto-xref">Figure&nbsp;2</a>. I put “direct effect” in quotes because although the effect is direct in the DAG as drawn (there is an arrow from <span class="math inline">\(S\)</span> to <span class="math inline">\(W_I\)</span> and to <span class="math inline">\(W_F\)</span>), the actual mechanism by which sex affects weight is extraordinarily complicated, hence the many intermediate variables. Now suppose that among all the unobserved intermediates between <span class="math inline">\(S\)</span> to <span class="math inline">\(W_I\)</span>, there is at least one that also mediates a path to <span class="math inline">\(W_F\)</span>. Let’s call this shared mediator <span class="math inline">\(L\)</span> for latent or lurker.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-lurk" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lurk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-lurk-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lurk-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Pearl’s DAG with lurker.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Before elaborating on what <span class="math inline">\(L\)</span> might be and why I think this DAG is plausible, let’s first just draw out its implications for the theoretical estimands of the two statisticians in the story. Whereas according to the DAG in <a href="#fig-no-change" class="quarto-xref">Figure&nbsp;2</a>, Statistician 2’s regression estimates a direct effect of sex on final weight (unmediated by initial weight), by the lights of the DAG in <a href="#fig-lurk" class="quarto-xref">Figure&nbsp;3</a>, this is no longer the case. This is because in this DAG, <span class="math inline">\(W_I\)</span> is a descendant of <span class="math inline">\(L\)</span>, and thus, by conditioning on <span class="math inline">\(W_I\)</span>, statistician 2 is blocking not only the path <span class="math inline">\(S \to W_I \to W_F\)</span>, but also, partially, the path <span class="math inline">\(S \to L \to W_F\)</span>. So according to this DAG which includes <span class="math inline">\(L\)</span>, statistician 2 cannnot be said to be estimating any causal parameter. Meanwhile, statistician 1 is still, according to this new DAG, estimating the total effect of sex on change score.</p>
+</section>
+<section id="what-is-l" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-l">What is L?</h2>
+<p>It took me a while before I arrived at the DAG in <a href="#fig-lurk" class="quarto-xref">Figure&nbsp;3</a>. I spent a long time struggling with Pearl’s DAG, which seems completely adequate because it includes all the observed variables in the scenario. The way that I finally arrived at <span class="math inline">\(L\)</span>, this unobserved intermediate variable that mediates both the path from <span class="math inline">\(S\)</span> to <span class="math inline">\(W_I\)</span> and the path from <span class="math inline">\(S\)</span> to <span class="math inline">\(W_F\)</span>, was by reading the short article <span class="citation" data-cites="shiffrin2020lord">Shiffrin (<a href="#ref-shiffrin2020lord" role="doc-biblioref">2020</a>)</span>, which proposes this model:</p>
+<blockquote class="blockquote">
+<p>…assume the two samples of weight for each individual are far enough apart in time that each is an independent sample from a Gaussian distribution with a mean at that individual’s stable long run weight, but with a considerable variance. According to this model the gains and losses for every individual fluctuate around a fixed value for each, so no gain or loss is seen on average.</p>
+</blockquote>
+<p>This long run latent weight is <span class="math inline">\(L\)</span>, and the model described here is the one depicted in <a href="#fig-lurk-simple" class="quarto-xref">Figure&nbsp;4</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-lurk-simple" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lurk-simple-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-lurk-simple-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lurk-simple-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Simplified DAG with lurker.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>After realizing this, I re-read <span class="citation" data-cites="tennant2022">Tennant et al. (<a href="#ref-tennant2022" role="doc-biblioref">2022</a>)</span>, which I had not previously understood, and realized they have the same idea as <span class="citation" data-cites="shiffrin2020lord">Shiffrin (<a href="#ref-shiffrin2020lord" role="doc-biblioref">2020</a>)</span> of a latent outcome variable.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+</section>
+<section id="generating-lords-data-according-to-this-dag" class="level2">
+<h2 class="anchored" data-anchor-id="generating-lords-data-according-to-this-dag">Generating Lord’s data according to this DAG</h2>
+<p>As a sanity check, let’s generate from this causal model with the lurking, latent weight the same fake data from my previous post. Recall that previously, we had directly specified the correlation of initial and final weight as 0.7 and their standard deviation as 5 kg within each gender by simulating these variables simultaneously as a bivariate normal (with the help of <code>MASS::mvrnorm</code>). Now, we will generate the same exact data by simulating variables one at a time according to the DAG in <a href="#fig-lurk-simple" class="quarto-xref">Figure&nbsp;4</a>. First some algebra.</p>
+<p>We will assume an additive noise model for the generation of <span class="math inline">\(W_I\)</span> and <span class="math inline">\(W_F\)</span> from <span class="math inline">\(L\)</span> in <a href="#fig-lurk-simple" class="quarto-xref">Figure&nbsp;4</a>, i.e.</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+W_I = L + \epsilon_I \\
+W_F = L + \epsilon_F,
+\end{aligned}
+\end{equation}\]</span></p>
+<p>with <span class="math inline">\(L\)</span>, <span class="math inline">\(\epsilon_I\)</span>, and <span class="math inline">\(\epsilon_F\)</span> all independent of each other. The covariance of <span class="math inline">\(W_I\)</span> and <span class="math inline">\(W_F\)</span> conditional on sex is thus <span class="math inline">\(\Cov(W_I, W_F \mid S) = \Cov(L + \epsilon_I, L+ \epsilon_F \mid S) = \Var(L \mid S)\)</span>.</p>
+<p>We want to match the correlations and standard deviations in our previously generated data, that is:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+\SD(W_I \mid S) = \SD(W_F \mid S) = 5 \\
+\Cor(W_I, W_F \mid S) = 0.7,
+\end{aligned}
+\end{equation}\]</span></p>
+<p>which forces upon us <span class="math display">\[\begin{equation}
+\begin{aligned}
+\Var(L \mid S) &amp;= \Cov(W_I, W_F \mid S) \\
+&amp;= \Cor(W_I, W_F \mid S) \SD(W_I \mid S)\SD(W_F \mid S)  \\
+&amp;= 0.7 \times 5 \times 5 = 17.5
+\end{aligned}
+\end{equation}\]</span></p>
+<p>We can then compute the necessary variances for the error terms <span class="math inline">\(\epsilon_I\)</span> and <span class="math inline">\(\epsilon_F\)</span>, assumed to be equal, using the law of total variance:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+\Var(\epsilon_F) = \Var(\epsilon_I) = \Var(W_I \mid L, S) = \E\left[\Var(W_I \mid L, S) \mid S \right] &amp;= \Var(W_I \mid S) - \Var\left[\E(W_I \mid S, L) \mid S \right] \\
+&amp;= \Var(W_I \mid S) - \Var(L \mid S ) \\
+&amp;= 5^2 -  17.5 = 7.5
+\end{aligned}
+\end{equation}\]</span></p>
+<p>Now let’s simulate!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">770</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">300</span> <span class="co"># number of students of each sex</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mu_girls <span class="ot">=</span> <span class="dv">75</span> <span class="co"># Average equilibrium weight for girls (kg)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mu_boys <span class="ot">=</span> <span class="dv">85</span> <span class="co"># Average equilibrium weight for boys (kg)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sd_L <span class="ot">=</span> <span class="fu">sqrt</span>(<span class="fl">17.5</span>) <span class="co"># standard deviation of latent weight</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sd_eps <span class="ot">=</span> <span class="fu">sqrt</span>(<span class="fl">7.5</span>) <span class="co"># standard deviation of measured weight given latent</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>L_girls <span class="ot">=</span> <span class="fu">rnorm</span>(n, mu_girls, sd_L)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>L_boys <span class="ot">=</span> <span class="fu">rnorm</span>(n, mu_boys, sd_L)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>L <span class="ot">=</span> <span class="fu">c</span>(L_girls, L_boys)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>WI <span class="ot">=</span> L <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2</span><span class="sc">*</span>n, <span class="dv">0</span>, sd_eps)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>WF <span class="ot">=</span> L <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2</span><span class="sc">*</span>n, <span class="dv">0</span>, sd_eps)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>lord <span class="ot">=</span> <span class="fu">tibble</span>(WI, WF, <span class="at">S =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"girl"</span>, <span class="st">"boy"</span>), <span class="at">each =</span> n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we plot:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Run the regression that Statistician 2 did and extract the coefficients</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ancov <span class="ot">&lt;-</span> <span class="fu">lm</span>(WF <span class="sc">~</span> WI <span class="sc">+</span> S, <span class="at">data =</span> lord)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>coef <span class="ot">=</span> <span class="fu">coef</span>(ancov)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>coef_boys <span class="ot">=</span> coef[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>coef_girls <span class="ot">=</span> <span class="fu">c</span>(coef[<span class="dv">1</span>] <span class="sc">+</span> coef[<span class="dv">3</span>], coef[<span class="dv">2</span>])</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#And now let’s plot:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">pty =</span> <span class="st">"s"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lord<span class="sc">$</span>WI, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>     lord<span class="sc">$</span>WF,  </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">if_else</span>(lord<span class="sc">$</span>S <span class="sc">==</span> <span class="st">"girl"</span>, <span class="st">"orange"</span>, <span class="st">"blue"</span>), </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Pre-semester weight"</span>,  </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Post-semester weight"</span>, </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">asp =</span> <span class="dv">1</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">coef =</span> coef_girls, <span class="at">col =</span> <span class="st">"orange"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="st">"dashed"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">coef =</span> coef_boys, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="st">"dashed"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"girls"</span>, <span class="st">"boys"</span>), </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"blue"</span>), <span class="at">pch =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Assuming we did the algebra correctly, this should look roughly the same as my plot in <a href="../../technical_posts/lord-s-paradox/index.html">the previous post</a>.</p>
+</section>
+<section id="lessons" class="level2">
+<h2 class="anchored" data-anchor-id="lessons">Lessons</h2>
+<p>In my original post, I argued that Pearl’s causal model was not a helpful way to shed light on the paradox. Now I can see that it is not causal modelling writ large that is to blame for failing to adequately explain the paradox–it is just Pearl’s incorrect model that is not helpful. Meanwhile, the correct causal model, i.e.&nbsp;the DAG in <a href="#fig-lurk-simple" class="quarto-xref">Figure&nbsp;4</a>, is a great way to make sense of the paradox. Of course, common sense alone was always enough to see that Statistician 2 was barking up the wrong tree, but I think this is just because what this common sense amounts to is the understanding that <span class="math inline">\(W_I\)</span> and <span class="math inline">\(W_F\)</span> are two measurements of some latent equilibrium weight <span class="math inline">\(L\)</span>–in other words, an intuitive understanding of the correct causal model.</p>
+<p>The final thing I want to say about Lord’s paradox before I never write about it again is that I think it is a prototypical example of a phenomenon in statistics that I’ve observed (often in myself) wherein a paranoia about methodological rigor will get in the way of reaching some straightforward conclusion from a simple analysis of data. Maybe I’m just projecting, but I think this paranoia, which leads people to question whether the most obvious way to analyze some collected data might be horribly mistake, might be the results of how we teach statistics, wherein we focus on all the ways things can go wrong. Exposure to this sort of statistical education might derail one’s analysis by making it more complicated than it needs to be. This would be quite unfortunate, since the goal of statistics is to facilitate the analysis of data, not to unnecessarilly complicate it!</p>
+<p>What exactly am I saying here? It is not that the simplest method is always the best, nor do I want to claim that data can never be counter-intuitive or that complicated statistical techniques are never required. In particular, the analysis of covariance (ANCOVA) undertaken by statistician 2 is extraordinarily useful when you are controlling for a pre-treatment variable, as opposed to the situation in Lord’s paradox, where initial weight is downstream (an effect) of sex. One might simply summarize the situation as: use the appropriate tool for the problem, but while this is undoubtedly true, I think (and I’m sure most statisticians agree) that simple, straight-forward analyses are to be much preferred to complex ones when the former are suitable, and I don’t think that people who take statistics course often receive this message. The result can be people abandoning their own common sense when they analyze data, and I think this is basically what we see happening to Statistician 2 in Lord’s paradox.</p>
+</section>
+<section id="references" class="level2">
+
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-pearl2016" class="csl-entry" role="listitem">
+Pearl, Judea. 2016. <span>“Lord<span>’</span>s Paradox Revisited <span></span> (Oh Lord! Kumbaya!).”</span> <em>Journal of Causal Inference</em> 4 (2). <a href="https://doi.org/10.1515/jci-2016-0021">https://doi.org/10.1515/jci-2016-0021</a>.
+</div>
+<div id="ref-shiffrin2020lord" class="csl-entry" role="listitem">
+Shiffrin, RM. 2020. <span>“Lord’s Paradox: A Commentary on Causal Inference.”</span> <em>Ann. Biom. Biostat</em> 5: 1034–36.
+</div>
+<div id="ref-tennant2022" class="csl-entry" role="listitem">
+Tennant, Peter WG, Georgia D Tomova, Kellyn F Arnold, and Mark S Gilthorpe. 2022. <span>“OP09<span></span>lord<span>’</span>s <span>‘</span>Paradox<span>’</span> Explained: The 50-Year Warning on the Analyses of <span>‘</span>Change Scores<span>’</span>*.”</span> <em>SSM Annual Scientific Meeting</em>, August. <a href="https://doi.org/10.1136/jech-2022-ssmabstracts.9">https://doi.org/10.1136/jech-2022-ssmabstracts.9</a>.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>The diet served is not actually a variable in this original version of Lord’s story: every student receives the same diet.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Their causal model of Lord’s paradox allows for more bells and whistles in order to provide a comprehensive picture (see their Figure 3B). In addition, their causal model has separate latent variables for the initial and final weight, but because the latent variable for the initial weight affects the latent variable for final weight in their model, the same lack of identifiability of the direct effect of sex on final weight arises.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,20 @@
+[
+  {
+    "listing": "/blog.html",
+    "items": [
+      "/technical_posts/lord-s-paradox-addendum/index.html",
+      "/technical_posts/notes-on-glms-part-2/index.html",
+      "/technical_posts/notes-on-generalized-linear-models/index.html",
+      "/technical_posts/linear-regression/index.html",
+      "/technical_posts/lord-s-paradox/index.html",
+      "/technical_posts/external-validity-conclusion/index.html",
+      "/technical_posts/sensitivity-analysis-for-generalization/index.html",
+      "/technical_posts/estimation-for-external-validity/index.html",
+      "/technical_posts/identification-for-external-validity/index.html",
+      "/technical_posts/sampling-bias-and-causal-inference/index.html",
+      "/technical_posts/pivoting-a-cdf/index.html",
+      "/technical_posts/attributable-effects/index.html",
+      "/technical_posts/paired-inference/index.html"
+    ]
+  }
+]

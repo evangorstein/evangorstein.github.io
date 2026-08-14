@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Evan Gorstein">
+<meta name="dcterms.date" content="2021-01-13">
+
+<title>Randomization Inference Part 2: Attributable Effects – Evan Gorstein</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-0be52d9f5fc056d18866a360b4e683b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Evan Gorstein</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../papers.html"> 
+<span class="menu-text">Papers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Randomization Inference Part 2: Attributable Effects</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">causal inference</div>
+                <div class="quarto-category">randomization inference</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Evan Gorstein </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 13, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In the last post, I presented a framework for performing causal inference in a matched-pair randomized experiment. The Wilcoxon signed rank statistic was introduced, and we saw how it could be used to obtain point and interval estimates of a constant additive effect. This approach will not work when the true effect of treatment differs across individuals, and so in this post, I want to discuss a method for quantifying non-constant causal effects. The quantity that we will define for this task is known as the “attributable effect” of treatment. This discussion is adapted from Chapter 2 of Paul Rosenbaum’s <em>Design of Observational Studies</em> (2010).</p>
+</section>
+<section id="exceptional-pairs" class="level2">
+<h2 class="anchored" data-anchor-id="exceptional-pairs">Exceptional Pairs</h2>
+<p>We adopt the same experimental set-up as in the previous post with <span class="math inline">\(I\)</span> pairs matched for pre-treatment covariates and treatment assignment randomized within each pair. Let’s consider for the moment a subset <span class="math inline">\(\mathscr{I} \subseteq \{1,2,3,...I\}\)</span> of <span class="math inline">\(m\)</span> of these <span class="math inline">\(I\)</span> pairs. In order to allow the heterogeneity of the effect to play a role in our calculations, let’s try to identify the pair <span class="math inline">\(i_\mathscr{I}\)</span> in <span class="math inline">\(\mathscr{I}\)</span> whose two individuals exhibit the largest difference in outcomes. Surely, this is a noteworthy pair, one that might provide evidence about the direction of the effect of treatment. For example, we might consider it evidence for a positive treatment effect if within this exceptional pair, the treated unit’s observed response is the larger of the two. Let <span class="math inline">\(H_\mathscr{I}\)</span> be an indicator for just this. In other words, <span class="math inline">\(H_\mathscr{I} = 1\)</span> if in the pair in <span class="math inline">\(\mathscr{I}\)</span> with the largest disparity in observed responses, the treated-minus-control difference is positive and <span class="math inline">\(H_\mathscr{I} = 0\)</span> otherwise. Of course, we may have just gotten lucky in the sense that even without a positive effect, we still might find that the treated unit in <span class="math inline">\(i_\mathscr{I}\)</span> has the larger observed response. Indeed, we saw in the previous post that under the sharp null hypothesis of no treatment effect in any unit, we have <span id="eq-null-diff"><span class="math display">\[
+Y_{i} := (Z_{i1}-Z_{i2})(R_{i1}-R_{i2})=(Z_{i1}-Z_{i2})(r_{Ci1}-r_{Ci2})
+\tag{1}\]</span></span> for all <span class="math inline">\(i\)</span>, where <span class="math inline">\(r_{Cij}\)</span> is the potential outcome under control of unit <span class="math inline">\(j\)</span> in pair <span class="math inline">\(i\)</span>. Since these potential outcomes are fixed constants, we can see that a flip of the randomization coin determines the sign of the treated-minus-control difference <span class="math inline">\(Y_{i}\)</span> for all <span class="math inline">\(i\)</span> and, in particular, for that most exceptional <span class="math inline">\(Y_{i_\mathscr{I}}\)</span>, under the sharp null hypothesis. Thus, when there is no effect for anyone, we will still have a 50-50 shot that <span class="math inline">\(H_\mathscr{I}=1\)</span>.</p>
+<p>In order to account for luck, we now define a different indicator <span class="math inline">\(H_{C\mathscr{I}}\)</span>. This indicator ranks the pairs in <span class="math inline">\(\mathscr{I}\)</span> according to their differences in <em>potential outcomes under control</em>, <span class="math inline">\(|r_{Ci1}-r_{Ci2}|\)</span>, instead of the difference in observed responses <span class="math inline">\(|R_{i1}-R_{i2}|\)</span>. It equals 1 if in the pair with the largest such difference, the treated unit is the one with the larger potential outcome under control. This is a weird thing to consider, but if the sharp null hypothesis of no effect in any unit is true, then <span class="math inline">\(|r_{Ci1}-r_{Ci2}| = |R_{i1}-R_{i2}|\)</span> for all <span class="math inline">\(i\)</span>, so <span class="math inline">\(H_{C\mathscr{I}} = H_{\mathscr{I}}\)</span>. So one might imagine that deviation of <span class="math inline">\(H_{\mathscr{I}}\)</span> from <span class="math inline">\(H_{C\mathscr{I}}\)</span> measures deviation from the sharp null hypothesis.</p>
+</section>
+<section id="attributable-effect" class="level2">
+<h2 class="anchored" data-anchor-id="attributable-effect">Attributable Effect</h2>
+<p>Let’s now recall that <span class="math inline">\(\mathscr{I}\)</span> was just one arbitrary subset of pairs, so we actually want to go through this for every single subset of pairs of size <span class="math inline">\(m\)</span> and sum the results. Let <span class="math inline">\(\mathscr{K}\)</span> be the collection of all subsets of <span class="math inline">\(m\)</span> distinct pairs. We define the statistic <span class="math inline">\(\tilde{T}\)</span> to be the tally of all the “successes” as we loop through these subsets, i.e.&nbsp;<span class="math inline">\(\tilde{T}= \sum_{\mathscr{I}\in\mathscr{K}}{H_\mathscr{I}}\)</span>. Similarly, the count of “successes” if we went according to the potential responses under control is given by <span class="math inline">\(\tilde{T_C}= \sum_{\mathscr{I}\in\mathscr{K}}{H_{C\mathscr{I}}}\)</span>, a quantity which in general is unobserved. A quantity that measures evidence for a treatment effect while accounting for luck is the difference between these two tallies, <span class="math inline">\(A=\tilde{T} - \tilde{T}_{C} = \sum_{\mathscr{I}\in\mathscr{K}}{H_\mathscr{I} - H_{C\mathscr{I}}}\)</span>. In general, <span class="math inline">\(A\)</span> is an integer between <span class="math inline">\(-|\mathscr{K}|\)</span> and <span class="math inline">\(|\mathscr{K}|\)</span> representing the change in the number of successes which can be attributed to treatment, i.e.&nbsp;the “attributable effect”. It is common and more informative to discuss attributable effects in terms of proportions, i.e.&nbsp;<span class="math inline">\(A/|\mathscr{K}|\)</span>.</p>
+</section>
+<section id="calculations" class="level2">
+<h2 class="anchored" data-anchor-id="calculations">Calculations</h2>
+<p>Now that we know what we’re interested in, let’s see if we can calculate it. There seem to be a couple of significant obstacles to calculating <span class="math inline">\(A\)</span>:</p>
+<ol type="1">
+<li>We do not observe <span class="math inline">\(\tilde{T}_C\)</span>.</li>
+<li>Although we observe <span class="math inline">\(\tilde{T}\)</span>, it seems pretty awful to calculate, involving the separate consideration of every subset of pairs of size <span class="math inline">\(m\)</span>.</li>
+</ol>
+<p>Upon further reflection, however, both of these obstacles can be overcome. First, although we don’t know the exact value of <span class="math inline">\(\tilde{T}_C\)</span>, we know its distribution; second, <span class="math inline">\(\tilde{T}\)</span> ends up being easy to calculate.</p>
+<p>Starting with the latter, <span class="math inline">\(\tilde{T}\)</span> can actually be expressed in the form of a signed rank statistic very similar to Wilcoxon’s, allowing us to calculate it with ease. In particular, we have <span class="math inline">\(T=\sum_{i=1}^I{\mathop{\mathrm{sgn}}(Y_i)\tilde{q_i}}\)</span>, where <span class="math inline">\(\tilde{q_i}\)</span> is a quantity that we will now define. Recall that <span class="math inline">\(q_i\)</span>, without the tilde, is just the rank of <span class="math inline">\(|Y_i|\)</span>, defined for the calculation of Wilcoxon’s statistic. Now for a fixed pair <span class="math inline">\(i\)</span>, if <span class="math inline">\(q_i &lt; m\)</span>, then in any subset of <span class="math inline">\(m\)</span> pairs, there will be at least one pair “more exceptional” than pair <span class="math inline">\(i\)</span>, and so pair <span class="math inline">\(i\)</span> contributes nothing to our tally of “successes”. On the other hand, if <span class="math inline">\(m \le q_i\)</span>, then the number of subsets of size <span class="math inline">\(m\)</span> in which <span class="math inline">\(i\)</span> appears as most exceptional is just the number of ways to choose <span class="math inline">\(m-1\)</span> pairs from the <span class="math inline">\(q_{i}-1\)</span> pairs less exceptional that pair <span class="math inline">\(i\)</span>. This analysis motivates our definition of <span class="math inline">\(\tilde{q_i}\)</span>as</p>
+<p><span class="math display">\[\tilde{q_i} = {q_i-1 \choose m-1} \text{ for } q_i \ge m \text{, } \tilde{q_i}=0 \text{ for }  q_i &lt; m\]</span> With <span class="math inline">\(\tilde{q_i}\)</span> thus defined, <span class="math inline">\(\sum_{i=1}^I{\mathop{\mathrm{sgn}}(Y_i)\tilde{q_i}}\)</span> describes an alternative approach to tallying “successes,” looping through pairs instead of looping through subsets of pairs. The result, of course, will be the same, although written in this form, it’s much easier to calculate. Notice also that if <span class="math inline">\(m=2\)</span>, <span class="math inline">\(\tilde{q_i} = q_i-1\)</span>, so we recover the Wilcoxon statistic with ranks starting at <span class="math inline">\(0\)</span> and going to <span class="math inline">\(I-1\)</span> instead of starting at <span class="math inline">\(1\)</span> and going to <span class="math inline">\(I\)</span>.</p>
+<p>What about the distribution of <span class="math inline">\(\tilde{T}_C\)</span>? Well, <span class="math inline">\(\tilde{T}_C\)</span> can also be written as the sum of the signed ranks of each of the treated-minus-control differences, where we now use the potential responses under control for each unit to calculate these differences. As we saw in <a href="#eq-null-diff" class="quarto-xref">Equation&nbsp;1</a>, when we use potential responses, the sign of each pair’s treated-minus-control difference is determined by a fair coin flip, so <span class="math inline">\(\tilde{T}_C\)</span> is just the sum of <span class="math inline">\(I\)</span>independent random variables, each equal to <span class="math inline">\(\tilde{q_i}\)</span> or <span class="math inline">\(0\)</span> with equal probability <span class="math inline">\(\frac{1}{2}\)</span>. Consequently, if we assume that there are no ties among the treated-minus-control differences, then we know its distribution before we even observe our data. In particular, its expected value and variance are given by</p>
+<p><span class="math display">\[\mathrm{E}(\tilde{T}_C)=\frac{1}{2}\sum_{i=1}^I{\tilde{q_i}}=\frac{1}{2}|\mathscr{K}|\]</span> and <span class="math display">\[\mathrm{Var}(\tilde{T}_C)=\frac{1}{4}\sum_{i=1}^I{\tilde{q_i}^2}=\frac{1}{4}\sum_{i=m}^I{ {i-1 \choose m-1}^2 }\]</span></p>
+<p>A point estimate for the attributable effect is thus <span class="math display">\[\hat{A}=\tilde{T}-\mathrm{E}(\tilde{T}_C)=\tilde{T} - \frac{1}{2}|\mathscr{K}|\]</span>or in proportional terms, <span class="math display">\[\frac{\tilde{T} - |\mathscr{K}|/2} {|\mathscr{K}|}= \frac{\tilde{T}}{|\mathscr{K}|} - .5\]</span></p>
+</section>
+<section id="confidence-intervals" class="level2">
+<h2 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h2>
+<p>The Lyapunov version of the central limit theorem tells us that the assymptotic distribution of the sum of independent, not necessarilly identical random variables follows a normal distribution. <span class="math inline">\(\tilde{T}_C\)</span> is a finite sum of independent random variables, but for large enough <span class="math inline">\(I\)</span>, the assymptotic distribution provides a solid approximation. Using this approximation, we can calculate the smallest value <span class="math inline">\(t_\alpha\)</span> such that <span class="math inline">\(P(\tilde{T}_C\leq t_\alpha) \geq 1 - \alpha\)</span> with</p>
+<p><span class="math display">\[t_\alpha = \mathrm{E}(\tilde{T}_C) + \Phi^{-1}(1-\alpha)\sqrt{\mathrm{Var}(\tilde{T}_C)} \]</span></p>
+<p>where <span class="math inline">\(\Phi^{-1}\)</span> is the quantile function for the standard normal distribution. The confidence statement we can then make about <span class="math inline">\(A=T_\mathscr{I} - T_{C\mathscr{I}}\)</span> is <span class="math display">\[P(A \geq \tilde{T} - t_\alpha) \geq 1-\alpha \]</span> In terms of proportions, we state with <span class="math inline">\(1-\alpha\)</span> confidence that <span class="math display">\[\frac{A}{|\mathscr{K}|} \geq \frac{\tilde{T} - t_\alpha}{|\mathscr{K}|}\]</span></p>
+</section>
+<section id="detecting-heterogenous-effects" class="level2">
+<h2 class="anchored" data-anchor-id="detecting-heterogenous-effects">Detecting Heterogenous Effects</h2>
+<p>Returning to our original motivation for introducing attributable effects, let’s conclude by analyzing the role that <span class="math inline">\(m\)</span>, the size of our subsets, plays in our calculations. In Part 1, we saw that the Wilxon signed rank statistic does a great job of efficiently estimating a constant treatment effect in a randomized, matched pair experiment. We also mentioned that Wilcoxon’s statistic could be used to test a null hypothesis of a particular non-constant effect, and in theory, this test could be inverted to produce a confidence set in a <span class="math inline">\(\mathbb{R}^{2I}\)</span> parameter space. However, this would not be a pretty set and therefore of little use to us. To address this gap, we introduced in this post the attributable effect, an interpretable quantity which summarizes the effect of a treatment that is not the same for all individuals.</p>
+<p>Let us now update this description slightly by looking at the role of <span class="math inline">\(m\)</span>. If <span class="math inline">\(m=2\)</span>, then the attributable effect is obtained from making comparisons between just two pairs at a time. What kind of effect will this do a good job of detecting and which kind of effect will it discount? I claim that a constant tretment effect, even one which is modest in size, should be detected using this method, whereas a heterogenous effect, which is large for a small number of individuals, but <span class="math inline">\(0\)</span> for the majority, will probably be underestimated. This is because most of the comparisons will not include any of the small number of highly affected individuals, and in those which do, there is no extra credit given for the size of the effect–the tally of successes goes up by at most one no matter what. This result is also reflected by the observation we made earlier in our calculations: When <span class="math inline">\(m=2\)</span>, <span class="math inline">\(\tilde{T}\)</span> is virtually identical to the Wilcoxon statistic, which only does a good job of detecting homogenous effects.</p>
+<p>By increasing <span class="math inline">\(m\)</span>, we consider larger collections of pairs one at a time. By virtue of their size, these collections are more likely to include one of the highly affected individuals and, as a result, our tally of successes will more appropriately account for the treatment effect. In other words, the measure of attributable effects as we defined it is more sensitive to large but uncommon effects the larger <span class="math inline">\(m\)</span> is.</p>
+<p>In Rosenbaum’s textbook, he illustrates this using a study of the impact of a employment and training program on the earnings of economically disadvantaged workers upon leaving the program. He computes the estimate of the attributable effect with <span class="math inline">\(m\)</span>=2 as 10.8% with a 95% confidence level for an effect of at least 3.8%. He also computes estimates for <span class="math inline">\(m=20\)</span>: a point estimate of a 35.7% increase in successes and a 95% confidence interval of at least a 15.8% increase. The conclusion he draws from these diverging estimates is that the training program had a a large but uncommon effect, dramatically increasing the earnings of a few select workers, but leaving the majority of wages unchanged.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
