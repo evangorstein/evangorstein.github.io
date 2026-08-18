@@ -301,7 +301,7 @@ Y_{i} := (Z_{i1}-Z_{i2})(R_{i1}-R_{i2})=(Z_{i1}-Z_{i2})(r_{Ci1}-r_{Ci2})
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/evangorstein\.github\.io");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
