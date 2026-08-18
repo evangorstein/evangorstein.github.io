@@ -3,6 +3,7 @@ project:
 
 website:
   title: "Evan Gorstein"
+  site-url: https://evangorstein.github.io
   navbar:
     background: lightgrey
     search: true
