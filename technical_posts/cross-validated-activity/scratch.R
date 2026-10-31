@@ -144,7 +144,7 @@ mod1 = list(
   ~ 0 + time
 )
 prior1 = list(
-  int_1 = "dunif(200000, 300000)"
+  Intercept_1 = "dunif(200000, 300000)"
   # cp_1, the changepoint, not specified, will default to dunif(MINX, MAXX),
   #time_2, i.e. the slope after the changepoint, not specified, will use default 
   #sigma_1 not specified, will use default
@@ -152,8 +152,8 @@ prior1 = list(
 
 
 # Look at prior predictive
-empty_manual = mcp(mod1, prior = prior1, sample = FALSE)
-empty_default = mcp(mod1, sample = FALSE)
+empty_manual = mcp(mod1, so_by_month, prior1, sample = FALSE)
+empty_default = mcp(mod1, so_by_month, sample = FALSE)
 cbind(manual = empty_manual$prior, default = empty_default$prior)
 
 set.seed(770)
@@ -198,15 +198,15 @@ mod_more = list( # allow for 4 change points, but insist that final segment is f
   ~ 0 
 )
 prior_more = list(
-  int_1 = "dunif(200000, 300000)"
+  Intercept_1 = "dunif(200000, 300000)"
   # cp_1, cp_2, cp_3, cp_4 not specified
   #time_2, time_3, time_4 not specified 
   #sigma_1 not specified
 )
 
 # Look at prior predictive
-empty_manual_more = mcp(mod_more, prior = prior_more, sample = FALSE)
-empty_default_more = mcp(mod_more, sample = FALSE)
+empty_manual_more = mcp(mod_more, so_by_month_more, prior_more, sample = FALSE)
+empty_default_more = mcp(mod_more, so_by_month_more, sample = FALSE)
 cbind(manual = empty_manual_more$prior, default = empty_default_more$prior)
 
 set.seed(770)
@@ -216,7 +216,7 @@ plot(fit_pp_manual_more, lines = 100)
 plot(fit_pp_default_more, lines = 100)
 
 # Actually fit model, i.e. sample from posterior
-fit_manual_more = mcp(mod_more, so_by_month_more, prior_more, chains = 5, adapt = 10000)
+fit_manual_more = mcp(mod_more, so_by_month_more, prior_more, chains = 5, warmup = 10000)
 fit_manual_more
 plot_pars(fit_manual_more, regex_pars = "cp_")
 plot_pars(fit_manual_more, regex_pars = "time_")
@@ -234,7 +234,7 @@ mod_more_red = list( # allow for only 3 change points
   ~ 0 + time,
   ~ 0 + time
 )
-fit_manual_more_red = mcp(mod_more_red, so_by_month_more, prior_more, chains = 5, adapt = 10000)
+fit_manual_more_red = mcp(mod_more_red, so_by_month_more, prior_more, chains = 5, warmup = 10000)
 fit_manual_more_red
 plot_pars(fit_manual_more_red, regex_pars = "cp_")
 plot_pars(fit_manual_more_red, regex_pars = "time_")
